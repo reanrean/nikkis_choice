@@ -471,6 +471,7 @@ function changeTheme() {
 		setFilters(allThemes[theme]);
 	}
 	onChangeCriteria();
+	showStrategy();
 }
 
 var currentLevel; // used for post filtering.
