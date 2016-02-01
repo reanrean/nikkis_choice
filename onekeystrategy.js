@@ -114,7 +114,7 @@ function showStrategy(){
 			continue;
 		$strategy.append(pspan(name+" : ", "clothes_category"));
 		$strategy.append(getstrClothes_mod(result[name]));
-		$strategy.append('</br></br>');
+		$strategy.append('</p>');
 		//$strategy.append(p(getstrClothes(result[name]), "clothes", name, "clothes_category"));
 	}
 	
@@ -132,11 +132,12 @@ function showStrategy(){
 				accList.push(resultList[i]);
 			}
 		}
-		if(accList.length > 0)
+		//if(accList.length > 0){
 			$strategy.append(pspan(typeList[t]+" : ", "clothes_category"));
 			$strategy.append(getstrClothes_mod(accList));
-			$strategy.append('</br></br>');
+			$strategy.append('</p>');
 			//$strategy.append(p(getstrClothes(accList), "clothes", typeList[t], "clothes_category"));
+		//}
 	}
 
 	$author_sign = $("<div/>").addClass("stgy_author_sign_div");
@@ -305,6 +306,16 @@ function removeNum(str){
 
 function initOnekey(){
 	$("#onekey").click(function() {
-		showStrategy();
+		on_off_strategy();
 	});
+}
+
+function on_off_strategy(){
+	if(document.getElementById("StrategyInfo").style.display == 'none'){
+		document.getElementById("StrategyInfo").style.display = 'inline';
+		document.getElementById("onekey").innerHTML = '收起攻略';
+	}else{
+		document.getElementById("StrategyInfo").style.display = 'none';
+		document.getElementById("onekey").innerHTML = '一键攻略';
+	}
 }
