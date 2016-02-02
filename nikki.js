@@ -78,6 +78,7 @@ function onChangeCriteria() {
 			$("#" + rank[r][0]).text(numstr[r]);
 		}
 	}
+	showStrategy();
 }
 
 function accMul(arg1, arg2) {
@@ -471,7 +472,6 @@ function changeTheme() {
 		setFilters(allThemes[theme]);
 	}
 	onChangeCriteria();
-	showStrategy();
 }
 
 var currentLevel; // used for post filtering.
