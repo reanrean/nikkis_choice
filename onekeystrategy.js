@@ -306,6 +306,7 @@ function removeNum(str){
 
 function initOnekey(){
 	$("#onekey").click(function() {
+		showStrategy();
 		on_off_strategy();
 	});
 }
