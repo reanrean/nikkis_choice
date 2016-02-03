@@ -1,5 +1,5 @@
-function showStrategy(rescnt){
-	if(!rescnt){var rescnt=4;}
+function showStrategy(){
+	var rescnt=stgy_rescnt;
 
 	var $strategy = $("<div/>").addClass("strategy_info_div");
 		
@@ -112,7 +112,7 @@ function showStrategy(rescnt){
 		
 	for (var t in typeList){
 		var accList = [];
-		for (var i = 0; i < resultList.length-2; i++){
+		for (var i = 0; i < resultList.length; i++){
 			if (resultList[i] && resultList[i].type.type == typeList[t]){
 				accList.push(resultList[i]);
 			}
@@ -247,7 +247,6 @@ function removeNum(str){
 }
 
 function strat_sortlist(clothes,filters,rescnt){
-	rescnt+=10;//sort for more than rescnt to avoid none in result
 	var result = {};
 	for (var i in clothes) {
 		if (matches(clothes[i], {}, filters)) {
@@ -292,9 +291,9 @@ function initOnekey(){
 var stgy_rescnt=4;
 function addonekey(){
 	stgy_rescnt+=1;
-	showStrategy(stgy_rescnt);
+	showStrategy();
 }
 function minonekey(){
 	stgy_rescnt=Math.max(1,stgy_rescnt-1);
-	showStrategy(stgy_rescnt);
+	showStrategy();
 }
