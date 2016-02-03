@@ -60,7 +60,7 @@ function showStrategy(){
 	$strategy.append($clotheslist_title);
 	$strategy.append(pspan("(显示"+rescnt+"件)", "clothes"));
 	$strategy.append('<button class="btn btn-xs btn-default" onclick="addonekey()">＋</button><button class="btn btn-xs btn-default" onclick="minonekey()">－</button>');
-	$strategy.append(' <button class="btn btn-xs btn-default" id="stgy_showall" onclick="onekeyshowall()">showall</button></p>');
+	$strategy.append(' <button class="btn btn-xs btn-default" id="stgy_showall" onclick="onekeyshowall()"></button></p>');
 	
 	for (var i in CATEGORY_HIERARCHY) {
 		if(i == "袜子"){
@@ -134,6 +134,9 @@ function showStrategy(){
 	$strategy.append($author_sign);
 	
 	$("#StrategyInfo").empty().append($strategy);
+	
+	if (stgy_showall){$("#stgy_showall").html('wardrobe');}
+	else{$("#stgy_showall").html('showall');}
 }
 
 function p(text, cls, text2, cls2){
@@ -317,6 +320,4 @@ function onekeyshowall(){
 	if (stgy_showall){stgy_showall=false;}
 	else{stgy_showall=true;}
 	showStrategy();
-	if (stgy_showall){$("#stgy_showall").html('wardrobe');}
-	else{$("#stgy_showall").html('showall');}
 }
