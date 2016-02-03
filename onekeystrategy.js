@@ -58,7 +58,7 @@ function showStrategy(rescnt){
 	$strategy.append('<p>')
 	var $clotheslist_title = pspan("推荐搭配: ", "clotheslist_title");
 	$strategy.append($clotheslist_title);
-	$strategy.append(pspan(rescnt, "clothes"));
+	$strategy.append(pspan("(显示"+rescnt+"件)", "clothes"));
 	$strategy.append('<button onclick="addonekey()">＋</button><button onclick="minonekey()">－</button></p>');
 	
 	for (var i in CATEGORY_HIERARCHY) {
@@ -247,6 +247,7 @@ function removeNum(str){
 }
 
 function strat_sortlist(clothes,filters,rescnt){
+	rescnt+=10;//sort for more than rescnt to avoid none in result
 	var result = {};
 	for (var i in clothes) {
 		if (matches(clothes[i], {}, filters)) {
@@ -288,12 +289,12 @@ function initOnekey(){
 	});
 }
 
-var rescnt=4;
+var stgy_rescnt=4;
 function addonekey(){
-	rescnt+=1;
-	showStrategy(rescnt);
+	stgy_rescnt+=1;
+	showStrategy(stgy_rescnt);
 }
 function minonekey(){
-	rescnt=Math.max(4,rescnt-1);//problem occurs when <4
-	showStrategy(rescnt);
+	stgy_rescnt=Math.max(1,stgy_rescnt-1);
+	showStrategy(stgy_rescnt);
 }
