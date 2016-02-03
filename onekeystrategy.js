@@ -9,10 +9,10 @@ function showStrategy(){
 	filters.missing = true;
 	
 	var $title = p($("#theme").val() == "custom" ? "....." : $("#theme").val(),"title");
-	$title.append(p("Rean mod 衣柜对比顶配版", "title"));
 	$strategy.append($title);
 	
 	var $author = p("配装器一键攻略@黑的升华", "author");
+	$author.append("<br/>衣柜对比mod /Rean");
 	$strategy.append($author);
 	
 	var $skill_title = p("技能: ", "skill_title");
@@ -59,7 +59,8 @@ function showStrategy(){
 	var $clotheslist_title = pspan("推荐搭配: ", "clotheslist_title");
 	$strategy.append($clotheslist_title);
 	$strategy.append(pspan("(显示"+rescnt+"件)", "clothes"));
-	$strategy.append('<button onclick="addonekey()">＋</button><button onclick="minonekey()">－</button></p>');
+	$strategy.append('<button class="btn btn-xs btn-default" onclick="addonekey()">＋</button><button class="btn btn-xs btn-default" onclick="minonekey()">－</button>');
+	$strategy.append(' <button class="btn btn-xs btn-default" id="stgy_showall" onclick="onekeyshowall()">showall</button></p>');
 	
 	for (var i in CATEGORY_HIERARCHY) {
 		if(i == "袜子"){
@@ -216,20 +217,34 @@ function getstrClothes_mod(result,rescnt){
 	var str="";
 	var tmp1="";
 	var tmp2="";
+	var tmp3="";
 	if(result.length == 0){
 		tmp1="无";
 		str=pspan(tmp1,"clothes");
 		return str;
 	}else{
-		for (j=0;j<rescnt&&result[j];j++){
-			if(j>0) {tmp2=(result[j-1].sumScore==result[j].sumScore ? " = " : " > ");}
-			tmp2+= result[j].name + "「" + result[j].sumScore + " " + removeNum(result[j].source) + "」";
-			if(result[j].own){
-				str=pspan(tmp2,"clothes",tmp1,"clothes_notown");
-				return str;
-			}else{
-				tmp1+=tmp2;
+		if(!stgy_showall){
+			for (j=0;j<rescnt&&result[j];j++){
+				if(j>0) {tmp2=(result[j-1].sumScore==result[j].sumScore ? " = " : " > ");}
+				tmp2+= result[j].name + "「" + result[j].sumScore + " " + removeNum(result[j].source) + "」";
+				if(result[j].own){
+					str=pspan(tmp2,"clothes",tmp1,"clothes_notown");
+					return str;
+				}else{
+					tmp1+=tmp2;
+				}
 			}
+		}else{
+			var isown=false;
+			for (j=0;j<rescnt&&result[j];j++){
+				if(j>0) {tmp2=(result[j-1].sumScore==result[j].sumScore ? " = " : " > ");}
+				tmp2+= result[j].name + "「" + result[j].sumScore + " " + removeNum(result[j].source) + "」";
+				if(result[j].own){isown=true;}
+				if(isown){tmp3+=tmp2;}
+				else{tmp1+=tmp2;}
+			}
+			str=pspan(tmp3,"clothes",tmp1,"clothes_notown");
+			return str;
 		}
 	}
 	str=pspan(tmp1,"clothes_notown");
@@ -289,6 +304,7 @@ function initOnekey(){
 }
 
 var stgy_rescnt=4;
+var stgy_showall=false;
 function addonekey(){
 	stgy_rescnt+=1;
 	showStrategy();
@@ -296,4 +312,11 @@ function addonekey(){
 function minonekey(){
 	stgy_rescnt=Math.max(1,stgy_rescnt-1);
 	showStrategy();
+}
+function onekeyshowall(){
+	if (stgy_showall){stgy_showall=false;}
+	else{stgy_showall=true;}
+	showStrategy();
+	if (stgy_showall){$("#stgy_showall").html('wardrobe');}
+	else{$("#stgy_showall").html('showall');}
 }
