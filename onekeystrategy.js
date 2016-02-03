@@ -1,4 +1,6 @@
-function showStrategy(){
+function showStrategy(rescnt){
+	if(!rescnt){var rescnt=4;}
+
 	var $strategy = $("<div/>").addClass("strategy_info_div");
 		
 	var theme = allThemes[$("#theme").val()];
@@ -7,8 +9,8 @@ function showStrategy(){
 	filters.missing = true;
 	
 	var $title = p($("#theme").val() == "custom" ? "....." : $("#theme").val(),"title");
+	$title.append(p("Rean mod 衣柜对比顶配版", "title"));
 	$strategy.append($title);
-	$strategy.append(p("Rean mod 衣柜对比顶配版", "title"));
 	
 	var $author = p("配装器一键攻略@黑的升华", "author");
 	$strategy.append($author);
@@ -52,9 +54,12 @@ function showStrategy(){
 		var $F = p($("#categoryFInfo").text().replace("","").replace("会导致", "  |  会导致"), "hint", "", "");
 		// $strategy.append($F);
 	}
-		
-	var $clotheslist_title = p("推荐搭配: ", "clotheslist_title");
+	
+	$strategy.append('<p>')
+	var $clotheslist_title = pspan("推荐搭配: ", "clotheslist_title");
 	$strategy.append($clotheslist_title);
+	$strategy.append(pspan(rescnt, "clothes"));
+	$strategy.append('<button onclick="addonekey()">＋</button><button onclick="minonekey()">－</button></p>');
 	
 	for (var i in CATEGORY_HIERARCHY) {
 		if(i == "袜子"){
@@ -70,30 +75,9 @@ function showStrategy(){
 			}			
 		}
 	}
-	var result = {};
-	for (var i in clothes) {
-		if (matches(clothes[i], {}, filters)) {
-			clothes[i].calc(filters);
-			if (!result[clothes[i].type.type]) {
-				result[clothes[i].type.type] = new Object()
-				result[clothes[i].type.type][0] = clothes[i];
-			} else if (clothes[i].sumScore > result[clothes[i].type.type][0].sumScore) {
-				result[clothes[i].type.type][3] = result[clothes[i].type.type][2];
-				result[clothes[i].type.type][2] = result[clothes[i].type.type][1];
-				result[clothes[i].type.type][1] = result[clothes[i].type.type][0];
-				result[clothes[i].type.type][0] = clothes[i];
-			} else if (!result[clothes[i].type.type][1] || clothes[i].sumScore > result[clothes[i].type.type][1].sumScore) {
-				result[clothes[i].type.type][3] = result[clothes[i].type.type][2];
-				result[clothes[i].type.type][2] = result[clothes[i].type.type][1];
-				result[clothes[i].type.type][1] = clothes[i];				
-			} else if (!result[clothes[i].type.type][2] || clothes[i].sumScore > result[clothes[i].type.type][2].sumScore) {
-				result[clothes[i].type.type][3] = result[clothes[i].type.type][2];
-				result[clothes[i].type.type][2] = clothes[i];				
-			} else if (!result[clothes[i].type.type][3] || clothes[i].sumScore > result[clothes[i].type.type][3].sumScore) {
-				result[clothes[i].type.type][3] = clothes[i];				
-			}
-		}
-	}
+	
+	var result = strat_sortlist(clothes,filters,rescnt);
+
 	var typeList = [];
 	var resultList = [];
 	for (var r in result){
@@ -112,18 +96,19 @@ function showStrategy(){
 		var name = category[c];
 		if(name.indexOf("饰品")>=0)
 			continue;
+		$strategy.append('<p>');
 		$strategy.append(pspan(name+" : ", "clothes_category"));
-		$strategy.append(getstrClothes_mod(result[name]));
+		$strategy.append(getstrClothes_mod(result[name],rescnt));
 		$strategy.append('</p>');
 		//$strategy.append(p(getstrClothes(result[name]), "clothes", name, "clothes_category"));
 	}
 	
-	var accCount = 20;
-	if(filters.bonus && filters.bonus[0] && filters.bonus[0].param
-		&& filters.bonus[0].param.indexOf("S") >= 0 ){
-		accCount = 8;
-	}
-	$strategy.append(p("————————————饰品(推荐佩戴" + accCount + "件)————————————", "divide"));
+	//var accCount = 20;
+	//if(filters.bonus && filters.bonus[0] && filters.bonus[0].param
+	//	&& filters.bonus[0].param.indexOf("S") >= 0 ){
+	//	accCount = 8;
+	//}
+	$strategy.append(p("————————————饰品(推荐佩戴" + typeList.length + "件)————————————", "divide"));
 		
 	for (var t in typeList){
 		var accList = [];
@@ -133,8 +118,9 @@ function showStrategy(){
 			}
 		}
 		//if(accList.length > 0){
+			$strategy.append('<p>');
 			$strategy.append(pspan(typeList[t]+" : ", "clothes_category"));
-			$strategy.append(getstrClothes_mod(accList));
+			$strategy.append(getstrClothes_mod(accList,rescnt));
 			$strategy.append('</p>');
 			//$strategy.append(p(getstrClothes(accList), "clothes", typeList[t], "clothes_category"));
 		//}
@@ -143,7 +129,7 @@ function showStrategy(){
 	$author_sign = $("<div/>").addClass("stgy_author_sign_div");
 	var d = new Date();
 	$author_sign.append(p("nikkiup2u3 One Key Strategy@Black Sublimation", "author_sign_name"));
-	$author_sign.append(p("generate in " + (1900+d.getYear()) + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes(), "author_sign_name"));
+	$author_sign.append(p("generated at " + (1900+d.getYear()) + "-" + (d.getMonth() + 1) + "-" + d.getDate() + " " + d.getHours() + ":" + d.getMinutes(), "author_sign_name"));
 	$strategy.append($author_sign);
 	
 	$("#StrategyInfo").empty().append($strategy);
@@ -226,70 +212,27 @@ function getstrClothes_orig(result){
 	 return str;
 }
 
-function getstrClothes(result){
-	if(result.length == 0)
-		return " : 无";
-	if(result[0].own){
-		var str = " : " + result[0].name + "「" + result[0].sumScore + " " + removeNum(result[0].source) + "」";
-	}else{
-		var str = " : *" + result[0].name + "*「" + result[0].sumScore + " " + removeNum(result[0].source) + "」";
-		if(result[1]){
-			if(result[1].own){
-				str += " > " + result[1].name + "「" + result[1].sumScore + " " + removeNum(result[1].source) + "」";
-			}else{
-				str += " > *" + result[1].name + "*「" + result[1].sumScore + " " + removeNum(result[1].source) + "」";
-				if(result[2]){
-					if(result[2].own){
-					str += " > " + result[2].name + "「" + result[2].sumScore + " " + removeNum(result[2].source) + "」";
-					}else{
-						str += " > *" + result[2].name + "*「" + result[2].sumScore + " " + removeNum(result[2].source) + "」";
-						if(result[3]){
-							str += " > *" + result[3].name + "*「" + result[3].sumScore + " " + removeNum(result[3].source) + "」";
-						}
-					}
-				}
-			}
-		}
-	}
-	 return str;
-}
-
-function getstrClothes_mod(result){
+function getstrClothes_mod(result,rescnt){
 	var str="";
 	var tmp1="";
 	var tmp2="";
+	if(rescnt==3) alert(result.length);
 	if(result.length == 0){
 		tmp1="无";
 		str=pspan(tmp1,"clothes");
 		return str;
 	}else{
-		tmp1=result[0].name + "「" + result[0].sumScore + " " + removeNum(result[0].source) + "」";
-		if(result[0].own){
-			str=pspan(tmp1,"clothes");
-			return str;
-		}else if(result[1]){
-			tmp2 = " > " + result[1].name + "「" + result[1].sumScore + " " + removeNum(result[1].source) + "」";
-			if(result[1].own){
+		for (j=0;j<rescnt&&result[j];j++){
+			if(j>0) {tmp2=(result[j-1].sumScore==result[j].sumScore ? " = " : " > ");}
+			tmp2+= result[j].name + "「" + result[j].sumScore + " " + removeNum(result[j].source) + "」";
+			if(result[j].own){
 				str=pspan(tmp2,"clothes",tmp1,"clothes_notown");
 				return str;
-			}else if(result[2]){//1 notown
+			}else{
 				tmp1+=tmp2;
-				tmp2 = " > " + result[2].name + "「" + result[2].sumScore + " " + removeNum(result[2].source) + "」";
-				if(result[2].own){
-					str=pspan(tmp2,"clothes",tmp1,"clothes_notown");
-					return str;
-				}else if(result[3]){
-					tmp1+=tmp2;
-					tmp2 = " > " + result[3].name + "「" + result[3].sumScore + " " + removeNum(result[3].source) + "」";
-					if(result[3].own){
-						str=pspan(tmp2,"clothes",tmp1,"clothes_notown");
-						return str;
-					}
-				}
 			}
 		}
 	}
-	tmp1+=tmp2;
 	str=pspan(tmp1,"clothes_notown");
 	return str;
 }
@@ -304,19 +247,54 @@ function removeNum(str){
 	return str;
 }
 
+function strat_sortlist(clothes,filters,rescnt){
+	var result = {};
+	for (var i in clothes) {
+		if (matches(clothes[i], {}, filters)) {
+		clothes[i].calc(filters);
+			if (!result[clothes[i].type.type]) {
+				result[clothes[i].type.type] = new Object()
+				result[clothes[i].type.type][0] = clothes[i];
+			} else {
+				for (j=0;j<rescnt;j++){
+					//compare with [j]
+					if(!result[clothes[i].type.type][j] || clothes[i].sumScore > result[clothes[i].type.type][j].sumScore
+						|| (clothes[i].sumScore >= result[clothes[i].type.type][j].sumScore && clothes[i].own)
+						){
+						//lower others ranking
+						for (k=rescnt-1;k>j;k--){
+							result[clothes[i].type.type][k] = result[clothes[i].type.type][k-1];
+						}
+						//put current clothes to [j]
+						result[clothes[i].type.type][j] = clothes[i];
+						break;
+					}
+				}
+			}
+		}
+	}
+	return result;
+}
+
 function initOnekey(){
 	$("#onekey").click(function() {
 		showStrategy();
-		on_off_strategy();
+		if ($('#StrategyInfo').css('display') == 'none'){
+			$("#StrategyInfo").show();
+			$("#onekey").html('收起攻略');
+		}else{
+			$("#StrategyInfo").hide();
+			$("#onekey").html('一键攻略');
+		}
 	});
 }
 
-function on_off_strategy(){
-	if(document.getElementById("StrategyInfo").style.display == 'none'){
-		document.getElementById("StrategyInfo").style.display = 'inline';
-		document.getElementById("onekey").innerHTML = '收起攻略';
-	}else{
-		document.getElementById("StrategyInfo").style.display = 'none';
-		document.getElementById("onekey").innerHTML = '一键攻略';
-	}
+var rescnt=4;
+function addonekey(){
+	rescnt+=1;
+	showStrategy(rescnt);
+}
+function minonekey(){
+	rescnt=Math.max(1,rescnt-1);
+	showStrategy(rescnt);
 }
