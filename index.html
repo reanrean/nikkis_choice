@@ -167,14 +167,15 @@
 		<div class = "showmore" id= "showmore" isshowmore="1">↓显示全部衣服↓</div>
 		<div id = "end"></div>
 	<hr>
-		导入批量衣服，请先选择要导入的类别，然后在文本框内输入编号，用空格、逗号或者换行隔开
+		<p>导入批量衣服，请先选择要导入的类别，然后在文本框内输入编号，用空格、逗号或者换行隔开</p>
 		<div id = "import">
 			<select id="importCate" onChange="clearImport()" ></select><br/>
 			<textarea id="importData" rows=5 style="width:60%" ></textarea>
 			<button onClick="doImport()">导入</button>
 		</div>
 	<hr>
-		<p>我拥有的服装 （复制衣橱文本框内容以备份衣橱）</p>
+		<p>我拥有的服装 （复制衣橱文本框内容以备份衣橱）<br/>
+		<span id='wardrobe_cnt'></span></p>
 		<textarea id="myClothes" rows=10 style="width:60%"></textarea><br/>
 		<button onClick="loadCustomInventory()">Update Inventory</button>
 	<hr>
