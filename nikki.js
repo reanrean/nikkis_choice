@@ -780,6 +780,7 @@ function init() {
 	updateSize(mine);
 	refreshShoppingCart();
 	initEvent();
+	wardrobe_cnt();
 }
 
 $(document).ready(function () {
@@ -787,3 +788,32 @@ $(document).ready(function () {
 	init();
 	menuFixed("clothes");
 });
+
+function wardrobe_cnt(){
+	var cnt=0;
+	var cate=[];
+	var own=[];
+	var res="Count: ";
+	for (var c in category){
+		cate[c]=0;
+		own[c]=0;
+	}
+	for (var i in clothes) {
+		for (var c in category){
+			if(clothes[i].type.type==category[c]){
+				cate[c]+=1;
+				cnt+=1;
+				if(clothes[i].own){
+					own[c]+=1;
+				}
+			}
+		}	
+	}
+	for (var c in category){
+		res+=category[c]+own[c]+"/"+cate[c]+" ";
+	}
+	$('#wardrobe_cnt').html(res);//currently unuse
+	
+	var lastupd='衣柜数据更新日期：'+wardrobe_lastupd;
+	$('#wardrobe_cnt').html(lastupd);
+}
