@@ -20,6 +20,7 @@ function show_level_drop(){
 }
 
 function showLevelDropInfo(){
+	var levelDropNote='';
 	var levelDropInfo='<table border="1">';
 	var j=$("#level_select").val();
 	var degree=$("#degree_level").val()==1 ? "公" : "少";
@@ -49,13 +50,11 @@ function showLevelDropInfo(){
 				}
 			}
 		}
+		levelDropNote+='<span class="syqc">粉字</span>：韶颜倾城<br/>';
+		levelDropNote+='<span class="xzh">蓝字</span>：星之海<br/>';
+		levelDropNote+='<span class="gls">红字</span>：格莱斯<br/>';
 	}
 	levelDropInfo+='</table>';
-	
-	var levelDropNote='';
-	levelDropNote+='<span class="syqc">粉字</span>：韶颜倾城<br/>';
-	levelDropNote+='<span class="xzh">蓝字</span>：星之海<br/>';
-	levelDropNote+='<span class="gls">红字</span>：格莱斯<br/>';
 	
 	$("#levelDropInfo").html(levelDropInfo);
 	$("#levelDropNote").html(levelDropNote);
