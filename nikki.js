@@ -765,26 +765,7 @@ function filterClotherHTML(btn){
 		 }
 }
 
-function initNotice() {
-	$("#update-info-2").html(clothesNotice);
-	$("#update-info-3").html(levelNotice);
-}
-
-function init() {
-	var mine = loadFromStorage();
-	calcDependencies();
-	drawFilter();
-	drawTheme();
-	drawImport();
-	switchCate(category[0]);
-	updateSize(mine);
-	refreshShoppingCart();
-	initEvent();
-	wardrobe_cnt();
-}
-
 $(document).ready(function () {
-	initNotice();
 	init();
 	menuFixed("clothes");
 });
