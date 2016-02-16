@@ -9,8 +9,8 @@ var global = {
 };
 
 // parses a csv row into object
-// Clothes: name, type, id, stars, gorgeous, simple, elegant, active, mature, cute, sexy, pure, cool, warm, extra
-//          0     1     2   3      4         5       6        7       8       9     10    11    12    13    14
+// Clothes: name, type, id, stars, gorgeous, simple, elegant, active, mature, cute, sexy, pure, cool, warm, extra, source, set
+//          0     1     2   3      4         5       6        7       8       9     10    11    12    13    14     15      16
 Clothes = function(csv) {
   var theType = typeInfo[csv[1]];
   if(!theType)
@@ -28,6 +28,7 @@ Clothes = function(csv) {
     cool: realRating(csv[12], csv[13], theType),
     tags: csv[14].split(','),
     source: csv[15],
+    set: csv[16],
     deps: [],
     toCsv: function() {
       name = this.name;
@@ -41,9 +42,10 @@ Clothes = function(csv) {
       cool = this.cool;
       extra = this.tags.join(',');
       source = this.source;
+      set = this.set;
       return [type.type, id, stars, simple[0], simple[1], cute[0], cute[1],
           active[0], active[1], pure[0], pure[1], cool[0],
-          cool[1], extra, source];
+          cool[1], extra, source, set];
     },
     addDep: function(sourceType, depNum, c) {
 		var depinfo = {};
