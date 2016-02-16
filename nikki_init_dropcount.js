@@ -8,8 +8,8 @@ var maxc=11;
 function show_level_drop(){
 	var chooseScope='';
 	chooseScope+='<select id="selectScope" onchange=chgScope()>'
-	chooseScope+='<option value="1">关卡</option>';
-	chooseScope+='<option value="2">衣服</option>';
+	chooseScope+='<option value="1">按关卡</option>';
+	chooseScope+='<option value="2">按衣服</option>';
 	chooseScope+='</select>';
 	chooseScope+='　-　'
 	$("#chooseScope").html(chooseScope);
@@ -42,6 +42,8 @@ function chgScope(){
 		$("#chooseLevel").html(chooseLevel);
 		chgScopeSub();
 	}
+	$("#levelDropInfo").html('');
+	$("#levelDropNote").html('');
 }
 
 function chgScopeSub(){
@@ -57,6 +59,8 @@ function chgScopeSub(){
 	}
 	chooseSub+='</select>';
 	$("#chooseSub").html(chooseSub);
+	$("#levelDropInfo").html('');
+	$("#levelDropNote").html('');
 }
 
 function showFactorInfo(){
@@ -100,7 +104,6 @@ function showLevelDropInfo(){
 								item+='<span class="'+style+'">'+clothes[i].name+'</span><br/>';
 							}
 						}
-						
 						if(!item){item=clothes[i].name;}
 						
 						levelDropInfo+='<tr>';
@@ -129,6 +132,9 @@ var extraInd=[];
 var shownFactor=[];
 
 function genFactor(id){
+	var src=new Array('公','少','店','');
+	var src_desc=new Array('公主级掉落','少女级掉落','商店购买','其它');
+	
 	for (var i in clothes){//clear count in previous run
 		reqCnt[i]=0;
 		parentInd[i]=0;
@@ -141,53 +147,50 @@ function genFactor(id){
 		if(extraInd[i]) {reqCnt[i]+=1; genFactor2(clothes[i],1);}
 	}
 	
-	var src=['少','公','店',''];
-	
 	var factor='';
-	factor+='<table border="1"><tr><td><b>名称</b></td><td><b>来源</b></td><td><b>需求数量</b></td></tr>';
+	var header=[];
+	var content=['','','',''];
+	var output='<table border="1"><tr><td><b>名称</b></td><td><b>来源</b></td><td><b>需求数量</b></td></tr>';
 	
 	for (var s in src){//sort by source
+		header[s]='<tr><td colspan="3"><u>'+src_desc[s]+'</u></td></tr>';
 	
-	if(s<3){
-	factor+='<tr><td colspan="3">'+src[s]+'</td></tr>';
-	}else{
-	factor+='<tr><td colspan="3">其他</td></tr>';
-	}
-	
-	for (l1=1;l1<=maxc;l1++){
-		for (l=1;l<30;l++){//sort by levels
-			if (l>20){var l2="支"+l%10;}
-			else{var l2=l+'';}
-	
-		for (var i in clothes){
-		if(!shownFactor[i]){
-			if(reqCnt[i]&&(!parentInd[i])) {
-			
-			
-			if((clothes[i].source.indexOf(l1+'-'+l2+src[s])>-1&&s<2)||(clothes[i].source.indexOf(src[s])>-1&&s>=2)){
-				shownFactor[i]=1;
-				factor+='<tr>';
-				factor+='<td>'+clothes[i].name+'</td>';
-				factor+='<td>'+clothes[i].source+'</td>';
-				factor+='<td>'+reqCnt[i]+'</td>';
-				factor+='</tr>';
+		for (l1=1;l1<=maxc;l1++){
+			for (l=1;l<=30;l++){//sort by level
+				var l2=l;
+				if(l>20){l2="支"+l%10;}
+				if(l==28){l2='金币';}//s=2, sort by source
+				if(l==29){l2='钻石';}
+				if(l==30){l2='';}
 				
+				//minimize calc
+				if(s<2&&l>27){break;}
+				if(s==2&&(l1>1||l<28)){continue;}
+				if(s==3&&(l1>1||l>1)){break;}
+		
+				for (var i in clothes){
+					if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])){
+						srci=clothes[i].source;
+						if( (s==0&&srci.indexOf(l1+'-'+l2+src[s])>-1&&srci.indexOf(src[1])<0) || 
+							(s==1&&srci.indexOf(l1+'-'+l2+src[s])>-1) || 
+							(s==2&&srci.indexOf(src[s])>-1&&srci.indexOf(l2)>-1) || 
+							(s==3) ){
+							shownFactor[i]=1;
+							content[s]+='<tr>';
+							content[s]+='<td>'+clothes[i].name+'</td>';
+							content[s]+='<td>'+srci+'</td>';
+							content[s]+='<td>'+reqCnt[i]+'</td>';
+							content[s]+='</tr>';
+						}
+					}
 				}
-				
-				
 			}
-		}}
-		
-		
-		
 		}
+		if (content[s]){output+=header[s]+content[s];}
 	}
 	
-	
-	
-	}
-	factor+='</table>';
-	$("#levelDropInfo").html(factor+'***UNDER CONSTRUCTION***');
+	output+='</table>';
+	$("#levelDropInfo").html(output);
 	$("#levelDropNote").html('');
 }
 
