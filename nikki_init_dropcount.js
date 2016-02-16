@@ -121,7 +121,6 @@ function showLevelDropInfo(){
 			levelDropNote+='<span class="'+highlight_style[h]+'">'+highlight[h]+'材料</span>';
 		}
 	}
-	
 	$("#levelDropInfo").html(levelDropInfo);
 	$("#levelDropNote").html(levelDropNote);
 }
@@ -147,7 +146,6 @@ function genFactor(id){
 		if(extraInd[i]) {reqCnt[i]+=1; genFactor2(clothes[i],1);}
 	}
 	
-	var factor='';
 	var header=[];
 	var content=['','','',''];
 	var output='<table border="1"><tr><td><b>名称</b></td><td><b>来源</b></td><td><b>需求数量</b></td></tr>';
@@ -188,7 +186,6 @@ function genFactor(id){
 		}
 		if (content[s]){output+=header[s]+content[s];}
 	}
-	
 	output+='</table>';
 	$("#levelDropInfo").html(output);
 	$("#levelDropNote").html('');
@@ -210,7 +207,6 @@ function genFactor2(cloth,num){
 				addreqCnt(clothesSet[pattern[i][2]][pattern[i][3]],pattern[i][4]*num);
 				genFactor2(clothesSet[pattern[i][2]][pattern[i][3]],pattern[i][4]*num);
 			}
-			
 		}
 	}
 }
