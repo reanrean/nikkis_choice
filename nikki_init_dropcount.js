@@ -128,6 +128,7 @@ function showLevelDropInfo(){
 var reqCnt=[];
 var parentInd=[];
 var extraInd=[];
+var extraAdded=[];
 var shownFactor=[];
 
 function genFactor(id){
@@ -138,13 +139,11 @@ function genFactor(id){
 		reqCnt[i]=0;
 		parentInd[i]=0;
 		extraInd[i]=0;
+		extraAdded[i]=0;
 		shownFactor[i]=0;
 	}
 	
 	genFactor2(clothes[id],1);
-	for (var i in clothes){//add extra count after factorize
-		if(extraInd[i]) {reqCnt[i]+=1; genFactor2(clothes[i],1);}
-	}
 	
 	var header=[];
 	var content=['','','',''];
@@ -212,6 +211,9 @@ function genFactor2(cloth,num){
 				genFactor2(clothesSet[pattern[i][2]][pattern[i][3]],pattern[i][4]*num);
 			}
 		}
+	}
+	for (var i in clothes){//add extra count once only
+		if(extraInd[i]&&(!extraAdded[i])) {reqCnt[i]+=1; genFactor2(clothes[i],1); extraAdded[i]=1;}
 	}
 }
 
