@@ -144,6 +144,13 @@ function genFactor(id){
 	}
 	
 	genFactor2(clothes[id],1);
+	do{
+		var total=0;
+		for (var i in clothes){//add extra count once only
+			if(extraInd[i]&&(!extraAdded[i])) 
+			{reqCnt[i]+=1; genFactor2(clothes[i],1); extraAdded[i]=1; total+=1;}
+		}
+	}while(total>0);
 	
 	var header=[];
 	var content=['','','',''];
@@ -211,9 +218,6 @@ function genFactor2(cloth,num){
 				genFactor2(clothesSet[pattern[i][2]][pattern[i][3]],pattern[i][4]*num);
 			}
 		}
-	}
-	for (var i in clothes){//add extra count once only
-		if(extraInd[i]&&(!extraAdded[i])) {reqCnt[i]+=1; genFactor2(clothes[i],1); extraAdded[i]=1;}
 	}
 }
 
