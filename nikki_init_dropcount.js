@@ -3,7 +3,17 @@ function init() {
 	show_level_drop();
 }
 
-var maxc=11;
+var highlight=['星之海','韶颜倾城','格莱斯'];
+var highlight_style=['xzh','syqc','gls'];
+var src=['公','少','店',''];
+var src_desc=['公主级掉落','少女级掉落','商店购买','其它'];
+var maxc=11;//max chapter
+var reqCnt=[];
+var parentInd=[];
+var extraInd=[];
+var extraAdded=[];
+var shownFactor=[];
+var setArr=[];
 
 function show_level_drop(){
 	var chooseScope='';
@@ -17,7 +27,6 @@ function show_level_drop(){
 }
 
 function chgScope(){
-	$("#chooseSub").html('');
 	var chooseLevel='';
 	if($("#selectScope").val()==1){
 		chooseLevel+='<select id="degree_level" onchange=showLevelDropInfo()>';
@@ -32,12 +41,14 @@ function chgScope(){
 		}
 		chooseLevel+='</select>';
 		$("#chooseLevel").html(chooseLevel);
-	}
-	else{
-		chooseLevel+='<select id="chooseCate" onchange=chgScopeSub()>';
-		for(var i in category){
-			{chooseLevel+='<option value="'+i+'">'+category[i]+'</option>';}
-		}
+		$("#chooseSub").html('');
+		$("#chooseSub2").html('');
+	}else{
+		chooseLevel+='<select id="degree_level" onchange=chgScopeSub()>';
+		chooseLevel+='<option value="1">设计图</option>';
+		chooseLevel+='<option value="2">进化</option>';
+		chooseLevel+='<option value="3">套装</option>';
+		chooseLevel+='<option value="4">自定义</option>';
 		chooseLevel+='</select>';
 		$("#chooseLevel").html(chooseLevel);
 		chgScopeSub();
@@ -47,34 +58,93 @@ function chgScope(){
 }
 
 function chgScopeSub(){
-	var j=$("#chooseCate").val();
-	var chooseSub='　-　'
-	chooseSub+='<select id="chooseItem" onchange=showFactorInfo()>';
-	chooseSub+='<option value="na">请选择衣服</option>';
-	for(var i in clothes){
-		if (clothes[i].type.type==category[j]){
-			if(clothes[i].source.indexOf('设')>-1||clothes[i].source.indexOf('进')>-1)
-			{chooseSub+='<option value="'+i+'">'+clothes[i].name+'</option>';}
+	var j=$("#degree_level").val();
+	var chooseSub='　-　';
+	if(j==4){
+		chooseSub+='<input type="text" id="searchById" placeholder="输入名字或编号搜索" />';
+		chooseSub+='<a href="#" class="search" onclick=searchById() >&#x1f50d;</a>';
+		$("#chooseSub").html(chooseSub);
+		$("#chooseSub2").html('');
+	}
+	else{
+		chooseSub+='<select id="chooseCate" onchange=chgScopeSub2()>';
+		if (j==1){
+			for(var i in category){
+				var hvcnt=0;
+				for(var c in clothes){
+					if(clothes[c].type.type==category[i]&&clothes[c].source.indexOf('设')>-1) {hvcnt+=1;}
+				}
+				if(hvcnt>0) {chooseSub+='<option value="'+i+'">'+category[i]+'</option>';}
+			}
+		}else if (j==2){
+			for(var i in category){
+				var hvcnt=0;
+				for(var c in clothes){
+					if(clothes[c].type.type==category[i]&&clothes[c].source.indexOf('进')>-1) {hvcnt+=1;}
+				}
+				if(hvcnt>0) {chooseSub+='<option value="'+i+'">'+category[i]+'</option>';}
+			}
+		}else if(j==3){
+			for(var c in clothes){
+				if( (clothes[c].source.indexOf('进')>-1||clothes[c].source.indexOf('设')>-1) && 
+					clothes[c].set){
+					setArr[c]=clothes[c].set;
+				}
+			}
+			setArr=jQuery.unique(setArr);
+			for (var s in setArr){
+				if(setArr[s]) {chooseSub+='<option value="'+s+'">'+setArr[s]+'</option>';}
+			}
+		}
+		chooseSub+='</select>';
+		$("#chooseSub").html(chooseSub);
+		chgScopeSub2();
+	}
+	$("#levelDropInfo").html('');
+	$("#levelDropNote").html('');
+}
+
+function chgScopeSub2(){
+	var j=$("#degree_level").val();
+	var k=$("#chooseCate").val();
+
+	var chooseSub2='　-　';
+	chooseSub2+='<select id="chooseItem" onchange=showFactorInfo()>';
+	chooseSub2+='<option value="na">请选择衣服</option>';
+	if (j==1){
+		for(var i in clothes){
+			if(clothes[i].type.type==category[k]&&clothes[i].source.indexOf('设')>-1)
+			{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
+		}
+	}else if(j==2){
+		for(var i in clothes){
+			if(clothes[i].type.type==category[k]&&clothes[i].source.indexOf('进')>-1)
+			{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
+		}
+	}else if(j==3){
+		for(var i in clothes){
+			if (clothes[i].set==setArr[k]){
+				//if(clothes[i].source.indexOf('设')>-1||clothes[i].source.indexOf('进')>-1)
+				{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
+			}
 		}
 	}
-	chooseSub+='</select>';
-	$("#chooseSub").html(chooseSub);
+	chooseSub2+='</select>';
+	$("#chooseSub2").html(chooseSub2);
 	$("#levelDropInfo").html('');
 	$("#levelDropNote").html('');
 }
 
 function showFactorInfo(){
 	var t=$("#chooseItem").val();
-	if(t=='na'){$("#levelDropInfo").html('');}
+	if(t=='na'){
+		$("#levelDropInfo").html('');
+		$("#levelDropNote").html('');
+	}
 	else{genFactor(t);}
 }
 
 function showLevelDropInfo(){
-	var highlight=new Array('星之海','韶颜倾城','格莱斯');
-	var highlight_style=new Array('xzh','syqc','gls');
-	
-	var levelDropInfo='';
-	var levelDropNote='';
 	var j=$("#level_select").val();
 	var degree=$("#degree_level").val()==1 ? "公" : "少";
 	if (j!=0){//chapter chosen
@@ -84,9 +154,9 @@ function showLevelDropInfo(){
 			else{var l2=l+'';}
 			
 			for (var i in clothes){
-				src=clothes[i].source.split("/");
-				for (k=0;k<src.length;k++){
-					if(src[k].indexOf(j+'-'+l2+degree)==0){//if source matches chapter&level
+				var src_sp=clothes[i].source.split("/");
+				for (k=0;k<src_sp.length;k++){
+					if(src_sp[k].indexOf(j+'-'+l2+degree)==0){//if source matches chapter&level
 						var deps1=clothes[i].getDeps('   ', 1);
 						var deps=deps1;
 						var item='';
@@ -108,7 +178,7 @@ function showLevelDropInfo(){
 						
 						levelDropInfo+='<tr>';
 						levelDropInfo+='<td>'+item+'</td>';
-						levelDropInfo+='<td>'+src[k]+'</td>';
+						levelDropInfo+='<td>'+src_sp[k]+'</td>';
 						levelDropInfo+='<td class="level_drop_cnt">'+deps+'</td>';
 						levelDropInfo+='</tr>';
 					}
@@ -125,16 +195,7 @@ function showLevelDropInfo(){
 	$("#levelDropNote").html(levelDropNote);
 }
 
-var reqCnt=[];
-var parentInd=[];
-var extraInd=[];
-var extraAdded=[];
-var shownFactor=[];
-
 function genFactor(id){
-	var src=new Array('公','少','店','');
-	var src_desc=new Array('公主级掉落','少女级掉落','商店购买','其它');
-	
 	for (var i in clothes){//clear count in previous run
 		reqCnt[i]=0;
 		parentInd[i]=0;
@@ -154,45 +215,96 @@ function genFactor(id){
 	
 	var header=[];
 	var content=['','','',''];
-	var output='<table border="1"><tr><td><b>名称</b></td><td><b>来源</b></td><td><b>需求数量</b></td></tr>';
+	var output='<table border="1">';
+	output+='<tr><td colspan="3"><b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+clothes[id].id+'</td></tr>';
+	output+='<tr><td colspan="3">';
+	if(clothes[id].simple[0]) output+='简'+clothes[id].simple[0];
+	if(clothes[id].simple[1]) output+='华'+clothes[id].simple[1];
+	if(clothes[id].cute[0]) output+='&ensp;可'+clothes[id].cute[0];
+	if(clothes[id].cute[1]) output+='&ensp;成'+clothes[id].cute[1];
+	if(clothes[id].active[0]) output+='&ensp;活'+clothes[id].active[0];
+	if(clothes[id].active[1]) output+='&ensp;雅'+clothes[id].active[1];
+	if(clothes[id].pure[0]) output+='&ensp;纯'+clothes[id].pure[0];
+	if(clothes[id].pure[1]) output+='&ensp;性'+clothes[id].pure[1];
+	if(clothes[id].cool[0]) output+='&ensp;凉'+clothes[id].cool[0];
+	if(clothes[id].cool[1]) output+='&ensp;暖'+clothes[id].cool[1];
+	if(clothes[id].tags[0]) output+='&ensp;'+clothes[id].tags.join(',');
+	if(clothes[id].set) output+='&ensp;套装:'+clothes[id].set;
+	output+='</td></tr>';
+	output+='<tr><td colspan="3">来源:'+clothes[id].source;
 	
-	for (var s in src){//sort by source
-		header[s]='<tr><td colspan="3"><u>'+src_desc[s]+'</u></td></tr>';
-	
-		for (l1=1;l1<=maxc;l1++){
-			for (l=1;l<=30;l++){//sort by level
-				var l2=l;
-				if(l>20){l2="支"+l%10;}
-				if(l==28){l2='金币';}//s=2, sort by source
-				if(l==29){l2='钻石';}
-				if(l==30){l2='';}
-				
-				//minimize calc
-				if(s<2&&l>27){break;}
-				if(s==2&&(l1>1||l<28)){continue;}
-				if(s==3&&(l1>1||l>1)){break;}
-		
-				for (var i in clothes){
-					if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])){
-						srci=clothes[i].source;
-						if( (s==0&&srci.indexOf(l1+'-'+l2+src[s])>-1&&srci.indexOf(src[1])<0) || 
-							(s==1&&srci.indexOf(l1+'-'+l2+src[s])>-1) || 
-							(s==2&&srci.indexOf(src[s])>-1&&srci.indexOf(l2)>-1) || 
-							(s==3) ){
-							shownFactor[i]=1;
-							content[s]+='<tr>';
-							content[s]+='<td>'+clothes[i].name+'</td>';
-							content[s]+='<td>'+srci+'</td>';
-							content[s]+='<td>'+reqCnt[i]+'</td>';
-							content[s]+='</tr>';
-						}
+	if(parentInd[id]) {
+		//if parent show formula
+		output+=' = ';
+		for (var p in pattern) {
+			if (clothesSet[pattern[p][0]][pattern[p][1]]==clothes[id]){
+				//show link
+				//output+=clothesSet[pattern[p][2]][pattern[p][3]].name+'x'+pattern[p][4]+' ';
+				for (var c in clothes){
+					if(clothes[c]==clothesSet[pattern[p][2]][pattern[p][3]]){
+						output+='<a href="#" onclick="genFactor('+c+')" >'+clothes[c].name+'</a>x'+pattern[p][4]+' ';
+						break;
 					}
 				}
 			}
 		}
-		if (content[s]){output+=header[s]+content[s];}
+		output+='</tr></td>';
+		output+='<tr><td><b>基础材料</b></td><td><b>来源</b></td><td><b>需求数量</b></td></tr>';
+		
+		for (var s in src){//sort by source
+			header[s]='<tr><td colspan="3"><u>'+src_desc[s]+'</u></td></tr>';
+		
+			for (l1=1;l1<=maxc;l1++){
+				for (l=1;l<=30;l++){//sort by level
+					var l2=l;
+					if(l>20){l2="支"+l%10;}
+					if(l==28){l2='金币';}//s=2, sort by source
+					if(l==29){l2='钻石';}
+					if(l==30){l2='';}
+					
+					//minimize calc
+					if(s<2&&l>27){break;}
+					if(s==2&&(l1>1||l<28)){continue;}
+					if(s==3&&(l1>1||l>1)){break;}
+			
+					for (var i in clothes){
+						if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])){
+							var srci=clothes[i].source;
+							var src_sp=clothes[i].source.split("/");
+							for (var ss in src_sp){
+								if( (s==0&&src_sp[ss].indexOf(l1+'-'+l2+src[s])==0&&srci.indexOf(src[1])<0) || 
+								(s==1&&src_sp[ss].indexOf(l1+'-'+l2+src[s])==0) || 
+								(s==2&&srci.indexOf(src[s])>-1&&srci.indexOf(l2)>-1) || 
+								(s==3) ){
+									shownFactor[i]=1;
+									content[s]+='<tr>';
+									content[s]+='<td><a href="#" onclick="genFactor('+i+')" >'+clothes[i].name+'</a></td>';
+									content[s]+='<td>'+srci+'</td>';
+									content[s]+='<td>'+reqCnt[i]+'</td>';
+									content[s]+='</tr>';
+									break;
+								}
+							}
+						}
+					}
+				}
+			}
+			if (content[s]){output+=header[s]+content[s];}
+		}
+	}
+	
+	var deps1=clothes[id].getDeps('   ', 1);
+	if (deps1){
+		var pos1=deps1.indexOf('总计需');
+		var pos2=deps1.indexOf('件',pos1);
+		var strip=deps1.substr(pos1+3,pos2-pos1-3);
+		output+='<tr><td colspan="3"></td></tr>';
+		output+='<tr><td colspan="2"><b>此部件共需数量</b></td>';
+		output+='<td>'+strip+'</td></tr>';
+		output+='<tr><td class="level_drop_cnt" colspan="3">'+deps1+'</td></tr>';
 	}
 	output+='</table>';
+	
 	$("#levelDropInfo").html(output);
 	$("#levelDropNote").html('');
 }
@@ -227,5 +339,26 @@ function addreqCnt(cloth,num){//add num in reqCnt[]
 			if(reqCnt[i]){reqCnt[i]+=num;}
 			else{reqCnt[i]=num;}
 		}
+	}
+}
+
+function searchById(){
+	var searchById=$("#searchById").val();
+	var searchById_match=0;
+	if(searchById){
+		var levelDropInfo='搜索结果：'+searchById;
+		levelDropNote='<table border="1"><tr><td><b>名称</b></td><td><b>分类</b></td><td><b>编号</b></td></tr>';
+		for (var i in clothes){
+			if(clothes[i].name.indexOf(searchById)>-1||parseInt(clothes[i].id)==parseInt(searchById)){
+				levelDropNote+='<tr><td>';
+				levelDropNote+='<a href="#" onclick="genFactor('+i+')" >'+clothes[i].name+'</a>';
+				levelDropNote+='</td><td>'+clothes[i].type.type+'</td><td>'+clothes[i].id+'</td></tr>';
+				searchById_match=1;
+			}
+		}
+		levelDropNote+='</table>';
+		$("#levelDropInfo").html(levelDropInfo);
+		if(searchById_match){$("#levelDropNote").html(levelDropNote);}
+		else{$("#levelDropNote").html('没有找到相关资料');}
 	}
 }
