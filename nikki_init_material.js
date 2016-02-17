@@ -19,7 +19,7 @@ function show_level_drop(){
 	var chooseScope='';
 	chooseScope+='<select id="selectScope" onchange=chgScope()>'
 	chooseScope+='<option value="1">按关卡</option>';
-	chooseScope+='<option value="2">按衣服</option>';
+	chooseScope+='<option value="2">按部件</option>';
 	chooseScope+='</select>';
 	chooseScope+='　-　'
 	$("#chooseScope").html(chooseScope);
@@ -40,6 +40,7 @@ function chgScope(){
 			else{chooseLevel+='<option value="'+i+'">第'+i+'章</option>';}
 		}
 		chooseLevel+='</select>';
+		chooseLevel+='<a href="#" class="search" onclick=showLevelDropInfo() >&#x1f50d;</a>';
 		$("#chooseLevel").html(chooseLevel);
 		$("#chooseSub").html('');
 		$("#chooseSub2").html('');
@@ -130,6 +131,7 @@ function chgScopeSub2(){
 		}
 	}
 	chooseSub2+='</select>';
+	chooseSub2+='<a href="#" class="search" onclick=showFactorInfo() >&#x1f50d;</a>';
 	$("#chooseSub2").html(chooseSub2);
 	$("#levelDropInfo").html('');
 	$("#levelDropNote").html('');
@@ -148,7 +150,7 @@ function showLevelDropInfo(){
 	var j=$("#level_select").val();
 	var degree=$("#degree_level").val()==1 ? "公" : "少";
 	if (j!=0){//chapter chosen
-		levelDropInfo+='<table border="1"><tr><td><b>名称</b></td><td><b>关卡</b></td><td><b>材料需求统计</b></td></tr>';
+		levelDropInfo='<table border="1"><tr><td><b>名称</b></td><td><b>关卡</b></td><td><b>材料需求统计</b></td></tr>';
 		for (l=1;l<30;l++){//sort by levels
 			if (l>20){var l2="支"+l%10;}
 			else{var l2=l+'';}
@@ -158,7 +160,7 @@ function showLevelDropInfo(){
 				for (k=0;k<src_sp.length;k++){
 					if(src_sp[k].indexOf(j+'-'+l2+degree)==0){//if source matches chapter&level
 						var deps1=clothes[i].getDeps('   ', 1);
-						var deps=deps1;
+						var deps=add_genFac(deps1,1);
 						var item='';
 						
 						for (var h in highlight){
@@ -177,7 +179,7 @@ function showLevelDropInfo(){
 						if(!item){item=clothes[i].name;}
 						
 						levelDropInfo+='<tr>';
-						levelDropInfo+='<td>'+item+'</td>';
+						levelDropInfo+='<td><a href="#" class="inherit" onclick="genFactor('+i+')" >'+item+'</a></td>';
 						levelDropInfo+='<td>'+src_sp[k]+'</td>';
 						levelDropInfo+='<td class="level_drop_cnt">'+deps+'</td>';
 						levelDropInfo+='</tr>';
@@ -186,6 +188,7 @@ function showLevelDropInfo(){
 			}
 		}
 		levelDropInfo+='</table>';
+		var levelDropNote='';
 		for (var h in highlight){
 			if(h>0){levelDropNote+='&ensp;/&ensp;';}
 			levelDropNote+='<span class="'+highlight_style[h]+'">'+highlight[h]+'材料</span>';
@@ -216,18 +219,18 @@ function genFactor(id){
 	var header=[];
 	var content=['','','',''];
 	var output='<table border="1">';
-	output+='<tr><td colspan="3"><b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+clothes[id].id+'</td></tr>';
+	output+='<tr><td colspan="3"><b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id+'</td></tr>';
 	output+='<tr><td colspan="3">';
-	if(clothes[id].simple[0]) output+='简'+clothes[id].simple[0];
-	if(clothes[id].simple[1]) output+='华'+clothes[id].simple[1];
-	if(clothes[id].cute[0]) output+='&ensp;可'+clothes[id].cute[0];
-	if(clothes[id].cute[1]) output+='&ensp;成'+clothes[id].cute[1];
-	if(clothes[id].active[0]) output+='&ensp;活'+clothes[id].active[0];
-	if(clothes[id].active[1]) output+='&ensp;雅'+clothes[id].active[1];
-	if(clothes[id].pure[0]) output+='&ensp;纯'+clothes[id].pure[0];
-	if(clothes[id].pure[1]) output+='&ensp;性'+clothes[id].pure[1];
-	if(clothes[id].cool[0]) output+='&ensp;凉'+clothes[id].cool[0];
-	if(clothes[id].cool[1]) output+='&ensp;暖'+clothes[id].cool[1];
+	if(clothes[id].simple[0]) output+='简约'+clothes[id].simple[0];
+	if(clothes[id].simple[1]) output+='华丽'+clothes[id].simple[1];
+	if(clothes[id].cute[0]) output+='&ensp;可爱'+clothes[id].cute[0];
+	if(clothes[id].cute[1]) output+='&ensp;成熟'+clothes[id].cute[1];
+	if(clothes[id].active[0]) output+='&ensp;活泼'+clothes[id].active[0];
+	if(clothes[id].active[1]) output+='&ensp;优雅'+clothes[id].active[1];
+	if(clothes[id].pure[0]) output+='&ensp;清纯'+clothes[id].pure[0];
+	if(clothes[id].pure[1]) output+='&ensp;性感'+clothes[id].pure[1];
+	if(clothes[id].cool[0]) output+='&ensp;清凉'+clothes[id].cool[0];
+	if(clothes[id].cool[1]) output+='&ensp;保暖'+clothes[id].cool[1];
 	if(clothes[id].tags[0]) output+='&ensp;'+clothes[id].tags.join(',');
 	if(clothes[id].set) output+='&ensp;套装:'+clothes[id].set;
 	output+='</td></tr>';
@@ -301,7 +304,7 @@ function genFactor(id){
 		output+='<tr><td colspan="3"></td></tr>';
 		output+='<tr><td colspan="2"><b>此部件共需数量</b></td>';
 		output+='<td>'+strip+'</td></tr>';
-		output+='<tr><td class="level_drop_cnt" colspan="3">'+deps1+'</td></tr>';
+		output+='<tr><td class="level_drop_cnt" colspan="3">'+add_genFac(deps1);+'</td></tr>';
 	}
 	output+='</table>';
 	
@@ -346,7 +349,7 @@ function searchById(){
 	var searchById=$("#searchById").val();
 	var searchById_match=0;
 	if(searchById){
-		var levelDropInfo='搜索结果：'+searchById;
+		var levelDropInfo='查找：'+searchById;
 		levelDropNote='<table border="1"><tr><td><b>名称</b></td><td><b>分类</b></td><td><b>编号</b></td></tr>';
 		for (var i in clothes){
 			if(clothes[i].name.indexOf(searchById)>-1||parseInt(clothes[i].id)==parseInt(searchById)){
@@ -361,4 +364,26 @@ function searchById(){
 		if(searchById_match){$("#levelDropNote").html(levelDropNote);}
 		else{$("#levelDropNote").html('没有找到相关资料');}
 	}
+}
+
+function add_genFac(text,inherit){
+	var textArr=text.split('\n'); //[0] to [length-2];
+	var parents=[];
+	for (var i=1;i<textArr.length-1;i++){//discard [0] for its own name
+		var pos_end=(textArr[i].indexOf('[需')>-1 ? textArr[i].indexOf('[需') : textArr[i].length);
+		var pos_start=textArr[i].substr(0,pos_end).lastIndexOf(']')+1;
+		var pos_start_1=textArr[i].substr(0,pos_start).lastIndexOf('[')+1;
+		var clo_name=textArr[i].substr(pos_start,pos_end-pos_start);
+		var clo_type=textArr[i].substr(pos_start_1,pos_start-pos_start_1-1);
+		for (var c in clothes){
+			if (clothes[c].type.mainType==clo_type&&clothes[c].name==clo_name){
+				clo_name='<a href="#" onclick="genFactor('+c+')"'+(inherit? 'class="inherit"' : '')+' >'+clo_name+'</a>';
+				break;
+			}
+		}
+		parents[i-1]=textArr[i].substr(0,pos_start)+clo_name+textArr[i].substr(pos_end);
+		if(!inherit){parents[i-1]=parents[i-1].substr(3);}
+	}
+	var out=(inherit? textArr[0]+'\n':'')+parents.join('\n');
+	return out;
 }
