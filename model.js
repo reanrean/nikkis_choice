@@ -80,7 +80,7 @@ Clothes = function(csv) {
 		if(splits.length > 1)
 			depNumAlls = eval(splits.join("+"));
 		if(indent == '   ' && ret != '')
-			ret = "[材料]" + this.name + (depNumAlls > 0 ?  ' - 总计需 '+ (depNumAlls+1) + ' 件' : '') + "\n" + ret;
+			ret = "[材料]" + this.name + (' - 总计需 '+ (depNumAlls+1) + ' 件') + "\n" + ret;
       return ret;
     },
     calc: function(filters) {
