@@ -13,8 +13,6 @@ var parentInd=[];
 var extraInd=[];
 var extraAdded=[];
 var shownFactor=[];
-var setArr=[];
-var tagArr=[];
 
 function show_level_drop(){
 	var chooseScope='';
@@ -31,8 +29,8 @@ function chgScope(){
 	var chooseLevel='';
 	if($("#selectScope").val()==1){
 		chooseLevel+='<select id="degree_level" onchange=showLevelDropInfo()>';
-		chooseLevel+='<option value="1">公主</option>';
-		chooseLevel+='<option value="2">少女</option>';
+		chooseLevel+='<option value="公">公主</option>';
+		chooseLevel+='<option value="少">少女</option>';
 		chooseLevel+='</select>';
 		chooseLevel+='　-　'
 		chooseLevel+='<select id="level_select" onchange=showLevelDropInfo()>';
@@ -77,7 +75,7 @@ function chgScopeSub(){
 				for(var c in clothes){
 					if(clothes[c].type.type==category[i]&&clothes[c].source.indexOf('设')>-1) {hvcnt+=1;}
 				}
-				if(hvcnt>0) {chooseSub+='<option value="'+i+'">'+category[i]+'</option>';}
+				if(hvcnt>0) {chooseSub+='<option value="'+category[i]+'">'+category[i]+'</option>';}
 			}
 		}else if (j==2){
 			for(var i in category){
@@ -85,34 +83,33 @@ function chgScopeSub(){
 				for(var c in clothes){
 					if(clothes[c].type.type==category[i]&&clothes[c].source.indexOf('进')>-1) {hvcnt+=1;}
 				}
-				if(hvcnt>0) {chooseSub+='<option value="'+i+'">'+category[i]+'</option>';}
+				if(hvcnt>0) {chooseSub+='<option value="'+category[i]+'">'+category[i]+'</option>';}
 			}
 		}else if(j==3){
+			var setArr=[];
 			for(var c in clothes){
-				if( /*(clothes[c].source.indexOf('设')>-1||clothes[c].source.indexOf('进')>-1||clothes[c].source.indexOf('定')>-1) &&*/ 
-					clothes[c].set){
-					setArr[c]=clothes[c].set;
+				if(clothes[c].set){
+					setArr.push(clothes[c].set);
 				}
 			}
-			setArr=jQuery.unique(setArr);
+			setArr=getDistinct(setArr);
 			setArr.sort();
 			for (var s in setArr){
-				if(setArr[s]) {chooseSub+='<option value="'+s+'">'+setArr[s]+'</option>';}
+				if(setArr[s]) {chooseSub+='<option value="'+setArr[s]+'">'+setArr[s]+'</option>';}
 			}
 		}else if(j==4){
-			var ts=0;
+			var tagArr=[];
 			for(var c in clothes){
 				if(clothes[c].tags[0]){
 					for (var tag in clothes[c].tags){
-						tagArr[ts]=clothes[c].tags[tag];
-						ts++;
+						tagArr.push(clothes[c].tags[tag]);
 					}
 				}
 			}
-			tagArr=jQuery.unique(tagArr);
+			tagArr=getDistinct(tagArr);
 			tagArr.sort();
 			for (var t in tagArr){
-				if(tagArr[t]) {chooseSub+='<option value="'+t+'">'+tagArr[t]+'</option>';}
+				if(tagArr[t]) {chooseSub+='<option value="'+tagArr[t]+'">'+tagArr[t]+'</option>';}
 			}
 		}
 		chooseSub+='</select>';
@@ -132,24 +129,24 @@ function chgScopeSub2(){
 	chooseSub2+='<option value="na">请选择部件</option>';
 	if (j==1){
 		for(var i in clothes){
-			if(clothes[i].type.type==category[k]&&clothes[i].source.indexOf('设')>-1)
+			if(clothes[i].type.type==k&&clothes[i].source.indexOf('设')>-1)
 			{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
 		}
 	}else if(j==2){
 		for(var i in clothes){
-			if(clothes[i].type.type==category[k]&&clothes[i].source.indexOf('进')>-1)
+			if(clothes[i].type.type==k&&clothes[i].source.indexOf('进')>-1)
 			{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
 		}
 	}else if(j==3){
 		for(var i in clothes){
-			if(clothes[i].set==setArr[k])
+			if(clothes[i].set==k)
 			{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
 		}
 	}else if(j==4){
 		for(var i in clothes){
 			if(clothes[i].tags[0]){
 				for (var tag in clothes[i].tags){
-					if(clothes[i].tags[tag]==tagArr[k])
+					if(clothes[i].tags[tag]==k)
 					{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>'; break;}
 				}
 			}
@@ -173,7 +170,7 @@ function showFactorInfo(){
 
 function showLevelDropInfo(){
 	var j=$("#level_select").val();
-	var degree=$("#degree_level").val()==1 ? "公" : "少";
+	var degree=$("#degree_level").val();
 	if (j!=0){//chapter chosen
 		levelDropInfo='<table border="1"><tr><td><b>名称</b></td><td><b>关卡</b></td><td><b>材料需求统计</b></td></tr>';
 		for (l=1;l<30;l++){//sort by levels
@@ -411,7 +408,7 @@ function add_genFac(text,inherit){
 		parents[i-1]=textArr[i].substr(0,pos_start)+clo_name+textArr[i].substr(pos_end);
 		if(!inherit){parents[i-1]=parents[i-1].substr(3);}
 	}
-	var out=(inherit? textArr[0]+'\n':'')+parents.join('\n');
+	var out=(inherit? textArr[0]+'\n':'')+parents.join('\n')+'\n';
 	return out;
 }
 
@@ -424,4 +421,19 @@ function retFactor(i,srci){
 	ret+='<td>'+reqCnt[i]+'</td>';
 	ret+='</tr>';
 	return ret;
+}
+
+function getDistinct(arr){
+	var newArr=[];
+	for (var i in arr){
+		var ind=0;
+		for (var j in newArr){
+			if(arr[i]==newArr[j]){
+				ind=1; 
+				break;
+			}
+		}
+		if(!ind) newArr.push(arr[i]);
+	}
+	return newArr;
 }
