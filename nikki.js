@@ -795,6 +795,6 @@ function wardrobe_cnt(){
 	}
 	$('#wardrobe_cnt').html(res);//currently unuse
 	
-	var lastupd='衣柜数据更新日期：'+wardrobe_lastupd;
+	var lastupd='衣柜数据更新日期：'+wardrobe_lastupd+'　<a href="maint.html" target="_blank">维护</a>';
 	$('#wardrobe_cnt').html(lastupd);
 }
