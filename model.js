@@ -70,7 +70,7 @@ Clothes = function(csv) {
 			 depNumAll = parentDepNum;
 		  }
           ret += indent + '[' + depinfo.sourceType + '][' + c.type.mainType + ']'
-              + c.name + ((c.own || depNumAll == 0)? '' : '[需' + (depNumAll)  + ']')+ '\n';
+              + c.name + ((c.own || depNumAll == 0)? '' : '[消耗' + (depNumAll)  + ']')+ '\n';
           ret += c.getDeps(indent + "   ", depNumAll);
         }
 		var splits = ret.split(/[^0-9]+/);
