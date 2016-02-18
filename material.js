@@ -14,6 +14,7 @@ var extraInd=[];
 var extraAdded=[];
 var shownFactor=[];
 var setArr=[];
+var tagArr=[];
 
 function show_level_drop(){
 	var chooseScope='';
@@ -49,7 +50,8 @@ function chgScope(){
 		chooseLevel+='<option value="1">设计图</option>';
 		chooseLevel+='<option value="2">进化</option>';
 		chooseLevel+='<option value="3">套装</option>';
-		chooseLevel+='<option value="4">自定义</option>';
+		chooseLevel+='<option value="4">特殊属性</option>';
+		chooseLevel+='<option value="0">自定义</option>';
 		chooseLevel+='</select>';
 		$("#chooseLevel").html(chooseLevel);
 		chgScopeSub();
@@ -61,7 +63,7 @@ function chgScope(){
 function chgScopeSub(){
 	var j=$("#degree_level").val();
 	var chooseSub='　-　';
-	if(j==4){
+	if(j==0){
 		chooseSub+='<input type="text" id="searchById" placeholder="输入名字或编号搜索" />';
 		chooseSub+='<a href="#" class="search" onclick=searchById() >&#x1f50d;</a>';
 		$("#chooseSub").html(chooseSub);
@@ -87,14 +89,30 @@ function chgScopeSub(){
 			}
 		}else if(j==3){
 			for(var c in clothes){
-				if( (clothes[c].source.indexOf('进')>-1||clothes[c].source.indexOf('设')>-1) && 
-					clothes[c].set){
+				if( /*(clothes[c].source.indexOf('设')>-1||clothes[c].source.indexOf('进')>-1||clothes[c].source.indexOf('定')>-1) 
+					&&*/ clothes[c].set){
 					setArr[c]=clothes[c].set;
 				}
 			}
 			setArr=jQuery.unique(setArr);
+			setArr.sort();
 			for (var s in setArr){
 				if(setArr[s]) {chooseSub+='<option value="'+s+'">'+setArr[s]+'</option>';}
+			}
+		}else if(j==4){
+			var ts=0;
+			for(var c in clothes){
+				if(clothes[c].tags[0]){
+					for (var tag in clothes[c].tags){
+						tagArr[ts]=clothes[c].tags[tag];
+						ts++;
+					}
+				}
+			}
+			tagArr=jQuery.unique(tagArr);
+			tagArr.sort();
+			for (var t in tagArr){
+				if(tagArr[t]) {chooseSub+='<option value="'+t+'">'+tagArr[t]+'</option>';}
 			}
 		}
 		chooseSub+='</select>';
@@ -111,7 +129,7 @@ function chgScopeSub2(){
 
 	var chooseSub2='　-　';
 	chooseSub2+='<select id="chooseItem" onchange=showFactorInfo()>';
-	chooseSub2+='<option value="na">请选择衣服</option>';
+	chooseSub2+='<option value="na">请选择部件</option>';
 	if (j==1){
 		for(var i in clothes){
 			if(clothes[i].type.type==category[k]&&clothes[i].source.indexOf('设')>-1)
@@ -124,9 +142,16 @@ function chgScopeSub2(){
 		}
 	}else if(j==3){
 		for(var i in clothes){
-			if (clothes[i].set==setArr[k]){
-				//if(clothes[i].source.indexOf('设')>-1||clothes[i].source.indexOf('进')>-1)
-				{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
+			if(clothes[i].set==setArr[k])
+			{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
+		}
+	}else if(j==4){
+		for(var i in clothes){
+			if(clothes[i].tags[0]){
+				for (var tag in clothes[i].tags){
+					if(clothes[i].tags[tag]==tagArr[k])
+					{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>'; break;}
+				}
 			}
 		}
 	}
@@ -294,17 +319,22 @@ function genFactor(id){
 			}
 			if (content[s]){output+=header[s]+content[s];}
 		}
+	}else{
+		output+='</tr></td>';
 	}
+	
+	output+='<tr><td colspan="3"></td></tr>';
 	
 	var deps1=clothes[id].getDeps('   ', 1);
 	if (deps1){
 		var pos1=deps1.indexOf('总计需');
 		var pos2=deps1.indexOf('件',pos1);
 		var strip=deps1.substr(pos1+3,pos2-pos1-3);
-		output+='<tr><td colspan="3"></td></tr>';
 		output+='<tr><td colspan="2"><b>此部件共需数量</b></td>';
 		output+='<td>'+strip+'</td></tr>';
 		output+='<tr><td class="level_drop_cnt" colspan="3">'+add_genFac(deps1);+'</td></tr>';
+	}else{
+		output+='<tr><td colspan="3"><b>此部件非制作材料</b></td>';
 	}
 	output+='</table>';
 	
@@ -370,7 +400,7 @@ function add_genFac(text,inherit){
 	var textArr=text.split('\n'); //[0] to [length-2];
 	var parents=[];
 	for (var i=1;i<textArr.length-1;i++){//discard [0] for its own name
-		var pos_end=(textArr[i].indexOf('[需')>-1 ? textArr[i].indexOf('[需') : textArr[i].length);
+		var pos_end=(textArr[i].indexOf('[消耗')>-1 ? textArr[i].indexOf('[消耗') : textArr[i].length);
 		var pos_start=textArr[i].substr(0,pos_end).lastIndexOf(']')+1;
 		var pos_start_1=textArr[i].substr(0,pos_start).lastIndexOf('[')+1;
 		var clo_name=textArr[i].substr(pos_start,pos_end-pos_start);
