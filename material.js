@@ -5,8 +5,8 @@ function init() {
 
 var highlight=['星之海','韶颜倾城','格莱斯'];
 var highlight_style=['xzh','syqc','gls'];
-var src=['公','少','店',''];
-var src_desc=['公主级掉落','少女级掉落','商店购买','其它'];
+var src=['公','少','店·金币,店·钻石,店','迷,幻,飘渺,昼夜,云禅','兑',''];
+var src_desc=['公主级掉落','少女级掉落','商店购买','谜之屋','兑换','其它'];
 var maxc=11;//max chapter
 var reqCnt=[];
 var parentInd=[];
@@ -89,8 +89,8 @@ function chgScopeSub(){
 			}
 		}else if(j==3){
 			for(var c in clothes){
-				if( /*(clothes[c].source.indexOf('设')>-1||clothes[c].source.indexOf('进')>-1||clothes[c].source.indexOf('定')>-1) 
-					&&*/ clothes[c].set){
+				if( /*(clothes[c].source.indexOf('设')>-1||clothes[c].source.indexOf('进')>-1||clothes[c].source.indexOf('定')>-1) &&*/ 
+					clothes[c].set){
 					setArr[c]=clothes[c].set;
 				}
 			}
@@ -177,8 +177,8 @@ function showLevelDropInfo(){
 	if (j!=0){//chapter chosen
 		levelDropInfo='<table border="1"><tr><td><b>名称</b></td><td><b>关卡</b></td><td><b>材料需求统计</b></td></tr>';
 		for (l=1;l<30;l++){//sort by levels
-			if (l>20){var l2="支"+l%10;}
-			else{var l2=l+'';}
+			var l2=l;
+			if(l>20){l2="支"+l%10;}
 			
 			for (var i in clothes){
 				var src_sp=clothes[i].source.split("/");
@@ -242,7 +242,7 @@ function genFactor(id){
 	}while(total>0);
 	
 	var header=[];
-	var content=['','','',''];
+	var content=[];
 	var output='<table border="1">';
 	output+='<tr><td colspan="3"><b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id+'</td></tr>';
 	output+='<tr><td colspan="3">';
@@ -266,8 +266,8 @@ function genFactor(id){
 		output+=' = ';
 		for (var p in pattern) {
 			if (clothesSet[pattern[p][0]][pattern[p][1]]==clothes[id]){
-				//show link
 				//output+=clothesSet[pattern[p][2]][pattern[p][3]].name+'x'+pattern[p][4]+' ';
+				//show link
 				for (var c in clothes){
 					if(clothes[c]==clothesSet[pattern[p][2]][pattern[p][3]]){
 						output+='<a href="#" onclick="genFactor('+c+')" >'+clothes[c].name+'</a>x'+pattern[p][4]+' ';
@@ -281,40 +281,37 @@ function genFactor(id){
 		
 		for (var s in src){//sort by source
 			header[s]='<tr><td colspan="3"><u>'+src_desc[s]+'</u></td></tr>';
-		
-			for (l1=1;l1<=maxc;l1++){
-				for (l=1;l<=30;l++){//sort by level
-					var l2=l;
-					if(l>20){l2="支"+l%10;}
-					if(l==28){l2='金币';}//s=2, sort by source
-					if(l==29){l2='钻石';}
-					if(l==30){l2='';}
-					
-					//minimize calc
-					if(s<2&&l>27){break;}
-					if(s==2&&(l1>1||l<28)){continue;}
-					if(s==3&&(l1>1||l>1)){break;}
 			
-					for (var i in clothes){
-						if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])){
+			if(s<2){
+				for (l1=1;l1<=maxc;l1++){
+					for (l=1;l<30;l++){//sort by level
+						var l2=l;
+						if(l>20){l2="支"+l%10;}
+						for (var i in clothes){ if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])){
 							var srci=clothes[i].source;
 							var src_sp=clothes[i].source.split("/");
 							for (var ss in src_sp){
 								if( (s==0&&src_sp[ss].indexOf(l1+'-'+l2+src[s])==0&&srci.indexOf(src[1])<0) || 
-								(s==1&&src_sp[ss].indexOf(l1+'-'+l2+src[s])==0) || 
-								(s==2&&srci.indexOf(src[s])>-1&&srci.indexOf(l2)>-1) || 
-								(s==3) ){
-									shownFactor[i]=1;
-									content[s]+='<tr>';
-									content[s]+='<td><a href="#" onclick="genFactor('+i+')" >'+clothes[i].name+'</a></td>';
-									content[s]+='<td>'+srci+'</td>';
-									content[s]+='<td>'+reqCnt[i]+'</td>';
-									content[s]+='</tr>';
+									(s==1&&src_sp[ss].indexOf(l1+'-'+l2+src[s])==0) ){
+									if(!content[s]){content[s]='';}
+									content[s]+=retFactor(i,srci);
 									break;
 								}
 							}
-						}
+						}}
 					}
+				}
+
+			}else{
+				var s_split=src[s].split(',');//sort by defined order
+				for(var sp_n in s_split){
+					for (var i in clothes){ if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])){
+						var srci=clothes[i].source;
+						if(srci.indexOf(s_split[sp_n])>-1){
+							if(!content[s]){content[s]='';}
+							content[s]+=retFactor(i,srci);
+						}
+					}}
 				}
 			}
 			if (content[s]){output+=header[s]+content[s];}
@@ -416,4 +413,15 @@ function add_genFac(text,inherit){
 	}
 	var out=(inherit? textArr[0]+'\n':'')+parents.join('\n');
 	return out;
+}
+
+function retFactor(i,srci){
+	shownFactor[i]=1;
+	var ret='';
+	ret+='<tr>';
+	ret+='<td><a href="#" onclick="genFactor('+i+')" >'+clothes[i].name+'</a></td>';
+	ret+='<td>'+srci+'</td>';
+	ret+='<td>'+reqCnt[i]+'</td>';
+	ret+='</tr>';
+	return ret;
 }
