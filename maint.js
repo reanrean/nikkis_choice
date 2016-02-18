@@ -4,6 +4,7 @@ var wowner=['rean','ivangift','seal100x'];
 function show(){
 	var pass='d0be2dc421be4fcd0172e5afceea3970e2f3d940';
 	var userInput=$("#passcode").val();
+	$("#passcode").val('');
 	userInput=$.sha1(userInput);
 	if (userInput==pass){
 		go();
