@@ -13,7 +13,20 @@ function show(){
 	}
 }
 function go(){
-	var max=getMaxLength();
+	var cnt=[];
+	for (var j in wname){
+		cnt[j]=0;
+		for(var i in wname[j]){
+			cnt[j]++;
+		}
+	}
+	var max=0;
+	var list='Count ';
+	for (var j in wname){
+		list+=wowner[j]+':'+cnt[j]+' ';
+		if (cnt[j]>max) {max=cnt[j];}
+	}
+	
 	var str=[];
 	for (var i in wname){
 		str[i]=[];
@@ -32,6 +45,7 @@ function go(){
 		}
 	}
 	var out='<table>';
+	out+=td(list);
 	out+=td('<hr>');
 	for(var i=1;i<wname.length;i++){
 		out+=td("Extra values in "+wowner[0]+"'s wardrobe VS "+wowner[i]+"'s:");
@@ -45,14 +59,6 @@ function go(){
 	
 	$("#info").html(out);
 }
-
-function getMaxLength(){
-	var a=0; var b=0; var c=0;
-	for(var i in wname[0]){a++;}
-	for(var i in wname[1]){b++;}
-	for(var i in wname[2]){c++;}
-	return Math.max(a,b,c);
-};
 
 function compare(a,b,len){//a contains but b not
 	var out='';
