@@ -1,3 +1,0 @@
-var clothesNotice = "";
-
-var levelNotice = "";
