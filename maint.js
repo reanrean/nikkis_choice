@@ -13,7 +13,9 @@ function show(){
 	if (userInput==pass){
 		go();
 	}else{
+		$("#menu").html('');
 		$("#info").html('&#x1f64a&#x1f64a&#x1f64a&#x1f64a&#x1f64a');
+		$("#extra").html('');
 	}
 }
 
@@ -29,7 +31,6 @@ function go(){
 }
 
 function go_comp(){
-	rows=0;
 	var cnt=[];
 	for (var j in wname){
 		cnt[j]=0;
@@ -48,14 +49,15 @@ function go_comp(){
 	for (var i in wname){
 		str[i]=[];
 	}
+	var skip_pos=jQuery.inArray('来源', field_desc);
 	for(var i=0;i<max;i++){//assign values into str[] from wardrobe
 		for (var j in wname){
 			if(wname[j][i]){
 				str[j][i]=wname[j][i][0]+'/'+wname[j][i][1].substr(0,1);
-				for (var p=2;p<=14;p++){
+				for (var p=2;p<field_desc.length;p++){
+					if(p==skip_pos){continue;}
 					str[j][i]+='/'+wname[j][i][p];
 				}
-				str[j][i]+='/'+wname[j][i][16];
 			}else{
 				str[j][i]='';
 			}
@@ -64,13 +66,16 @@ function go_comp(){
 	var out='<table>';
 	out+=tr(td(list));
 	out+=tr(td('<hr>'));
-	for(var i=1;i<wname.length;i++){//compare [0] with others
-		out+=tr(td("Extra values in "+wowner[0]+"'s wardrobe VS "+wowner[i]+"'s:"));
-		out+=tr(td(compare(str[0],str[i],'<br/>')));
-		out+=tr(td('<hr>'));
-		out+=tr(td("Extra values in "+wowner[i]+"'s wardrobe VS "+wowner[0]+"'s:"));
-		out+=tr(td(compare(str[i],str[0],'<br/>')));
-		out+=tr(td('<hr>'));
+	for(var j=0;j<wname.length;j++){
+		for(var i=j+1;i<wname.length;i++){//compare [j] with [i]
+			if(j==i){continue;}
+			out+=tr(td("Extra records in "+wowner[j]+"'s wardrobe VS "+wowner[i]+"'s:"));
+			out+=tr(td(compare(str[j],str[i],'<br/>')));
+			out+=tr(td('<hr>'));
+			out+=tr(td("Extra records in "+wowner[i]+"'s wardrobe VS "+wowner[j]+"'s:"));
+			out+=tr(td(compare(str[i],str[j],'<br/>')));
+			out+=tr(td('<hr>'));
+		}
 	}
 	out+='</table>';
 	
@@ -79,6 +84,7 @@ function go_comp(){
 }
 
 function go_add(){
+	rows=0;
 	var form='<table id="go_add"><tbody>';
 	var line='';
 	for (var i in field_desc){
@@ -187,16 +193,28 @@ function compare(a,b,split){//a contains but b not
 
 function arrowKey() {
 	$('input').keydown(function(e) {
-		if (e.keyCode==39) {
-			if(this.value.length==this.value.slice(0, this.selectionStart).length){
-			$(this).parent().next().find('input').focus();
-			}
-		}
-		if (e.keyCode==37) {
+		if (e.keyCode==37) {//left
 			if(this.value.slice(0, this.selectionStart).length==0){
 			//$(this).prev('input').focus();
 			$(this).parent().prev().find('input').focus();
 			}
+		}
+		if (e.keyCode==39) {//right
+			if(this.value.length==this.value.slice(0, this.selectionStart).length){
+			$(this).parent().next().find('input').focus();
+			}
+		}
+		if (e.keyCode==38) {//up
+			var thisid=$(this).attr('id');
+			var tar_str=thisid.substr(2,thisid.indexOf('_')-2);
+			var tar_id=thisid.replace(tar_str,parseInt(tar_str)-1);
+			if($('#'+tar_id).length>0) {$('#'+tar_id).focus();}
+		}
+		if (e.keyCode==40) {//down
+			var thisid=$(this).attr('id');
+			var tar_str=thisid.substr(2,thisid.indexOf('_')-2);
+			var tar_id=thisid.replace(tar_str,parseInt(tar_str)+1);
+			if($('#'+tar_id).length>0) {$('#'+tar_id).focus();}
 		}
 	});
 }
