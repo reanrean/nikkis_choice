@@ -413,14 +413,9 @@ function retFactor(i,srci){
 function getDistinct(arr){
 	var newArr=[];
 	for (var i in arr){
-		var ind=0;
-		for (var j in newArr){
-			if(arr[i]==newArr[j]){
-				ind=1; 
-				break;
-			}
+		if(jQuery.inArray(arr[i], newArr)<0){
+			newArr.push(arr[i]);
 		}
-		if(!ind) newArr.push(arr[i]);
 	}
 	return newArr;
 }
