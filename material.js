@@ -16,10 +16,7 @@ var shownFactor=[];
 
 function show_level_drop(){
 	var chooseScope='';
-	chooseScope+='<select id="selectScope" onchange=chgScope()>'
-	chooseScope+='<option value="1">按关卡</option>';
-	chooseScope+='<option value="2">按部件</option>';
-	chooseScope+='</select>';
+	chooseScope+=selectBox("selectScope","chgScope()",[1,2],['按关卡','按部件']);
 	chooseScope+='　-　'
 	$("#chooseScope").html(chooseScope);
 	chgScope();
@@ -28,29 +25,21 @@ function show_level_drop(){
 function chgScope(){
 	var chooseLevel='';
 	if($("#selectScope").val()==1){
-		chooseLevel+='<select id="degree_level" onchange=showLevelDropInfo()>';
-		chooseLevel+='<option value="公">公主</option>';
-		chooseLevel+='<option value="少">少女</option>';
-		chooseLevel+='</select>';
-		chooseLevel+='　-　'
-		chooseLevel+='<select id="level_select" onchange=showLevelDropInfo()>';
-		for(var i=0;i<=maxc;i++){
-			if(i==0){chooseLevel+='<option value="'+i+'">请选择章节</option>';}
-			else{chooseLevel+='<option value="'+i+'">第'+i+'章</option>';}
+		chooseLevel+=selectBox("degree_level","showLevelDropInfo()",['公','少'],['公主','少女']);
+		chooseLevel+='　-　';
+		var chapVal=[0];var chapText=['请选择章节'];
+		for(var i=1;i<=maxc;i++){
+			chapVal.push(i);
+			chapText.push('第'+i+'章');
 		}
-		chooseLevel+='</select>';
-		chooseLevel+='<a href="#" class="search" onclick=showLevelDropInfo() >&#x1f50d;</a>';
+		chooseLevel+=selectBox("level_select","showLevelDropInfo()",chapVal,chapText);
+		chooseLevel+=ahref('&#x1f50d;','showLevelDropInfo()','search');
 		$("#chooseLevel").html(chooseLevel);
 		$("#chooseSub").html('');
 		$("#chooseSub2").html('');
 	}else{
-		chooseLevel+='<select id="degree_level" onchange=chgScopeSub()>';
-		chooseLevel+='<option value="1">设计图</option>';
-		chooseLevel+='<option value="2">进化</option>';
-		chooseLevel+='<option value="3">套装</option>';
-		chooseLevel+='<option value="4">特殊属性</option>';
-		chooseLevel+='<option value="0">自定义</option>';
-		chooseLevel+='</select>';
+		var chapVal=[1,2,3,4,0];var chapText=['设计图','进化','套装','特殊属性','自定义'];
+		chooseLevel+=selectBox("degree_level","chgScopeSub()",chapVal,chapText);
 		$("#chooseLevel").html(chooseLevel);
 		chgScopeSub();
 	}
@@ -63,56 +52,50 @@ function chgScopeSub(){
 	var chooseSub='　-　';
 	if(j==0){
 		chooseSub+='<input type="text" id="searchById" placeholder="输入名字或编号搜索" />';
-		chooseSub+='<a href="#" class="search" onclick=searchById() >&#x1f50d;</a>';
+		chooseSub+=ahref('&#x1f50d;','searchById()','search');
 		$("#chooseSub").html(chooseSub);
 		$("#chooseSub2").html('');
 	}
 	else{
-		chooseSub+='<select id="chooseCate" onchange=chgScopeSub2()>';
+		var selectArr=[];
 		if (j==1){
 			for(var i in category){
-				var hvcnt=0;
 				for(var c in clothes){
-					if(clothes[c].type.type==category[i]&&clothes[c].source.indexOf('设')>-1) {hvcnt+=1;}
-				}
-				if(hvcnt>0) {chooseSub+='<option value="'+category[i]+'">'+category[i]+'</option>';}
-			}
-		}else if (j==2){
-			for(var i in category){
-				var hvcnt=0;
-				for(var c in clothes){
-					if(clothes[c].type.type==category[i]&&clothes[c].source.indexOf('进')>-1) {hvcnt+=1;}
-				}
-				if(hvcnt>0) {chooseSub+='<option value="'+category[i]+'">'+category[i]+'</option>';}
-			}
-		}else if(j==3){
-			var setArr=[];
-			for(var c in clothes){
-				if(clothes[c].set){
-					setArr.push(clothes[c].set);
-				}
-			}
-			setArr=getDistinct(setArr);
-			setArr.sort();
-			for (var s in setArr){
-				if(setArr[s]) {chooseSub+='<option value="'+setArr[s]+'">'+setArr[s]+'</option>';}
-			}
-		}else if(j==4){
-			var tagArr=[];
-			for(var c in clothes){
-				if(clothes[c].tags[0]){
-					for (var tag in clothes[c].tags){
-						tagArr.push(clothes[c].tags[tag]);
+					if(clothes[c].type.type==category[i]&&clothes[c].source.indexOf('设')>-1) {
+						selectArr.push(category[i]);
+						break;
 					}
 				}
 			}
-			tagArr=getDistinct(tagArr);
-			tagArr.sort();
-			for (var t in tagArr){
-				if(tagArr[t]) {chooseSub+='<option value="'+tagArr[t]+'">'+tagArr[t]+'</option>';}
+		}else if (j==2){
+			for(var i in category){
+				for(var c in clothes){
+					if(clothes[c].type.type==category[i]&&clothes[c].source.indexOf('进')>-1) {
+						selectArr.push(category[i]);
+						break;
+					}
+				}
 			}
+		}else if(j==3){
+			for(var c in clothes){
+				if(clothes[c].set){
+					selectArr.push(clothes[c].set);
+				}
+			}
+			selectArr=getDistinct(selectArr);
+			selectArr.sort();
+		}else if(j==4){
+			for(var c in clothes){
+				if(clothes[c].tags[0]){
+					for (var tag in clothes[c].tags){
+						selectArr.push(clothes[c].tags[tag]);
+					}
+				}
+			}
+			selectArr=getDistinct(selectArr);
+			selectArr.sort();
 		}
-		chooseSub+='</select>';
+		chooseSub+=selectBox("chooseCate","chgScopeSub2()",selectArr,selectArr);
 		$("#chooseSub").html(chooseSub);
 		chgScopeSub2();
 	}
@@ -125,35 +108,42 @@ function chgScopeSub2(){
 	var k=$("#chooseCate").val();
 
 	var chooseSub2='　-　';
-	chooseSub2+='<select id="chooseItem" onchange=showFactorInfo()>';
-	chooseSub2+='<option value="na">请选择部件</option>';
+	var valArr=['na']; var textArr=['请选择部件'];
 	if (j==1){
 		for(var i in clothes){
-			if(clothes[i].type.type==k&&clothes[i].source.indexOf('设')>-1)
-			{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
+			if(clothes[i].type.type==k&&clothes[i].source.indexOf('设')>-1){
+				valArr.push(i);
+				textArr.push(clothes[i].name);
+			}
 		}
 	}else if(j==2){
 		for(var i in clothes){
-			if(clothes[i].type.type==k&&clothes[i].source.indexOf('进')>-1)
-			{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
+			if(clothes[i].type.type==k&&clothes[i].source.indexOf('进')>-1){
+				valArr.push(i);
+				textArr.push(clothes[i].name);
+			}
 		}
 	}else if(j==3){
 		for(var i in clothes){
-			if(clothes[i].set==k)
-			{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>';}
+			if(clothes[i].set==k){
+				valArr.push(i);
+				textArr.push(clothes[i].name);
+			}
 		}
 	}else if(j==4){
 		for(var i in clothes){
 			if(clothes[i].tags[0]){
 				for (var tag in clothes[i].tags){
-					if(clothes[i].tags[tag]==k)
-					{chooseSub2+='<option value="'+i+'">'+clothes[i].name+'</option>'; break;}
+					if(clothes[i].tags[tag]==k){
+						valArr.push(i);
+						textArr.push(clothes[i].name);
+					}
 				}
 			}
 		}
 	}
-	chooseSub2+='</select>';
-	chooseSub2+='<a href="#" class="search" onclick=showFactorInfo() >&#x1f50d;</a>';
+	chooseSub2+=selectBox('chooseItem','showFactorInfo()',valArr,textArr);
+	chooseSub2+=ahref('&#x1f50d;','showFactorInfo()','search');
 	$("#chooseSub2").html(chooseSub2);
 	$("#levelDropInfo").html('');
 	$("#levelDropNote").html('');
@@ -172,7 +162,8 @@ function showLevelDropInfo(){
 	var j=$("#level_select").val();
 	var degree=$("#degree_level").val();
 	if (j!=0){//chapter chosen
-		levelDropInfo='<table border="1"><tr><td><b>名称</b></td><td><b>关卡</b></td><td><b>材料需求统计</b></td></tr>';
+		levelDropInfo='<table border="1">'
+		levelDropInfo+=tr(tab('名称')+tab('关卡')+tab('材料需求统计'),'style="font-weight:bold;"');
 		for (l=1;l<30;l++){//sort by levels
 			var l2=l;
 			if(l>20){l2="支"+l%10;}
@@ -192,19 +183,18 @@ function showLevelDropInfo(){
 								while(ind>-1){//in case it appears 2 times like 5-10
 									var HRow_end=deps.indexOf('\n',ind)>-1 ? deps.indexOf('\n',ind) : deps.length;
 									var HRow_start=deps.substr(0,ind).lastIndexOf('\n   [')+1;
-									deps=deps.substr(0,HRow_start)+'<span class="'+style+'">'+deps.substr(HRow_start,HRow_end-HRow_start)+'</span>'+deps.substr(HRow_end);
+									deps=deps.substr(0,HRow_start)+span(deps.substr(HRow_start,HRow_end-HRow_start),style)+deps.substr(HRow_end);
 									ind=deps.substr(0,HRow_start).lastIndexOf(highlight[h]);
 								}
-								item+='<span class="'+style+'">'+clothes[i].name+'</span><br/>';
+								item+=span(clothes[i].name,style)+'<br/>';
 							}
 						}
 						if(!item){item=clothes[i].name;}
 						
-						levelDropInfo+='<tr>';
-						levelDropInfo+='<td><a href="#" class="inherit" onclick="genFactor('+i+')" >'+item+'</a></td>';
-						levelDropInfo+='<td>'+src_sp[k]+'</td>';
-						levelDropInfo+='<td class="level_drop_cnt">'+deps+'</td>';
-						levelDropInfo+='</tr>';
+						var line=tab(ahref(item,'genFactor('+i+')','inherit'));
+							line+=tab(src_sp[k]);
+							line+=tab(deps,'class="level_drop_cnt"');
+						levelDropInfo+=tr(line);
 					}
 				}
 			}
@@ -213,7 +203,7 @@ function showLevelDropInfo(){
 		var levelDropNote='';
 		for (var h in highlight){
 			if(h>0){levelDropNote+='&ensp;/&ensp;';}
-			levelDropNote+='<span class="'+highlight_style[h]+'">'+highlight[h]+'材料</span>';
+			levelDropNote+=span(highlight[h]+'材料',highlight_style[h]);
 		}
 	}
 	$("#levelDropInfo").html(levelDropInfo);
@@ -241,43 +231,44 @@ function genFactor(id){
 	var header=[];
 	var content=[];
 	var output='<table border="1">';
-	output+='<tr><td colspan="3"><b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id+'</td></tr>';
-	output+='<tr><td colspan="3">';
-	if(clothes[id].simple[0]) output+='简约'+clothes[id].simple[0];
-	if(clothes[id].simple[1]) output+='华丽'+clothes[id].simple[1];
-	if(clothes[id].cute[0]) output+='&ensp;可爱'+clothes[id].cute[0];
-	if(clothes[id].cute[1]) output+='&ensp;成熟'+clothes[id].cute[1];
-	if(clothes[id].active[0]) output+='&ensp;活泼'+clothes[id].active[0];
-	if(clothes[id].active[1]) output+='&ensp;优雅'+clothes[id].active[1];
-	if(clothes[id].pure[0]) output+='&ensp;清纯'+clothes[id].pure[0];
-	if(clothes[id].pure[1]) output+='&ensp;性感'+clothes[id].pure[1];
-	if(clothes[id].cool[0]) output+='&ensp;清凉'+clothes[id].cool[0];
-	if(clothes[id].cool[1]) output+='&ensp;保暖'+clothes[id].cool[1];
-	if(clothes[id].tags[0]) output+='&ensp;'+clothes[id].tags.join(',');
-	if(clothes[id].set) output+='&ensp;套装:'+clothes[id].set;
-	output+='</td></tr>';
-	output+='<tr><td colspan="3">来源:'+clothes[id].source;
+	var cell='';
+	var line='';
+	output+=tr(tab('<b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id,'colspan="3"'));
+	if(clothes[id].simple[0]) cell+='简约'+clothes[id].simple[0];
+	if(clothes[id].simple[1]) cell+='华丽'+clothes[id].simple[1];
+	if(clothes[id].cute[0]) cell+='&ensp;可爱'+clothes[id].cute[0];
+	if(clothes[id].cute[1]) cell+='&ensp;成熟'+clothes[id].cute[1];
+	if(clothes[id].active[0]) cell+='&ensp;活泼'+clothes[id].active[0];
+	if(clothes[id].active[1]) cell+='&ensp;优雅'+clothes[id].active[1];
+	if(clothes[id].pure[0]) cell+='&ensp;清纯'+clothes[id].pure[0];
+	if(clothes[id].pure[1]) cell+='&ensp;性感'+clothes[id].pure[1];
+	if(clothes[id].cool[0]) cell+='&ensp;清凉'+clothes[id].cool[0];
+	if(clothes[id].cool[1]) cell+='&ensp;保暖'+clothes[id].cool[1];
+	if(clothes[id].tags[0]) cell+='&ensp;'+clothes[id].tags.join(',');
+	if(clothes[id].set) cell+='&ensp;套装:'+clothes[id].set;
+	output+=tr(tab(cell,'colspan="3"'));
 	
+	cell='来源:'+clothes[id].source;
 	if(parentInd[id]) {
 		//if parent show formula
-		output+=' = ';
+		cell+=' = ';
 		for (var p in pattern) {
 			if (clothesSet[pattern[p][0]][pattern[p][1]]==clothes[id]){
 				//output+=clothesSet[pattern[p][2]][pattern[p][3]].name+'x'+pattern[p][4]+' ';
 				//show link
 				for (var c in clothes){
 					if(clothes[c]==clothesSet[pattern[p][2]][pattern[p][3]]){
-						output+='<a href="#" onclick="genFactor('+c+')" >'+clothes[c].name+'</a>x'+pattern[p][4]+' ';
+						cell+=ahref(clothes[c].name,'genFactor('+c+')')+'x'+pattern[p][4]+' ';
 						break;
 					}
 				}
 			}
 		}
-		output+='</tr></td>';
-		output+='<tr><td><b>基础材料</b></td><td><b>来源</b></td><td><b>需求数量</b></td></tr>';
+		output+=tr(tab(cell,'colspan="3"'));
 		
+		output+=tr(tab('基础材料')+tab('来源')+tab('需求数量'),'style="font-weight:bold;"');
 		for (var s in src){//sort by source
-			header[s]='<tr><td colspan="3"><u>'+src_desc[s]+'</u></td></tr>';
+			header[s]=tr(tab('<u>'+src_desc[s]+'</u>','colspan="3"'));
 			
 			if(s<2){
 				for (l1=1;l1<=maxc;l1++){
@@ -314,21 +305,20 @@ function genFactor(id){
 			if (content[s]){output+=header[s]+content[s];}
 		}
 	}else{
-		output+='</tr></td>';
+		output+=tr(tab(cell,'colspan="3"'));
 	}
 	
-	output+='<tr><td colspan="3"></td></tr>';
+	output+=tr(tab('','colspan="3"'));
 	
 	var deps1=clothes[id].getDeps('   ', 1);
 	if (deps1){
 		var pos1=deps1.indexOf('总计需');
 		var pos2=deps1.indexOf('件',pos1);
 		var strip=deps1.substr(pos1+3,pos2-pos1-3);
-		output+='<tr><td colspan="2"><b>此部件共需数量</b></td>';
-		output+='<td>'+strip+'</td></tr>';
-		output+='<tr><td class="level_drop_cnt" colspan="3">'+add_genFac(deps1);+'</td></tr>';
+		output+=tr(tab('<b>此部件共需数量</b>','colspan="2"')+tab(strip));
+		output+=tr(tab(add_genFac(deps1),'class="level_drop_cnt" colspan="3"'));
 	}else{
-		output+='<tr><td colspan="3"><b>此部件非制作材料</b></td>';
+		output+=tr(tab('<b>此部件非制作材料</b>','colspan="3"'));
 	}
 	output+='</table>';
 	
@@ -374,12 +364,13 @@ function searchById(){
 	var searchById_match=0;
 	if(searchById){
 		var levelDropInfo='查找：'+searchById;
-		levelDropNote='<table border="1"><tr><td><b>名称</b></td><td><b>分类</b></td><td><b>编号</b></td></tr>';
+		levelDropNote='<table border="1">'+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
 		for (var i in clothes){
 			if(clothes[i].name.indexOf(searchById)>-1||parseInt(clothes[i].id)==parseInt(searchById)){
-				levelDropNote+='<tr><td>';
-				levelDropNote+='<a href="#" onclick="genFactor('+i+')" >'+clothes[i].name+'</a>';
-				levelDropNote+='</td><td>'+clothes[i].type.type+'</td><td>'+clothes[i].id+'</td></tr>';
+				var line=tab(ahref(clothes[i].name,'genFactor('+i+')'));
+					line+=tab(clothes[i].type.type);
+					line+=tab(clothes[i].id);
+				levelDropNote+=tr(line);
 				searchById_match=1;
 			}
 		}
@@ -401,7 +392,7 @@ function add_genFac(text,inherit){
 		var clo_type=textArr[i].substr(pos_start_1,pos_start-pos_start_1-1);
 		for (var c in clothes){
 			if (clothes[c].type.mainType==clo_type&&clothes[c].name==clo_name){
-				clo_name='<a href="#" onclick="genFactor('+c+')"'+(inherit? 'class="inherit"' : '')+' >'+clo_name+'</a>';
+				clo_name=ahref(clo_name,'genFactor('+c+')',(inherit? 'inherit' : ''));
 				break;
 			}
 		}
@@ -414,13 +405,10 @@ function add_genFac(text,inherit){
 
 function retFactor(i,srci){
 	shownFactor[i]=1;
-	var ret='';
-	ret+='<tr>';
-	ret+='<td><a href="#" onclick="genFactor('+i+')" >'+clothes[i].name+'</a></td>';
-	ret+='<td>'+srci+'</td>';
-	ret+='<td>'+reqCnt[i]+'</td>';
-	ret+='</tr>';
-	return ret;
+	var ret=tab(ahref(clothes[i].name,'genFactor('+i+')'));
+		ret+=tab(srci);
+		ret+=tab(reqCnt[i]);
+	return tr(ret);
 }
 
 function getDistinct(arr){
@@ -436,4 +424,30 @@ function getDistinct(arr){
 		if(!ind) newArr.push(arr[i]);
 	}
 	return newArr;
+}
+
+function tab(text,attr){
+	return '<td'+(attr? ' '+attr : '')+'>'+text+'</td>';
+}
+
+function tr(text,attr){
+	return '<tr'+(attr? ' '+attr : '')+'>'+text+'</tr>';
+}
+
+function span(text,cls){
+	return '<span'+(cls? ' class="'+cls+'"' : '')+'>'+text+'</span>';
+}
+
+function ahref(text,onclick,cls){
+	return '<a href="#" onclick='+onclick+' '+(cls? 'class="'+cls+'" ' : '')+'>'+text+'</a>';
+}
+
+function selectBox(id,onchange,valArr,textArr){
+	var ret='<select id="'+id+'" onchange='+onchange+'>';
+	if(!textArr){textArr=valArr;}
+	for (var i in valArr){
+		ret+='<option value="'+valArr[i]+'">'+textArr[i]+'</option>';
+	}
+	ret+='</select>';;
+	return ret;
 }
