@@ -10,7 +10,7 @@ function show(){
 	var pass='6394210ce21ac27fb5de7645824dff9be9ba0690';
 	var userInput=$.sha1($("#passcode").val());
 	$("#passcode").val('');
-	if (userInput==pass){*/
+	if (userInput==pass){
 		go();
 	}else{
 		$("#info").html('&#x1f64a&#x1f64a&#x1f64a&#x1f64a&#x1f64a');
