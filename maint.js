@@ -65,10 +65,10 @@ function go_comp(){
 	out+=tr(td('<hr>'));
 	for(var i=1;i<wname.length;i++){//compare [0] with others
 		out+=tr(td("Extra values in "+wowner[0]+"'s wardrobe VS "+wowner[i]+"'s:"));
-		out+=tr(td(compare(str[0],str[i],max,'<br/>')));
+		out+=tr(td(compare(str[0],str[i],'<br/>')));
 		out+=tr(td('<hr>'));
 		out+=tr(td("Extra values in "+wowner[i]+"'s wardrobe VS "+wowner[0]+"'s:"));
-		out+=tr(td(compare(str[i],str[0],max,'<br/>')));
+		out+=tr(td(compare(str[i],str[0],'<br/>')));
 		out+=tr(td('<hr>'));
 	}
 	out+='</table>';
@@ -144,26 +144,21 @@ function validWardrobe(){
 			if(jQuery.inArray(i, chk2)>-1){
 				if(check[i]&&check[i*1-1]){cont+=field_desc[i-2]+field_desc[i-1]+'both, ';}
 				else if(!check[i]&&!check[i*1-1]){cont+=field_desc[i-2]+field_desc[i-1]+'null, ';}
-				else if(jQuery.inArray(check[i], prop)<0){cont+=field_desc[i-1]+'invalid, '}
-				else if(jQuery.inArray(check[i-1], prop)<0){cont+=field_desc[i-2]+'invalid, '}
+				else if(jQuery.inArray(check[i], prop)<0){cont+=field_desc[i-1]+'invalid, ';}
+				else if(jQuery.inArray(check[i-1], prop)<0){cont+=field_desc[i-2]+'invalid, ';}
 			}
+			if(i==2&&check[i]&&jQuery.inArray(check[i], category)<0) {cont+=field_desc[i-1]+'invalid, ';}
+			if(i==3&&check[i]&&isNaN(parseInt(check[i]))) {cont+=field_desc[i-1]+'invalid, ';}
 		}
 		if(cont){out+=head+cont;}
 	}
 	$("#extra").html(out);
 }
 
-function compare(a,b,len,split){//a contains but b not
+function compare(a,b,split){//a contains but b not
 	var out='';
-	for(var i=0;i<len&&a[i];i++){
-		var ind=0;
-		for(var j=0;j<len&&b[j];j++){
-			if (a[i]==b[j]){
-				ind=1;
-				break;
-			}
-		}
-		if(!ind) out+=a[i]+split;
+	for(var i=0;a[i];i++){
+		if (jQuery.inArray(a[i], b)<0) {out+=a[i]+split;}
 	}
 	return out;
 }
