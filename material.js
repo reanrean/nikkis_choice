@@ -232,7 +232,6 @@ function genFactor(id){
 	var content=[];
 	var output='<table border="1">';
 	var cell='';
-	var line='';
 	output+=tr(tab('<b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id,'colspan="3"'));
 	if(clothes[id].simple[0]) cell+='简约'+clothes[id].simple[0];
 	if(clothes[id].simple[1]) cell+='华丽'+clothes[id].simple[1];
