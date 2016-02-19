@@ -7,10 +7,10 @@ var field_desc=['名字','分类','编号','心级',
 	'tag','来源','套装'];
 
 function show(){
-	var pass='d0be2dc421be4fcd0172e5afceea3970e2f3d940';
+	var pass='6394210ce21ac27fb5de7645824dff9be9ba0690';
 	var userInput=$.sha1($("#passcode").val());
 	$("#passcode").val('');
-	if (userInput==pass){
+	if (userInput==pass){*/
 		go();
 	}else{
 		$("#info").html('&#x1f64a&#x1f64a&#x1f64a&#x1f64a&#x1f64a');
@@ -18,9 +18,10 @@ function show(){
 }
 
 function go(){
-	var menu='<table width=50%>';
+	var menu='<table width=50% style="table-layout: fixed">';
 	var line=td('<a href="#" onclick=go_comp() ><b>Compare</b></a>');
 		line+=td('<a href="#" onclick=go_add() ><b>Add</b></a>');
+		line+=td('<a href="#" onclick=go_src() ><b>CheckSource</b></a>');
 	menu+=tr(line);
 	$("#menu").html(menu);
 	$("#info").html('');
@@ -99,6 +100,27 @@ function go_add(){
 	add();
 }
 
+function go_src(){
+	var pos=jQuery.inArray('来源', field_desc);
+	var src=[];
+	for (var c in wname[0]){
+		var ss=wname[0][c][pos].split("/");
+		for (var s in ss){
+			if (ss[s].indexOf('公')>-1) {ss[s]='公';}
+			if (ss[s].indexOf('少')>-1) {ss[s]='少';}
+			if (ss[s].indexOf('定')>-1) {ss[s]='定';}
+			if (ss[s].indexOf('进')>-1) {ss[s]='进';}
+			if (jQuery.inArray(ss[s], src)<0) {src.push(ss[s]);}
+		}
+	}
+	src.sort();
+	for (var s in src){
+		src[s]=(s<9? '0'+(s*1+1) : (s*1+1))+src[s];
+	}
+	$("#info").html(src.join('<br/>'));
+	$("#extra").html('');
+}
+
 function add(){
 	rows++;
 	var line='';
@@ -120,8 +142,8 @@ function genWardrobe(){
 	var out='';
 	for(var j=1;j<=rows;j++){
 		out+='  [';
-		for (var i=1;i<=17;i++){
-			out+="'"+$('#in'+j+'_'+i).val()+"'"+(i==17?'':',');
+		for (var i=1;i<=field_desc.length;i++){
+			out+="'"+$('#in'+j+'_'+i).val()+"'"+(i==field_desc.length?'':',');
 		}
 		out+='],<br/>';
 	}
@@ -144,11 +166,11 @@ function validWardrobe(){
 			if(jQuery.inArray(i, chk2)>-1){
 				if(check[i]&&check[i*1-1]){cont+=field_desc[i-2]+field_desc[i-1]+'both, ';}
 				else if(!check[i]&&!check[i*1-1]){cont+=field_desc[i-2]+field_desc[i-1]+'null, ';}
-				else if(jQuery.inArray(check[i], prop)<0){cont+=field_desc[i-1]+'invalid, ';}
-				else if(jQuery.inArray(check[i-1], prop)<0){cont+=field_desc[i-2]+'invalid, ';}
+				else if(jQuery.inArray(check[i], prop)<0){cont+=field_desc[i-1]+'inv, ';}
+				else if(jQuery.inArray(check[i-1], prop)<0){cont+=field_desc[i-2]+'inv, ';}
 			}
-			if(i==2&&check[i]&&jQuery.inArray(check[i], category)<0) {cont+=field_desc[i-1]+'invalid, ';}
-			if(i==3&&check[i]&&isNaN(parseInt(check[i]))) {cont+=field_desc[i-1]+'invalid, ';}
+			if(i==2&&check[i]&&jQuery.inArray(check[i], category)<0) {cont+=field_desc[i-1]+'inv, ';}
+			if(i==3&&check[i]&&isNaN(parseInt(check[i]))) {cont+=field_desc[i-1]+'inv, ';}
 		}
 		if(cont){out+=head+cont;}
 	}
@@ -164,20 +186,29 @@ function compare(a,b,split){//a contains but b not
 }
 
 function arrowKey() {
-$('input').keydown(function(e) {
-    if (e.keyCode==39) {
-		if(this.value.length==this.value.slice(0, this.selectionStart).length){
-        $(this).parent().next().find('input').focus();
+	$('input').keydown(function(e) {
+		if (e.keyCode==39) {
+			if(this.value.length==this.value.slice(0, this.selectionStart).length){
+			$(this).parent().next().find('input').focus();
+			}
 		}
-    }
-    if (e.keyCode==37) {
-        if(this.value.slice(0, this.selectionStart).length==0){
-        //$(this).prev('input').focus();
-        $(this).parent().prev().find('input').focus();
+		if (e.keyCode==37) {
+			if(this.value.slice(0, this.selectionStart).length==0){
+			//$(this).prev('input').focus();
+			$(this).parent().prev().find('input').focus();
+			}
 		}
-    }
-});
+	});
 }
+
+$(document).ready(function () {
+	$('#passcode').keydown(function(e) {
+		if (e.keyCode==13) {
+			$(this).blur();
+			show();
+		}
+	});
+});
 
 function td(text,attr){
 	return '<td'+(attr? ' '+attr : '')+'>'+text+'</td>';
