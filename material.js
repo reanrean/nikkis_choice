@@ -55,6 +55,7 @@ function chgScopeSub(){
 		chooseSub+=ahref('&#x1f50d;','searchById()','search');
 		$("#chooseSub").html(chooseSub);
 		$("#chooseSub2").html('');
+		enterKey();
 	}
 	else{
 		var selectArr=[];
@@ -444,4 +445,13 @@ function selectBox(id,onchange,valArr,textArr){
 	}
 	ret+='</select>';;
 	return ret;
+}
+
+function enterKey() {
+	$('#searchById').keydown(function(e) {
+		if (e.keyCode==13) {
+			$(this).blur();
+			searchById();
+		}
+	});
 }
