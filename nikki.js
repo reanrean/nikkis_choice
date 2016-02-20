@@ -604,11 +604,6 @@ function goTop() {
 }
 
 function initEvent() {
-	$("#show_history").click(function () {
-		$("#update_history").show();
-		$("#show_history").hide();
-		return false;
-	});
 	$(".fliter").change(function () {
 		onChangeUiFilter();
 		if (this.value == "balance") {
@@ -657,10 +652,10 @@ function initEvent() {
 	initOnekey();
 	
 	//前台筛选
-	$(".front_filter_option").click(function(){
+	/*$(".front_filter_option").click(function(){
 		filterClotherHTML(this);
 		 return false;
-	});
+	});*/
 	$("#add_all").click(function(){
 		var idmap = {};
 		var idlist= [];
@@ -696,7 +691,7 @@ function initEvent() {
 		}
 	});
 }
-
+/*
 function filterClotherHTML(btn){
 		var clothesDivList = $("#clothes .table-body .table-row");
 		var str = "";
@@ -752,7 +747,7 @@ function filterClotherHTML(btn){
 				}
 				if($(clothesDivList[i]).find(".source:first").text().indexOf("定") >= 0 
 					|| $(clothesDivList[i]).find(".source:first").text().indexOf("进") >= 0 ){
-					var id = $(clothesDivList[i]).find(".source:first").text().replace(/(定|进)([0-9]+)[^0-9]*/, "$2");
+					var id = $(clothesDivList[i]).find(".source:first").text().replace(/(定|进)([0-9]+)[^0-9]*//*, "$2");
 					var $source = $("#clickable-" + $(clothesDivList[i]).find(".category:first").text().split("-")[0] + id).parent();
 					if($source.find(".source:first").text().indexOf(str) >= 0){
 						ifhide = false;
@@ -764,11 +759,20 @@ function filterClotherHTML(btn){
 			 }
 		 }
 }
+*/
 
-$(document).ready(function () {
-	init();
-	menuFixed("clothes");
-});
+function init() {
+	var mine = loadFromStorage();
+	calcDependencies();
+	drawFilter();
+	drawTheme();
+	drawImport();
+	switchCate(category[0]);
+	updateSize(mine);
+	refreshShoppingCart();
+	initEvent();
+	wardrobe_cnt();
+}
 
 function wardrobe_cnt(){
 	var cnt=0;
