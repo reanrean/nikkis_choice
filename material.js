@@ -15,6 +15,7 @@ var extraAdded=[];
 var shownFactor=[];
 
 function show_level_drop(){
+	$("#chooseSub2").html('');
 	var chooseScope='';
 	chooseScope+=selectBox("selectScope","chgScope()",[1,2],['按关卡','按部件']);
 	chooseScope+='　-　'
@@ -23,6 +24,9 @@ function show_level_drop(){
 }
 
 function chgScope(){
+	$("#levelDropInfo").html('');
+	$("#levelDropNote").html('');
+	
 	var chooseLevel='';
 	if($("#selectScope").val()==1){
 		chooseLevel+=selectBox("degree_level","showLevelDropInfo()",['公','少'],['公主','少女']);
@@ -36,25 +40,24 @@ function chgScope(){
 		chooseLevel+=ahref('&#x1f50d;','showLevelDropInfo()','search');
 		$("#chooseLevel").html(chooseLevel);
 		$("#chooseSub").html('');
-		$("#chooseSub2").html('');
 	}else{
 		var chapVal=[1,2,3,4,0];var chapText=['设计图','进化','套装','特殊属性','自定义'];
 		chooseLevel+=selectBox("degree_level","chgScopeSub()",chapVal,chapText);
 		$("#chooseLevel").html(chooseLevel);
 		chgScopeSub();
 	}
-	$("#levelDropInfo").html('');
-	$("#levelDropNote").html('');
 }
 
 function chgScopeSub(){
+	$("#levelDropInfo").html('');
+	$("#levelDropNote").html('');
+	
 	var j=$("#degree_level").val();
 	var chooseSub='　-　';
 	if(j==0){
 		chooseSub+='<input type="text" id="searchById" placeholder="输入名字或编号搜索" />';
 		chooseSub+=ahref('&#x1f50d;','searchById()','search');
 		$("#chooseSub").html(chooseSub);
-		$("#chooseSub2").html('');
 		enterKey();
 	}
 	else{
@@ -96,39 +99,35 @@ function chgScopeSub(){
 			selectArr=getDistinct(selectArr);
 			selectArr.sort();
 		}
+		selectArr.unshift('请选择');
 		chooseSub+=selectBox("chooseCate","chgScopeSub2()",selectArr,selectArr);
+		chooseSub+=ahref("&#x1f50d;","chgScopeSub2()","search");
 		$("#chooseSub").html(chooseSub);
 		chgScopeSub2();
 	}
-	$("#levelDropInfo").html('');
-	$("#levelDropNote").html('');
 }
 
-function chgScopeSub2(){
-	var j=$("#degree_level").val();
-	var k=$("#chooseCate").val();
+function chgScopeSub2(j,k){
+	if(!j) {j=$("#degree_level").val();}
+	if(!k) {k=$("#chooseCate").val();}
 
-	var chooseSub2='　-　';
-	var valArr=['na']; var textArr=['请选择部件'];
+	var valArr=[];
 	if (j==1){
 		for(var i in clothes){
 			if(clothes[i].type.type==k&&clothes[i].source.indexOf('设')>-1){
 				valArr.push(i);
-				textArr.push(clothes[i].name);
 			}
 		}
 	}else if(j==2){
 		for(var i in clothes){
 			if(clothes[i].type.type==k&&clothes[i].source.indexOf('进')>-1){
 				valArr.push(i);
-				textArr.push(clothes[i].name);
 			}
 		}
 	}else if(j==3){
 		for(var i in clothes){
 			if(clothes[i].set==k){
 				valArr.push(i);
-				textArr.push(clothes[i].name);
 			}
 		}
 	}else if(j==4){
@@ -137,17 +136,28 @@ function chgScopeSub2(){
 				for (var tag in clothes[i].tags){
 					if(clothes[i].tags[tag]==k){
 						valArr.push(i);
-						textArr.push(clothes[i].name);
 					}
 				}
 			}
 		}
 	}
-	chooseSub2+=selectBox('chooseItem','showFactorInfo()',valArr,textArr);
-	chooseSub2+=ahref('&#x1f50d;','showFactorInfo()','search');
-	$("#chooseSub2").html(chooseSub2);
-	$("#levelDropInfo").html('');
-	$("#levelDropNote").html('');
+	
+	var levelDropNote='';
+	if (valArr.length>0){
+		//var levelDropInfo='查找：'+$("#degree_level option[value='"+j+"']").text()+'　'+k;
+		levelDropNote+='<table border="1">'+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
+		for (var i in clothes){
+			if(jQuery.inArray(i,valArr)>-1){
+				var line=tab(ahref(clothes[i].name,'genFactor('+i+')'));
+					line+=tab(clothes[i].type.type);
+					line+=tab(clothes[i].id);
+				levelDropNote+=tr(line);
+			}
+		}
+		levelDropNote+='</table>';
+	}
+		$("#levelDropInfo").html('');
+		$("#levelDropNote").html(levelDropNote);
 }
 
 function showFactorInfo(){
@@ -245,7 +255,7 @@ function genFactor(id){
 	if(clothes[id].cool[0]) cell+='&ensp;清凉'+clothes[id].cool[0];
 	if(clothes[id].cool[1]) cell+='&ensp;保暖'+clothes[id].cool[1];
 	if(clothes[id].tags[0]) cell+='&ensp;'+clothes[id].tags.join(',');
-	if(clothes[id].set) cell+='&ensp;套装:'+clothes[id].set;
+	if(clothes[id].set) cell+='&ensp;套装:'+ahref(clothes[id].set,'chgScopeSub2(3,"'+clothes[id].set+'")');
 	output+=tr(tab(cell,'colspan="3"'));
 	
 	cell='来源:'+clothes[id].source;
