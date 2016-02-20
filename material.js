@@ -55,7 +55,7 @@ function chgScopeSub(){
 	var j=$("#degree_level").val();
 	var chooseSub='　-　';
 	if(j==0){
-		chooseSub+='<input type="text" id="searchById" placeholder="输入名字或编号搜索" />';
+		chooseSub+='<input type="text" style="line-height:100%;" id="searchById" placeholder="输入名字或编号搜索" />';
 		chooseSub+=ahref('&#x1f50d;','searchById()','search');
 		$("#chooseSub").html(chooseSub);
 		enterKey();
@@ -143,7 +143,8 @@ function chgScopeSub2(j,k){
 	}
 	
 	if (valArr.length>0){
-		var levelDropInfo='查找：'+/*$("#degree_level option[value='"+j+"']").text()+'　'+*/k;
+		var j_txt=(j<=2) ? $("#degree_level option[value='"+j+"']").text()+' - ' : '';//given now it wont be invoked when j<=2
+		var levelDropInfo='查找：'+j_txt+k;
 		var levelDropNote='<table border="1">'+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
 		for (var c in category){//sort by category
 			for (var i in clothes){
