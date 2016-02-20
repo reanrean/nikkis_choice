@@ -360,7 +360,7 @@ function fakeClothes(cart) {
           scoreWithBonusTd(scores.pure[0], bonus.pure[0]),
           scoreWithBonusTd(scores.pure[1], bonus.pure[1]),
           scoreWithBonusTd(scores.cool[0], bonus.cool[0]),
-          scoreWithBonusTd(scores.cool[1], bonus.cool[1]), '', ''];
+          scoreWithBonusTd(scores.cool[1], bonus.cool[1]), '', '', ''];
     }
   };
 }
