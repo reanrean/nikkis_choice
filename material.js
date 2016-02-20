@@ -142,22 +142,23 @@ function chgScopeSub2(j,k){
 		}
 	}
 	
-	var levelDropNote='';
 	if (valArr.length>0){
-		//var levelDropInfo='查找：'+$("#degree_level option[value='"+j+"']").text()+'　'+k;
-		levelDropNote+='<table border="1">'+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
-		for (var i in clothes){
-			if(jQuery.inArray(i,valArr)>-1){
-				var line=tab(ahref(clothes[i].name,'genFactor('+i+')'));
-					line+=tab(clothes[i].type.type);
-					line+=tab(clothes[i].id);
-				levelDropNote+=tr(line);
+		var levelDropInfo='查找：'+/*$("#degree_level option[value='"+j+"']").text()+'　'+*/k;
+		var levelDropNote='<table border="1">'+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
+		for (var c in category){//sort by category
+			for (var i in clothes){
+				if(jQuery.inArray(i,valArr)>-1&&clothes[i].type.type==category[c]){
+					var line=tab(ahref(clothes[i].name,'genFactor('+i+')'));
+						line+=tab(clothes[i].type.type);
+						line+=tab(clothes[i].id);
+					levelDropNote+=tr(line);
+				}
 			}
 		}
 		levelDropNote+='</table>';
 	}
-		$("#levelDropInfo").html('');
-		$("#levelDropNote").html(levelDropNote);
+	$("#levelDropInfo").html(levelDropInfo? levelDropInfo:'');
+	$("#levelDropNote").html(levelDropNote? levelDropNote:'');
 }
 
 function showFactorInfo(){
@@ -254,7 +255,13 @@ function genFactor(id){
 	if(clothes[id].pure[1]) cell+='&ensp;性感'+clothes[id].pure[1];
 	if(clothes[id].cool[0]) cell+='&ensp;清凉'+clothes[id].cool[0];
 	if(clothes[id].cool[1]) cell+='&ensp;保暖'+clothes[id].cool[1];
-	if(clothes[id].tags[0]) cell+='&ensp;'+clothes[id].tags.join(',');
+	if(clothes[id].tags[0]) {
+		var tags_conv=[];
+		for (var tg in clothes[id].tags){
+			tags_conv[tg]=ahref(clothes[id].tags[tg],'chgScopeSub2(4,"'+clothes[id].tags[tg]+'")');
+		}
+		cell+='&ensp;'+tags_conv.join(',');
+	}
 	if(clothes[id].set) cell+='&ensp;套装:'+ahref(clothes[id].set,'chgScopeSub2(3,"'+clothes[id].set+'")');
 	output+=tr(tab(cell,'colspan="3"'));
 	
@@ -375,13 +382,16 @@ function searchById(){
 	if(searchById){
 		var levelDropInfo='查找：'+searchById;
 		levelDropNote='<table border="1">'+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
-		for (var i in clothes){
-			if(clothes[i].name.indexOf(searchById)>-1||parseInt(clothes[i].id)==parseInt(searchById)){
-				var line=tab(ahref(clothes[i].name,'genFactor('+i+')'));
-					line+=tab(clothes[i].type.type);
-					line+=tab(clothes[i].id);
-				levelDropNote+=tr(line);
-				searchById_match=1;
+		for (var c in category){//sort by category
+			for (var i in clothes){
+				if( (clothes[i].name.indexOf(searchById)>-1||parseInt(clothes[i].id)==parseInt(searchById)) 
+					&& clothes[i].type.type==category[c]){
+					var line=tab(ahref(clothes[i].name,'genFactor('+i+')'));
+						line+=tab(clothes[i].type.type);
+						line+=tab(clothes[i].id);
+					levelDropNote+=tr(line);
+					searchById_match=1;
+				}
 			}
 		}
 		levelDropNote+='</table>';
