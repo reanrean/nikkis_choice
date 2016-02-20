@@ -1,7 +1,7 @@
-function init() {
+$(document).ready(function () {
 	calcDependencies();
 	show_level_drop();
-}
+});
 
 var highlight=['星之海','韶颜倾城','格莱斯'];
 var highlight_style=['xzh','syqc','gls'];
