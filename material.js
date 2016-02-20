@@ -100,8 +100,8 @@ function chgScopeSub(){
 			selectArr.sort();
 		}
 		selectArr.unshift('请选择');
-		chooseSub+=selectBox("chooseCate","chgScopeSub2()",selectArr,selectArr);
-		chooseSub+=ahref("&#x1f50d;","chgScopeSub2()","search");
+		chooseSub+=selectBox('chooseCate','chgScopeSub2()',selectArr,selectArr);
+		chooseSub+=ahref('&#x1f50d;','chgScopeSub2()','search');
 		$("#chooseSub").html(chooseSub);
 		chgScopeSub2();
 	}
@@ -259,11 +259,11 @@ function genFactor(id){
 	if(clothes[id].tags[0]) {
 		var tags_conv=[];
 		for (var tg in clothes[id].tags){
-			tags_conv[tg]=ahref(clothes[id].tags[tg],'chgScopeSub2(4,"'+clothes[id].tags[tg]+'")');
+			tags_conv[tg]=ahref(clothes[id].tags[tg],"chgScopeSub2(4,'"+clothes[id].tags[tg]+"')");
 		}
 		cell+='&ensp;'+tags_conv.join(',');
 	}
-	if(clothes[id].set) cell+='&ensp;套装:'+ahref(clothes[id].set,'chgScopeSub2(3,"'+clothes[id].set+'")');
+	if(clothes[id].set) cell+='&ensp;套装:'+ahref(clothes[id].set,"chgScopeSub2(3,'"+clothes[id].set+"')");
 	output+=tr(tab(cell,'colspan="3"'));
 	
 	cell='来源:'+clothes[id].source;
@@ -455,7 +455,7 @@ function span(text,cls){
 }
 
 function ahref(text,onclick,cls){
-	return '<a href="#" onclick='+onclick+' '+(cls? 'class="'+cls+'" ' : '')+'>'+text+'</a>';
+	return '<a href="#" onclick="'+onclick+';return false;" '+(cls? 'class="'+cls+'" ' : '')+'>'+text+'</a>';
 }
 
 function selectBox(id,onchange,valArr,textArr){
