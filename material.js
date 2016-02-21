@@ -144,8 +144,9 @@ function chgScopeSub2(j,k){
 	
 	if (valArr.length>0){
 		var j_txt=(j<=2) ? $("#degree_level option[value='"+j+"']").text()+' - ' : '';//given now it wont be invoked when j<=2
-		var levelDropInfo='查找：'+j_txt+k;
-		var levelDropNote='<table border="1">'+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
+		var set_link=(j==3)? '　'+ahref('套装材料总览',"searchSet('"+k+"')") : '';
+		var levelDropInfo='查找：'+j_txt+k+set_link;
+		var levelDropNote=table()+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
 		for (var c in category){//sort by category
 			for (var i in clothes){
 				if(jQuery.inArray(i,valArr)>-1&&clothes[i].type.type==category[c]){
@@ -156,7 +157,7 @@ function chgScopeSub2(j,k){
 				}
 			}
 		}
-		levelDropNote+='</table>';
+		levelDropNote+=table(1);
 	}
 	$("#levelDropInfo").html(levelDropInfo? levelDropInfo:'');
 	$("#levelDropNote").html(levelDropNote? levelDropNote:'');
@@ -175,8 +176,7 @@ function showLevelDropInfo(){
 	var j=$("#level_select").val();
 	var degree=$("#degree_level").val();
 	if (j!=0){//chapter chosen
-		levelDropInfo='<table border="1">'
-		levelDropInfo+=tr(tab('名称')+tab('关卡')+tab('材料需求统计'),'style="font-weight:bold;"');
+		levelDropInfo=table()+tr(tab('名称')+tab('关卡')+tab('材料需求统计'),'style="font-weight:bold;"');
 		for (l=1;l<30;l++){//sort by levels
 			var l2=l;
 			if(l>20){l2="支"+l%10;}
@@ -212,7 +212,7 @@ function showLevelDropInfo(){
 				}
 			}
 		}
-		levelDropInfo+='</table>';
+		levelDropInfo+=table(1);
 		var levelDropNote='';
 		for (var h in highlight){
 			if(h>0){levelDropNote+='&ensp;/&ensp;';}
@@ -223,29 +223,28 @@ function showLevelDropInfo(){
 	$("#levelDropNote").html(levelDropNote);
 }
 
-function genFactor(id){
-	for (var i in clothes){//clear count in previous run
-		reqCnt[i]=0;
-		parentInd[i]=0;
-		extraInd[i]=0;
-		extraAdded[i]=0;
-		shownFactor[i]=0;
-	}
-	
-	genFactor2(clothes[id],1);
+function genFactor_main(){
 	do{
 		var total=0;
 		for (var i in clothes){//add extra count once only
-			if(extraInd[i]&&(!extraAdded[i])) 
-			{reqCnt[i]+=1; genFactor2(clothes[i],1); extraAdded[i]=1; total+=1;}
+			if(extraInd[i]&&(!extraAdded[i])){
+				reqCnt[i]+=1; 
+				genFactor2(clothes[i],1); 
+				extraAdded[i]=1; 
+				total+=1;
+			}
 		}
 	}while(total>0);
+}
+
+function genFactor(id){
+	clearCnt();
 	
-	var header=[];
-	var content=[];
-	var output='<table border="1">';
+	extraInd[id]=1;
+	genFactor_main();
+	
 	var cell='';
-	output+=tr(tab('<b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id,'colspan="3"'));
+	var output=table()+tr(tab('<b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id,'colspan="3"'));
 	if(clothes[id].simple[0]) cell+='简约'+clothes[id].simple[0];
 	if(clothes[id].simple[1]) cell+='华丽'+clothes[id].simple[1];
 	if(clothes[id].cute[0]) cell+='&ensp;可爱'+clothes[id].cute[0];
@@ -283,45 +282,7 @@ function genFactor(id){
 			}
 		}
 		output+=tr(tab(cell,'colspan="3"'));
-		
-		output+=tr(tab('基础材料')+tab('来源')+tab('需求数量'),'style="font-weight:bold;"');
-		for (var s in src){//sort by source
-			header[s]=tr(tab('<u>'+src_desc[s]+'</u>','colspan="3"'));
-			
-			if(s<2){
-				for (l1=1;l1<=maxc;l1++){
-					for (l=1;l<30;l++){//sort by level
-						var l2=l;
-						if(l>20){l2="支"+l%10;}
-						for (var i in clothes){ if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])){
-							var srci=clothes[i].source;
-							var src_sp=clothes[i].source.split("/");
-							for (var ss in src_sp){
-								if( (s==0&&src_sp[ss].indexOf(l1+'-'+l2+src[s])==0&&srci.indexOf(src[1])<0) || 
-									(s==1&&src_sp[ss].indexOf(l1+'-'+l2+src[s])==0) ){
-									if(!content[s]){content[s]='';}
-									content[s]+=retFactor(i,srci);
-									break;
-								}
-							}
-						}}
-					}
-				}
-
-			}else{
-				var s_split=src[s].split(',');//sort by defined order
-				for(var sp_n in s_split){
-					for (var i in clothes){ if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])){
-						var srci=clothes[i].source;
-						if(srci.indexOf(s_split[sp_n])>-1){
-							if(!content[s]){content[s]='';}
-							content[s]+=retFactor(i,srci);
-						}
-					}}
-				}
-			}
-			if (content[s]){output+=header[s]+content[s];}
-		}
+		output+=genBasicMaterial();
 	}else{
 		output+=tr(tab(cell,'colspan="3"'));
 	}
@@ -338,7 +299,7 @@ function genFactor(id){
 	}else{
 		output+=tr(tab('<b>此部件非制作材料</b>','colspan="3"'));
 	}
-	output+='</table>';
+	output+=table(1);
 	
 	$("#levelDropInfo").html(output);
 	$("#levelDropNote").html('');
@@ -368,6 +329,16 @@ function genFactor2(cloth,num){
 	}
 }
 
+function clearCnt(){
+	for (var i in clothes){//clear count in previous run
+		reqCnt[i]=0;
+		parentInd[i]=0;
+		extraInd[i]=0;
+		extraAdded[i]=0;
+		shownFactor[i]=0;
+	}
+}
+
 function addreqCnt(cloth,num){//add num in reqCnt[]
 	for (var i in clothes){
 		if (clothes[i]==cloth){
@@ -382,7 +353,7 @@ function searchById(){
 	var searchById_match=0;
 	if(searchById){
 		var levelDropInfo='查找：'+searchById;
-		levelDropNote='<table border="1">'+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
+		levelDropNote=table()+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
 		for (var c in category){//sort by category
 			for (var i in clothes){
 				if( (clothes[i].name.indexOf(searchById)>-1||parseInt(clothes[i].id)==parseInt(searchById)) 
@@ -395,11 +366,77 @@ function searchById(){
 				}
 			}
 		}
-		levelDropNote+='</table>';
+		levelDropNote+=table(1);
 		$("#levelDropInfo").html(levelDropInfo);
 		if(searchById_match){$("#levelDropNote").html(levelDropNote);}
 		else{$("#levelDropNote").html('没有找到相关资料');}
 	}
+}
+
+function searchSet(setName){
+	clearCnt();
+	
+	var setCnt=0;
+	for (var i in clothes){
+		if(clothes[i].set==setName){
+			extraInd[i]=1;
+			setCnt+=1;
+		}
+	}
+	genFactor_main();
+	
+	var output=table();
+	var cell='<b>套裝：</b>'+ahref(setName,"chgScopeSub2(3,'"+setName+"')")+'　全'+setCnt+'个部件材料总览';
+	output+=tr(tab(cell,'colspan="3"'));
+	output+=tr(tab('','colspan="3"'));
+	output+=genBasicMaterial();
+	output+=table(1);
+	
+	$("#levelDropInfo").html(output);
+	$("#levelDropNote").html('');	
+}
+
+function genBasicMaterial(){
+	var header=[];
+	var content=[];
+	var output=tr(tab('基础材料')+tab('来源')+tab('需求数量'),'style="font-weight:bold;"');
+	for (var s in src){//sort by source
+		header[s]=tr(tab('<u>'+src_desc[s]+'</u>','colspan="3"'));
+		
+		if(s<2){
+			for (l1=1;l1<=maxc;l1++){
+				for (l=1;l<30;l++){//sort by level
+					var l2=l;
+					if(l>20){l2="支"+l%10;}
+					for (var i in clothes){ if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])){
+						var srci=clothes[i].source;
+						var src_sp=clothes[i].source.split("/");
+						for (var ss in src_sp){
+							if( (s==0&&src_sp[ss].indexOf(l1+'-'+l2+src[s])==0&&srci.indexOf(src[1])<0) || 
+								(s==1&&src_sp[ss].indexOf(l1+'-'+l2+src[s])==0) ){
+								if(!content[s]){content[s]='';}
+								content[s]+=retFactor(i,srci);
+								break;
+							}
+						}
+					}}
+				}
+			}
+		}else{
+			var s_split=src[s].split(',');//sort by defined order
+			for(var sp_n in s_split){
+				for (var i in clothes){ if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])){
+					var srci=clothes[i].source;
+					if(srci.indexOf(s_split[sp_n])>-1){
+						if(!content[s]){content[s]='';}
+						content[s]+=retFactor(i,srci);
+					}
+				}}
+			}
+		}
+		if (content[s]){output+=header[s]+content[s];}
+	}
+	return output;
 }
 
 function add_genFac(text,inherit){
@@ -456,6 +493,10 @@ function span(text,cls){
 
 function ahref(text,onclick,cls){
 	return '<a href="#" onclick="'+onclick+';return false;" '+(cls? 'class="'+cls+'" ' : '')+'>'+text+'</a>';
+}
+
+function table(ind){
+	return ind? '</table>' : '<table border="1">';
 }
 
 function selectBox(id,onchange,valArr,textArr){
