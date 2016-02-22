@@ -484,7 +484,7 @@ function conv_source(src,subs,mainType){
 		var str3=src.substr(pos2);
 		for (var p in clothes){
 			if(clothes[p].type.mainType==mainType&&clothes[p].id==str2) 
-			{str2='·'+clothes[p].name;}
+			{str2='-'+clothes[p].name;}
 		}
 		return str1+str2+str3;
 	}else{
