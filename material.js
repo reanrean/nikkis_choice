@@ -541,7 +541,7 @@ function span(text,cls){
 }
 
 function ahref(text,onclick,cls){
-	return '<a href="#" onclick="'+onclick+';return false;" '+(cls? 'class="'+cls+'" ' : '')+'>'+text+'</a>';
+	return '<a href="http://" onclick="'+onclick+';return false;" '+(cls? 'class="'+cls+'" ' : '')+'>'+text+'</a>';
 }
 
 function table(ind){
