@@ -1,6 +1,7 @@
 $(document).ready(function () {
 	calcDependencies();
 	show_level_drop();
+	get_convertlist();
 });
 
 var highlight=['星之海','韶颜倾城','格莱斯'];
@@ -13,6 +14,8 @@ var parentInd=[];
 var extraInd=[];
 var extraAdded=[];
 var shownFactor=[];
+var convertlist=[];
+var convertlistCnt=[];
 
 function show_level_drop(){
 	$("#chooseSub2").html('');
@@ -315,7 +318,7 @@ function genFactor2(cloth,num){
 			}
 			if(pattern[i][4]>1){//if num required>1
 				for (var j in clothes){//mark sub as extra count needed
-					if(clothes[j]==clothesSet[pattern[i][2]][pattern[i][3]]){extraInd[j]=1;}
+					if(clothes[j]==clothesSet[pattern[i][2]][pattern[i][3]]){extraInd[j]=1;break;}
 				}
 				addreqCnt(clothesSet[pattern[i][2]][pattern[i][3]],(pattern[i][4]-1)*num);
 				genFactor2(clothesSet[pattern[i][2]][pattern[i][3]],(pattern[i][4]-1)*num);
@@ -323,9 +326,15 @@ function genFactor2(cloth,num){
 				for (var j in clothes){
 					if(clothes[j]==clothesSet[pattern[i][2]][pattern[i][3]]){extraInd[j]=1;}
 				}
-			}else{
+			}else{//dye
 				addreqCnt(clothesSet[pattern[i][2]][pattern[i][3]],pattern[i][4]*num);
 				genFactor2(clothesSet[pattern[i][2]][pattern[i][3]],pattern[i][4]*num);
+				for (var c in convert){//add dye count
+					if(cloth==clothesSet[convert[c][0]][convert[c][1]]){
+						convertlistCnt[jQuery.inArray(convert[c][2],convertlist)]+=convert[c][4]*num;
+						break;
+					}
+				}
 			}
 		}
 	}
@@ -338,6 +347,9 @@ function clearCnt(){
 		extraInd[i]=0;
 		extraAdded[i]=0;
 		shownFactor[i]=0;
+	}
+	for (var i in convertlist){
+		convertlistCnt[i]=0;
 	}
 }
 
@@ -439,8 +451,15 @@ function genBasicMaterial(){
 				}}
 			}
 		}
-		if (content[s]){output+=header[s]+content[s];}
+		if (content[s]) {output+=header[s]+content[s];}
 	}
+	
+	var dye='';
+	for (var c in convertlist){
+		if(convertlistCnt[c]>0) {dye+=tr(tab(convertlist[c],'colspan="2"')+tab(convertlistCnt[c]));}
+	}
+	if(dye) {output+=tr(tab('<u>染料</u>','colspan="3"'))+dye;}
+	
 	return output;
 }
 
@@ -500,6 +519,13 @@ function getDistinct(arr){
 		}
 	}
 	return newArr;
+}
+
+function get_convertlist(){
+	for(var i in convert){
+		convertlist.push(convert[i][2]);
+	}
+	convertlist=getDistinct(convertlist);
 }
 
 function tab(text,attr){
