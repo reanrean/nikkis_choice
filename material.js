@@ -143,16 +143,18 @@ function chgScopeSub2(j,k){
 	}
 	
 	if (valArr.length>0){
-		var j_txt=(j<=2) ? $("#degree_level option[value='"+j+"']").text()+' - ' : '';//given now it wont be invoked when j<=2
+		var j_txt=(j<=2) ? $("#degree_level option[value='"+j+"']").text()+' - ' : '';//given now j<=2 only invoked by selectbox
 		var set_link=(j==3)? '　'+ahref('套装材料总览',"searchSet('"+k+"')") : '';
 		var levelDropInfo='查找：'+j_txt+k+set_link;
-		var levelDropNote=table()+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
+		var levelDropNote=table()+tr(tab('名称')+tab('分类')+tab('来源'),'style="font-weight:bold;"');
 		for (var c in category){//sort by category
 			for (var i in clothes){
 				if(jQuery.inArray(i,valArr)>-1&&clothes[i].type.type==category[c]){
 					var line=tab(ahref(clothes[i].name,'genFactor('+i+')'));
 						line+=tab(clothes[i].type.type);
-						line+=tab(clothes[i].id);
+						var srcs=conv_source(clothes[i].source,'进',clothes[i].type.mainType);
+							srcs=conv_source(srcs,'定',clothes[i].type.mainType);
+						line+=tab(srcs);
 					levelDropNote+=tr(line);
 				}
 			}
@@ -353,7 +355,7 @@ function searchById(){
 	var searchById_match=0;
 	if(searchById){
 		var levelDropInfo='查找：'+searchById;
-		levelDropNote=table()+tr(tab('名称')+tab('分类')+tab('编号'),'style="font-weight:bold;"');
+		levelDropNote=table()+tr(tab('名称')+tab('分类')+tab('编号')+tab('来源'),'style="font-weight:bold;"');
 		for (var c in category){//sort by category
 			for (var i in clothes){
 				if( (clothes[i].name.indexOf(searchById)>-1||parseInt(clothes[i].id)==parseInt(searchById)) 
@@ -361,6 +363,9 @@ function searchById(){
 					var line=tab(ahref(clothes[i].name,'genFactor('+i+')'));
 						line+=tab(clothes[i].type.type);
 						line+=tab(clothes[i].id);
+						var srcs=conv_source(clothes[i].source,'进',clothes[i].type.mainType);
+							srcs=conv_source(srcs,'定',clothes[i].type.mainType);
+						line+=tab(srcs);
 					levelDropNote+=tr(line);
 					searchById_match=1;
 				}
@@ -467,6 +472,24 @@ function retFactor(i,srci){
 		ret+=tab(srci);
 		ret+=tab(reqCnt[i]);
 	return tr(ret);
+}
+
+function conv_source(src,subs,mainType){
+	if(src.indexOf(subs)>-1){
+		var pos1=src.indexOf(subs)+1;
+		var pos2=src.indexOf('/',pos1); 
+		if(pos2<0) {pos2=src.length;}
+		var str1=src.substr(0,pos1);
+		var str2=src.substr(pos1,pos2-pos1);
+		var str3=src.substr(pos2);
+		for (var p in clothes){
+			if(clothes[p].type.mainType==mainType&&clothes[p].id==str2) 
+			{str2='·'+clothes[p].name;}
+		}
+		return str1+str2+str3;
+	}else{
+		return src;
+	}
 }
 
 function getDistinct(arr){
