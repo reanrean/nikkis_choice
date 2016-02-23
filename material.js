@@ -182,8 +182,10 @@ function showFactorInfo(){
 function showLevelDropInfo(){
 	var j=$("#level_select").val();
 	var degree=$("#degree_level").val();
+	var levelDropInfo='';
+	var levelDropNote='';
 	if (j!=0){//chapter chosen
-		levelDropInfo=table()+tr(tab('名称')+tab('关卡')+tab('材料需求统计'),'style="font-weight:bold;"');
+		levelDropInfo+=table()+tr(tab('名称')+tab('关卡')+tab('材料需求统计'),'style="font-weight:bold;"');
 		for (l=1;l<30;l++){//sort by levels
 			var l2=l;
 			if(l>20){l2="支"+l%10;}
@@ -220,7 +222,6 @@ function showLevelDropInfo(){
 			}
 		}
 		levelDropInfo+=table(1);
-		var levelDropNote='';
 		for (var h in highlight){
 			if(h>0){levelDropNote+='&ensp;/&ensp;';}
 			levelDropNote+=span(highlight[h]+'材料',highlight_style[h]);
