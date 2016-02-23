@@ -322,7 +322,7 @@ function genFactor2(cloth,num){
 				}
 				addreqCnt(clothesSet[pattern[i][2]][pattern[i][3]],(pattern[i][4]-1)*num);
 				genFactor2(clothesSet[pattern[i][2]][pattern[i][3]],(pattern[i][4]-1)*num);
-			}else if(pattern[i][5]=='设'){//do not consume
+			}else if(pattern[i][5]!='染'){//do not consume
 				for (var j in clothes){
 					if(clothes[j]==clothesSet[pattern[i][2]][pattern[i][3]]){extraInd[j]=1;}
 				}
