@@ -21,9 +21,9 @@ function show(){
 
 function go(){
 	var menu='<table width=50% style="table-layout: fixed">';
-	var line=td('<a href="#" onclick=go_comp() ><b>Compare</b></a>');
-		line+=td('<a href="#" onclick=go_add() ><b>Add</b></a>');
-		line+=td('<a href="#" onclick=go_src() ><b>CheckSource</b></a>');
+	var line=td(ahref('<b>Compare</b>','go_comp()'));
+		line+=td(ahref('<b>Add</b>','go_add()'));
+		line+=td(ahref('<b>CheckSource</b>','go_src()'));
 	menu+=tr(line);
 	$("#menu").html(menu);
 	$("#info").html('');
@@ -238,4 +238,8 @@ function tr(text,attr){
 
 function button(text,onclick){
 	return '<button onclick="'+onclick+'">'+text+'</button>'
+}
+
+function ahref(text,onclick,cls){
+	return '<a href="" onclick="'+onclick+';return false;" '+(cls? 'class="'+cls+'" ' : '')+'>'+text+'</a>';
 }
