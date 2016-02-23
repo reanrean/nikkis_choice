@@ -650,41 +650,6 @@ function initEvent() {
 		return false;
 	});
 	initOnekey();
-	
-	$("#add_all").click(function(){
-		var idmap = {};
-		var idlist= [];
-		var clothesDivList = $("#clothes .table-body .table-row");		
-		for(var i = 0 ; i < clothesDivList.length; i++){
-			var id  = $(clothesDivList[i]).find(".id:first").text();
-			idmap[id] = true;
-			idlist.push(id);
-		}
-		var type = $(clothesDivList[0]).find(".category:first").text().split("-")[0];
-		var updating = [];
-		for (var i in clothes) {
-			if (clothes[i].type.mainType == type && idmap[clothes[i].id]) {
-				updating.push(clothes[i].name);
-			}
-		}
-		var names = updating.join(",");
-		if(names.length > 100){
-			names = names.substring(0,100) + ".....等" + updating.length + "件衣服";
-		}
-		if (confirm("你将要在>>" + type + "<<中导入：\n" + names)) {
-			var myClothes = MyClothes();
-			myClothes.filter(clothes);
-			if (myClothes.mine[type]) {
-				myClothes.mine[type] = myClothes.mine[type].concat(idlist);
-			} else {
-				myClothes.mine[type] = idlist;
-			}
-			myClothes.update(clothes);
-			saveAndUpdate();
-			refreshTable();
-			clearImport();
-		}
-	});
 }
 
 function init() {
