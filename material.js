@@ -151,6 +151,7 @@ function chgScopeSub2(j,k){
 		var levelDropInfo='查找：'+j_txt+k+set_link;
 		var levelDropNote=table()+tr(tab('名称')+tab('分类')+tab('编号')+tab('来源'),'style="font-weight:bold;"');
 		for (var c in category){//sort by category
+			if(j<=2&&category[c]!=k) {continue;}//if j<=2 skip other categories
 			for (var i in clothes){
 				if(jQuery.inArray(i,valArr)>-1&&clothes[i].type.type==category[c]){
 					var line=tab(ahref(clothes[i].name,'genFactor('+i+')'));
