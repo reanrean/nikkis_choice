@@ -29,7 +29,9 @@
 	display: table-row;
 	transition: border-color 0.2s;
 	border-bottom: 1px solid #f3f0f6;
+	background: #fffdfc;
 }
+/*
 .table-row:nth-child(2n+1) {
 	background: #fff8fa;
 	border-bottom: 1px solid #f3f0f6;
@@ -38,6 +40,7 @@
 	background: #fffdfc;
 	border-bottom: 1px solid #f3f0f6;
 }
+*/
 .table-row:hover{
 	background: #f4f4f4
 }
