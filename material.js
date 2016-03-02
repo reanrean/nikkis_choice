@@ -83,14 +83,24 @@ function chgScopeSub(){
 					}
 				}
 			}
-		}else if(j==3){
+		}else if(j==3){//design&evo > others
+			var tmpArr1=[];
 			for(var c in clothes){
-				if(clothes[c].set){
-					selectArr.push(clothes[c].set);
+				if(clothes[c].set&&(clothes[c].source.indexOf('设')>-1||clothes[c].source.indexOf('进')>-1)){
+					tmpArr1.push(clothes[c].set);
 				}
 			}
-			selectArr=getDistinct(selectArr);
+			selectArr=getDistinct(tmpArr1);
 			selectArr.sort();
+			tmpArr1=[];
+			for(var c in clothes){
+				if(clothes[c].set&&jQuery.inArray(clothes[c].set, selectArr)<0){
+					tmpArr1.push(clothes[c].set);
+				}
+			}
+			tmpArr1=getDistinct(tmpArr1);
+			tmpArr1.sort();
+			selectArr=selectArr.concat(tmpArr1);
 		}else if(j==4){
 			for(var c in clothes){
 				if(clothes[c].tags[0]){
