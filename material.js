@@ -89,8 +89,8 @@ function chooseSet(){
 				setlist.push(clothes[c].set);
 			}
 		}
-		setlist=getDistinct(setlist);
 	}
+	setlist=getDistinct(setlist);
 	setlist.sort();
 	setlist.unshift('请选择');
 	var chooseSub='　-　';
