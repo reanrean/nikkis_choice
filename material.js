@@ -1,6 +1,6 @@
 $(document).ready(function () {
 	calcDependencies();
-	show_level_drop();
+	show_scope();
 	get_convertlist();
 });
 
@@ -16,11 +16,12 @@ var extraAdded=[];
 var shownFactor=[];
 var convertlist=[];
 var convertlistCnt=[];
+var allSetInCate=[];
 
-function show_level_drop(){
+function show_scope(){
 	$("#chooseSub2").html('');
 	var chooseScope='';
-	chooseScope+=selectBox("selectScope","chgScope()",[1,2],['按关卡','按部件']);
+	chooseScope+=selectBox("selectScope","chgScope()",[1,2,3],['按关卡','按套装','按部件']);
 	chooseScope+='　-　'
 	$("#chooseScope").html(chooseScope);
 	chgScope();
@@ -31,24 +32,77 @@ function chgScope(){
 	$("#levelDropNote").html('');
 	
 	var chooseLevel='';
-	if($("#selectScope").val()==1){
-		chooseLevel+=selectBox("degree_level","showLevelDropInfo()",['公','少'],['公主','少女']);
-		chooseLevel+='　-　';
-		var chapVal=[0];var chapText=['请选择章节'];
-		for(var i=1;i<=maxc;i++){
-			chapVal.push(i);
-			chapText.push('第'+i+'章');
-		}
-		chooseLevel+=selectBox("level_select","showLevelDropInfo()",chapVal,chapText);
-		chooseLevel+=ahref('&#x1f50d;','showLevelDropInfo()','search');
-		$("#chooseLevel").html(chooseLevel);
-		$("#chooseSub").html('');
-	}else{
-		var chapVal=[1,2,3,4,0];var chapText=['设计图','进化','套装','特殊属性','自定义'];
-		chooseLevel+=selectBox("degree_level","chgScopeSub()",chapVal,chapText);
-		$("#chooseLevel").html(chooseLevel);
-		chgScopeSub();
+	switch($("#selectScope").val()){
+		case '1':
+			chooseLevel+=selectBox("degree_level","showLevelDropInfo()",['公','少'],['公主','少女']);
+			chooseLevel+='　-　';
+			var chapVal=[0];var chapText=['请选择章节'];
+			for(var i=1;i<=maxc;i++){
+				chapVal.push(i);
+				chapText.push('第'+i+'章');
+			}
+			chooseLevel+=selectBox("level_select","showLevelDropInfo()",chapVal,chapText);
+			chooseLevel+=ahref('&#x1f50d;','showLevelDropInfo()','search');
+			$("#chooseLevel").html(chooseLevel);
+			$("#chooseSub").html('');
+			break;
+		case '2':
+			var catelist=[];
+			allSetInCate=[];
+			for (var i in setcategory){
+				if(jQuery.inArray(setcategory[i][0], catelist)<0){
+					catelist.push(setcategory[i][0]);
+				}
+				allSetInCate.push(setcategory[i][1]);
+			}
+			for (var c in clothes){//add any set not listed to undefined
+				if(clothes[c].set&&jQuery.inArray(clothes[c].set, allSetInCate)<0){
+					catelist.push('-未分类-'); break;
+				}
+			}
+			chooseLevel+=selectBox("degree_level","chooseSet()",catelist,catelist);
+			$("#chooseLevel").html(chooseLevel);
+			chooseSet();
+			break;
+		case '3': 
+			//20160304: move 3-setSearch into chgScope-'2'
+			var chapVal=[1,2,4,0];var chapText=['设计图','进化','特殊属性','自定义'];
+			chooseLevel+=selectBox("degree_level","chgScopeSub()",chapVal,chapText);
+			$("#chooseLevel").html(chooseLevel);
+			chgScopeSub();
+			break;
 	}
+}
+
+function chooseSet(){
+	var cate=$("#degree_level").val();
+	var setlist=[];
+	if(cate.substr(0,1)!='-'){
+		for (var i in setcategory){
+			if(setcategory[i][0]==cate){
+				setlist.push(setcategory[i][1]);
+			}
+		}
+	}else{
+		for (var c in clothes){//any set not listed
+			if(clothes[c].set&&jQuery.inArray(clothes[c].set, allSetInCate)<0){
+				setlist.push(clothes[c].set);
+			}
+		}
+		setlist=getDistinct(setlist);
+	}
+	setlist.sort();
+	setlist.unshift('请选择');
+	var chooseSub='　-　';
+	chooseSub+=selectBox('searchSetMain','searchSetMain()',setlist,setlist);
+	chooseSub+=ahref('&#x1f50d;','searchSetMain()','search');
+	$("#chooseSub").html(chooseSub);
+	searchSetMain();
+}
+
+function searchSetMain(){
+	var setName=$("#searchSetMain").val();
+	chgScopeSub2(3,setName);
 }
 
 function chgScopeSub(){
