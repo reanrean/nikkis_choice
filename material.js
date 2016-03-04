@@ -22,7 +22,7 @@ function show_scope(){
 	$("#chooseSub2").html('');
 	var chooseScope='';
 	chooseScope+=selectBox("selectScope","chgScope()",[1,2,3],['按关卡','按套装','按部件']);
-	chooseScope+='&ensp;-&ensp;'
+	chooseScope+='－'
 	$("#chooseScope").html(chooseScope);
 	chgScope();
 }
@@ -35,7 +35,7 @@ function chgScope(){
 	switch($("#selectScope").val()){
 		case '1':
 			chooseLevel+=selectBox("degree_level","showLevelDropInfo()",['公','少'],['公主','少女']);
-			chooseLevel+='&ensp;-&ensp;';
+			chooseLevel+='－';
 			var chapVal=[0];var chapText=['请选择章节'];
 			for(var i=1;i<=maxc;i++){
 				chapVal.push(i);
@@ -93,7 +93,7 @@ function chooseSet(){
 	setlist=getDistinct(setlist);
 	setlist.sort();
 	setlist.unshift('请选择');
-	var chooseSub='&ensp;-&ensp;';
+	var chooseSub='－';
 	chooseSub+=selectBox('searchSetMain','searchSetMain()',setlist,setlist);
 	chooseSub+=ahref('&#x1f50d;','searchSetMain()','search');
 	$("#chooseSub").html(chooseSub);
@@ -110,7 +110,7 @@ function chgScopeSub(){
 	$("#levelDropNote").html('');
 	
 	var j=$("#degree_level").val();
-	var chooseSub='&ensp;-&ensp;';
+	var chooseSub='－';
 	if(j==0){
 		chooseSub+='<input type="text" style="line-height:100%;" id="searchById" placeholder="输入名字或编号搜索" />';
 		chooseSub+=ahref('&#x1f50d;','searchById()','search');
@@ -210,7 +210,7 @@ function chgScopeSub2(j,k){
 	}
 	
 	if (valArr.length>0){
-		var j_txt=(j<=2) ? $("#degree_level option[value='"+j+"']").text()+'&ensp;-&ensp;' : '';//given now j<=2 only invoked by selectbox
+		var j_txt=(j<=2) ? $("#degree_level option[value='"+j+"']").text()+'－' : '';//given now j<=2 only invoked by selectbox
 		var set_link=(j==3)? '　'+ahref('套装材料总览',"searchSet('"+k+"')") : '';
 		var levelDropInfo='查找：'+j_txt+k+set_link;
 		var levelDropNote=table()+tr(tab('名称')+tab('分类')+tab('编号')+tab('来源'),'style="font-weight:bold;"');
