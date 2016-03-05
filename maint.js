@@ -162,6 +162,10 @@ function validWardrobe(){
 	var chk1=[1,2,3,4,16];
 	var chk2=[6,8,10,12,14];
 	var prop=['SSS','SS','S','A','B','C',''];
+	var src_list=[];//source list
+	for (var c in wardrobe){
+		if(jQuery.inArray(wardrobe[c][15], src_list)<0) {src_list.push(wardrobe[c][15]);}
+	}
 	for(var j=1;j<=rows;j++){
 		var head=(j==1? '':'<br/>')+'row'+j+'('+$('#in'+j+'_1').val()+'): '
 		var check=[];
@@ -177,6 +181,7 @@ function validWardrobe(){
 			}
 			if(i==2&&check[i]&&jQuery.inArray(check[i], category)<0) {cont+=field_desc[i-1]+'inv, ';}
 			if(i==3&&check[i]&&isNaN(parseInt(check[i]))) {cont+=field_desc[i-1]+'inv, ';}
+			if(i==16&&check[i]&&jQuery.inArray(check[i], src_list)<0) {cont+=field_desc[i-1]+'inv, ';}
 		}
 		if(cont){out+=head+cont;}
 	}
