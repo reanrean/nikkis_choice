@@ -83,23 +83,40 @@ function calctop_byid(id){
 		}
 	}
 	
-	var output='<b>='+clothes[id].name+'=</b><br>';
+	var output='<b>'+clothes[id].name+'</b><br>';
+	var cell='';
+		if(clothes[id].simple[0]) cell+='简约'+clothes[id].simple[0];
+		if(clothes[id].simple[1]) cell+='华丽'+clothes[id].simple[1];
+		if(clothes[id].active[0]) cell+='&ensp;活泼'+clothes[id].active[0];
+		if(clothes[id].active[1]) cell+='&ensp;优雅'+clothes[id].active[1];
+		if(clothes[id].cute[0]) cell+='&ensp;可爱'+clothes[id].cute[0];
+		if(clothes[id].cute[1]) cell+='&ensp;成熟'+clothes[id].cute[1];
+		if(clothes[id].pure[0]) cell+='&ensp;清纯'+clothes[id].pure[0];
+		if(clothes[id].pure[1]) cell+='&ensp;性感'+clothes[id].pure[1];
+		if(clothes[id].cool[0]) cell+='&ensp;清凉'+clothes[id].cool[0];
+		if(clothes[id].cool[1]) cell+='&ensp;保暖'+clothes[id].cool[1];
+		if(clothes[id].tags[0]) {
+			for (var tg in clothes[id].tags){
+				cell+=clothes[id].tags[tg];
+			}
+		}
+	output+=cell+'<br><br>';
 	if(inTop.length>0){
 		output+='顶配：<br>';
 		for (var s in inTop){
-			output+='&ensp;'+inTop[s]+'<br>';
+			output+='&emsp;'+inTop[s]+'<br>';
 		}
 	}
 	if(inSec.length>0){
 		output+='次配：<br>';
 		for (var t in inSec){
-			output+='&ensp;'+inSec[t]+'<br>';
+			output+='&emsp;'+inSec[t]+'<br>';
 		}
 	}
 	if(inOth.length>0){
 		output+='高配：<br>';
 		for (var u in inOth){
-			output+='&ensp;'+inOth[u][0]+'(第'+inOth[u][1]+')<br>';
+			output+='&emsp;'+inOth[u][0]+'(第'+inOth[u][1]+')<br>';
 		}
 	}
 	if(inTop.length==0 && inSec.length==0 && inOth.length==0){
