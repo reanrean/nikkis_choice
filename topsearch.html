@@ -10,9 +10,21 @@
 	<link rel="stylesheet" href="bootstrap/bootstrap.min.css">
 	<style>
 		td {padding:5px;}
-		body{
+		body {
 			margin: 1em;
 			font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;
+		}
+		fieldset {
+			width:100%;
+			max-width:270px;
+			padding: .35em .625em .75em;
+			border: 1px solid silver;
+		}
+		legend {
+			border: 0;
+			width: auto;
+			margin-bottom:0;
+			font-size: 14px;
 		}
 	</style>
 	<script type='text/javascript' charset="UTF-8" src='jquery.js'></script>
@@ -30,14 +42,21 @@
 	</p>
 	<hr>
 	<p>
-		<input type="text" id="textBox" placeholder="输入名字或编号搜索" />
+		<input type="text" id="textBox" placeholder="名称/编号/套装" />
 		<button id="searchById" onclick="searchById()">Search</button>
 		<button id="calc" onclick="calctop()">Calc</button>
 		<span id='alert_msg'></span>
 	</p>
-	<p>
-		选项：&ensp;[<input type="checkbox" id="showNormal" />显示普通关卡]&ensp;[计算<input type="text" id="showCnt" size="1"/>件顶配信息]&ensp;※需重新计算生效
-	</p>
+	<fieldset>
+		<legend>选项（重新计算生效）</legend>
+		计算<input type="text" id="showCnt" size="1" style="line-height:100%;"/>件高配信息<br>
+		<input type="checkbox" id="showNormal"/>计算主线关卡<br>
+		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>选取多件 (手机不推荐勾选)
+	</fieldset>
+	<span id="cartContent" style="display:none">
+	<hr>
+	<p><span id="cart"></span><button id="clearCart" class="btn btn-xs btn-default" onclick="clearCart()">Clear</button></p>
+	</span>
 	<hr>
 	<p id='topsearch_info'></p>
 
