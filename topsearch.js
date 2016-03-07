@@ -126,7 +126,8 @@ function retTopTd(arr,crit,id){
 				case '联盟': var pos=2; break;
 				case '关卡': var pos=3; break;
 			}
-			a='<span id="cell'+id+'_t'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_t"+pos+"')")+'</span><span id="cell'+id+'_t'+pos+'_f" style="display:none">'+ret+'</span>';
+			a='<span id="cell'+id+'_t'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_t"+pos+"')")+'</span>';
+			a+='<span id="cell'+id+'_t'+pos+'_f" style="display:none">'+ret+' '+ahref('收起',"hideTop('"+id+"_t"+pos+"')")+'</span>';
 			return (ret?'顶配：':'')+a;
 		}
 		return (ret?'顶配：':'')+ret;
@@ -155,7 +156,11 @@ function retTopTd(arr,crit,id){
 function showTop(id){
 	$('#cell'+id+'_f').show();
 	$('#cell'+id).hide();
-	
+}
+
+function hideTop(id){
+	$('#cell'+id+'_f').hide();
+	$('#cell'+id).show();
 }
 
 function calctop_byid(id){
