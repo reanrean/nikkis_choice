@@ -146,7 +146,8 @@ function retTopTd(arr,crit,id){
 				case '关卡': var pos=3; break;
 				default: var pos=0;
 			}
-			a='<span id="cell'+id+'_s'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_s"+pos+"')")+'</span><span id="cell'+id+'_s'+pos+'_f" style="display:none">'+ret+'</span>';
+			a='<span id="cell'+id+'_s'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_s"+pos+"')")+'</span>';
+			a+='<span id="cell'+id+'_s'+pos+'_f" style="display:none">'+ret+' '+ahref('收起',"hideTop('"+id+"_s"+pos+"')")+'</span>';
 			return (ret?'高配：':'')+a;
 		}
 		return (ret?'高配：':'')+ret;
