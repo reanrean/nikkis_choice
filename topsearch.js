@@ -170,34 +170,6 @@ function getTopCloByCate(filters,rescnt,type,id){
 	return result;
 }
 
-function test_sortlist(clothes,filters,rescnt,type){
-	var result = {};
-	for (var i in clothes) {
-		if (clothes[i].type.type!=type){continue;}
-		clothes[i].calc(filters);
-			if (!result[clothes[i].type.type]) {
-				result[clothes[i].type.type] = new Object()
-				result[clothes[i].type.type][0] = clothes[i];
-			} else {
-				for (j=0;j<rescnt;j++){
-					//compare with [j]
-					if(!result[clothes[i].type.type][j] || clothes[i].sumScore > result[clothes[i].type.type][j].sumScore
-						|| (clothes[i].sumScore >= result[clothes[i].type.type][j].sumScore && i==id)
-						){
-						//lower others ranking
-						for (k=rescnt-1;k>j;k--){
-							result[clothes[i].type.type][k] = result[clothes[i].type.type][k-1];
-						}
-						//put current clothes to [j]
-						result[clothes[i].type.type][j] = clothes[i];
-						break;
-					}
-				}
-		}
-	}
-	return result;
-}
-
 function td(text,attr){
 	return '<td'+(attr? ' '+attr : '')+'>'+text+'</td>';
 }
