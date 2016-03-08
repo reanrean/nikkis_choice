@@ -16,7 +16,7 @@ function searchById(){
 	var searchById_match=0;
 	if(searchById){
 		var out='<table border="1">';
-		out+=tr(td('名称')+td('分类')+td('编号')+td('来源'),'style="font-weight:bold;"');
+		out+=tr(td('名称')+td('分类')+td('编号')+td('来源'));
 		for (var i in setList){
 			if (setList[i].indexOf(searchById)>-1){
 				out+=tr(td(ahref(setList[i],"searchSet('"+setList[i]+"')"))+td('套装')+td('-')+td('-'));
@@ -46,7 +46,7 @@ function searchById(){
 
 function searchSet(setName){
 	var out='<table border="1">';
-	out+=tr(td('名称')+td('分类')+td('编号')+td('来源'),'style="font-weight:bold;"');
+	out+=tr(td('名称')+td('分类')+td('编号')+td('来源'));
 		for (var c in category){//sort by category
 			for (var i in clothes){
 				if(clothes[i].set==setName && clothes[i].type.type==category[c]){
@@ -107,7 +107,7 @@ function calctop_byall(){
 	else{var showNormal=0;}
 	var out='<table border="1" style="width:100%;table-layout:fixed;">';
 	var title=td('名称','class="calcTd"')+td('部位','class="calcTd"')+td('顶配','class="calcTd"');
-	out+=tr(title+td('竞技场','class="minWid"')+td('联盟','class="minWid"')+(showNormal?td('关卡','class="minWid"'):''),'style="font-weight:bold;"');
+	out+=tr(title+td('竞技场','class="minWid"')+td('联盟','class="minWid"')+(showNormal?td('关卡','class="minWid"'):''));
 	for (var i in cartList){
 		id=cartList[i];
 		calctop_byid(id);
