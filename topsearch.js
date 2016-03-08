@@ -158,15 +158,15 @@ function retTopTd(arr,crit,id){
 				case '关卡': var pos=3; break;
 			}
 			a='<span id="cell'+id+'_t'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_t"+pos+"')")+'</span>';
-			a+='<span id="cell'+id+'_t'+pos+'_f" style="display:none">'+ret+' '+ahref('收起',"hideTop('"+id+"_t"+pos+"')")+'</span>';
+			a+='<span id="cell'+id+'_t'+pos+'_f" style="display:none">'+ret+' '+nobr(ahref('收起',"hideTop('"+id+"_t"+pos+"')"))+'</span>';
 			return a;
 		}
 		return ret;
 	}else{
 		for (var s in inSec){
 			if(inSec[s][0].indexOf(crit)==0) {
-				if (crit=='竞技场') {ret+=nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2))+nobr('(第'+inSec[s][1]+')')+' ';}
-				else {ret+=nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2))+nobr('(第'+inSec[s][1]+')')+' ';}
+				if (crit=='竞技场') {ret+=nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2)+'(第'+inSec[s][1]+')')+' ';}
+				else {ret+=nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2)+'(第'+inSec[s][1]+')')+' ';}
 				cnt++;
 			}
 		}
