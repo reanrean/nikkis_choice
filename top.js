@@ -105,9 +105,8 @@ function calctop(){
 function calctop_byall(){
 	if ($('#showNormal').is(":checked")){var showNormal=1;}
 	else{var showNormal=0;}
-	var out='<table border="1" style="width:100%;table-layout:fixed;">';
-	var title=td('名称','class="calcTd"')+td('部位','class="calcTd"')+td('顶配','class="calcTd"');
-	out+=tr(title+td('竞技场','class="minWid"')+td('联盟','class="minWid"')+(showNormal?td('关卡','class="minWid"'):''));
+	var out='<table border="1" class="calcByAll">';
+	out+=tr(td('名称')+td('部位')+td('顶配')+td('竞技场')+td('联盟')+(showNormal?td('关卡'):''));
 	for (var i in cartList){
 		id=cartList[i];
 		calctop_byid(id);
@@ -158,7 +157,7 @@ function retTopTd(arr,crit,id){
 				case '关卡': var pos=3; break;
 			}
 			a='<span id="cell'+id+'_t'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_t"+pos+"')")+'</span>';
-			a+='<span id="cell'+id+'_t'+pos+'_f" style="display:none">'+ret+' '+nobr(ahref('收起',"hideTop('"+id+"_t"+pos+"')"))+'</span>';
+			a+='<span id="cell'+id+'_t'+pos+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_t"+pos+"')"))+'</span>';
 			return a;
 		}
 		return ret;
@@ -178,7 +177,7 @@ function retTopTd(arr,crit,id){
 				default: var pos=0;
 			}
 			a='<span id="cell'+id+'_s'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_s"+pos+"')")+'</span>';
-			a+='<span id="cell'+id+'_s'+pos+'_f" style="display:none">'+ret+' '+nobr(ahref('收起',"hideTop('"+id+"_s"+pos+"')"))+'</span>';
+			a+='<span id="cell'+id+'_s'+pos+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_s"+pos+"')"))+'</span>';
 			return a;
 		}
 		return ret;
