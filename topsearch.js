@@ -146,8 +146,8 @@ function retTopTd(arr,crit,id){
 	if(arr==inTop){
 		for (var s in inTop){
 			if(inTop[s].indexOf(crit)==0) {
-				if (crit=='竞技场') {ret+=nobr(inTop[s].substr(inTop[s].indexOf(': ')+2,2))+' ';}
-				else {ret+=nobr(inTop[s].substr(inTop[s].indexOf(': ')+2))+' ';}
+				if (crit=='竞技场') {ret+=(cnt>0?', ':'')+nobr(inTop[s].substr(inTop[s].indexOf(': ')+2,2));}
+				else {ret+=(cnt>0?', ':'')+nobr(inTop[s].substr(inTop[s].indexOf(': ')+2));}
 				cnt++;
 			}
 		}
@@ -165,8 +165,8 @@ function retTopTd(arr,crit,id){
 	}else{
 		for (var s in inSec){
 			if(inSec[s][0].indexOf(crit)==0) {
-				if (crit=='竞技场') {ret+=nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2)+'(第'+inSec[s][1]+')')+' ';}
-				else {ret+=nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2)+'(第'+inSec[s][1]+')')+' ';}
+				if (crit=='竞技场') {ret+=(cnt>0?', ':'')+nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2)+'(第'+inSec[s][1]+')');}
+				else {ret+=(cnt>0?', ':'')+nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2)+'(第'+inSec[s][1]+')');}
 				cnt++;
 			}
 		}
@@ -313,7 +313,7 @@ function chgcartMode(){
 function clear_top_id(){
 	top_id='';
 	$('#textBox').css({'background':''});
-	var searchById=$("#textBox").val();
+	var searchById=$.trim($("#textBox").val());
 	if(searchById.indexOf(': ')>-1) {
 		searchById=searchById.substr(searchById.indexOf(': ')+2);
 		$("#textBox").val(searchById);
