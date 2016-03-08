@@ -430,7 +430,7 @@ function addreqCnt(cloth,num){//add num in reqCnt[]
 }
 
 function searchById(){
-	var searchById=$("#searchById").val();
+	var searchById=$.trim($("#searchById").val());
 	var searchById_match=0;
 	if(searchById){
 		var levelDropInfo='查找：'+searchById;
