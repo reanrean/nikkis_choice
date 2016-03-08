@@ -1,5 +1,6 @@
 $(document).ready(function () {
 	enterKey();
+	gen_setList();
 	$("#showCnt").val(5);
 });
 
@@ -8,37 +9,64 @@ var showCnt;
 var inTop=[];
 var inSec=[];
 var cartList=[];
+var setList=[];
 
 function searchById(){
-	top_id='';
-	$('#textBox').css({'background':''});
-	var searchById=$("#textBox").val();
-	if(searchById.indexOf(': ')>-1) {
-		searchById=searchById.substr(searchById.indexOf(': ')+2);
-		$("#textBox").val(searchById);
-	}	
+	var searchById=clear_top_id();
 	var searchById_match=0;
 	if(searchById){
 		var out='<table border="1">';
-		out+=tr(td('名称')+td('分类')+td('编号')+td('来源')+td('套装'),'style="font-weight:bold;"');
+		out+=tr(td('名称')+td('分类')+td('编号')+td('来源'),'style="font-weight:bold;"');
+		for (var i in setList){
+			if (setList[i].indexOf(searchById)>-1){
+				out+=tr(td(ahref(setList[i],"searchSet('"+setList[i]+"')"))+td('套装')+td('-')+td('-'));
+				searchById_match=1;
+			}
+		}
 		for (var c in category){//sort by category
 			for (var i in clothes){
-				if( (clothes[i].name.indexOf(searchById)>-1||parseInt(clothes[i].id)==parseInt(searchById)||clothes[i].set.indexOf(searchById)>-1)
+				if( (clothes[i].name.indexOf(searchById)>-1||parseInt(clothes[i].id)==parseInt(searchById))
 					&& clothes[i].type.type==category[c]){
 					var line=td(ahref(clothes[i].name,'choose_topid('+i+')'));
 						line+=td(clothes[i].type.type);
 						line+=td(clothes[i].id);
-						line+=td(clothes[i].source);
-						line+=td(clothes[i].set);
+						var srcs=conv_source(clothes[i].source,'进',clothes[i].type.mainType);
+							srcs=conv_source(srcs,'定',clothes[i].type.mainType);
+						line+=td(srcs);
 					out+=tr(line);
 					searchById_match=1;
 				}
 			}
 		}
 	out+='</table>';
-	}
 	if(searchById_match) {$('#topsearch_info').html(out);}
 	else {$("#topsearch_info").html('没有找到相关资料');}
+	}
+}
+
+function searchSet(setName){
+	var out='<table border="1">';
+	out+=tr(td('名称')+td('分类')+td('编号')+td('来源'),'style="font-weight:bold;"');
+		for (var c in category){//sort by category
+			for (var i in clothes){
+				if(clothes[i].set==setName && clothes[i].type.type==category[c]){
+					if ($('#cartMode').is(":checked")){
+						addCart(i);
+					}else{
+						var line=td(ahref(clothes[i].name,'choose_topid('+i+')'));
+							line+=td(clothes[i].type.type);
+							line+=td(clothes[i].id);
+							var srcs=conv_source(clothes[i].source,'进',clothes[i].type.mainType);
+								srcs=conv_source(srcs,'定',clothes[i].type.mainType);
+							line+=td(srcs);
+						out+=tr(line);
+					}
+				}
+			}
+		}
+	out+='</table>';
+	if ($('#cartMode').is(":checked")) {refreshCart();}
+	else {$('#topsearch_info').html(out);}
 }
 
 function choose_topid(id){
@@ -77,8 +105,9 @@ function calctop(){
 function calctop_byall(){
 	if ($('#showNormal').is(":checked")){var showNormal=1;}
 	else{var showNormal=0;}
-	var out='<table border="1">';
-	out+=tr(td('名称')+td('部位')+td('竞技场顶配')+td('联盟顶配')+(showNormal?td('关卡顶配'):''),'style="font-weight:bold;"');
+	var out='<table border="1" style="width:100%;table-layout:fixed;">';
+	var title=td('名称','class="calcTd"')+td('部位','class="calcTd"')+td('顶配','class="calcTd"');
+	out+=tr(title+td('竞技场','class="minWid"')+td('联盟','class="minWid"')+(showNormal?td('关卡','class="minWid"'):''),'style="font-weight:bold;"');
 	for (var i in cartList){
 		id=cartList[i];
 		calctop_byid(id);
@@ -87,6 +116,7 @@ function calctop_byall(){
 		
 		var cell=td(clothes[id].name,'rowspan="'+rowspan+'"')+td(clothes[id].type.type,'rowspan="'+rowspan+'"');
 		if(inTop.length>0){
+			cell+=td('顶配');
 			cell+=td(retTopTd(inTop,'竞技场',id));
 			cell+=td(retTopTd(inTop,'联盟',id));
 			cell+=(showNormal?td(retTopTd(inTop,'关卡',id)):'');
@@ -94,13 +124,14 @@ function calctop_byall(){
 		}
 		if(inSec.length>0){
 			if(inTop.length>0){cell='';}
+			cell+=td('高配');
 			cell+=td(retTopTd(inSec,'竞技场',id));
 			cell+=td(retTopTd(inSec,'联盟',id));
 			cell+=(showNormal?td(retTopTd(inSec,'关卡',id)):'');
 			out+=tr(cell);
 		}
 		if(inTop.length==0 && inSec.length==0){
-			out+=tr(cell+td('')+td('')+(showNormal?td(''):''));
+			out+=tr(cell+td('')+td('')+td('')+(showNormal?td(''):''));
 		}
 	}
 	out+='</table>';
@@ -115,8 +146,8 @@ function retTopTd(arr,crit,id){
 	if(arr==inTop){
 		for (var s in inTop){
 			if(inTop[s].indexOf(crit)==0) {
-				if (crit=='竞技场') {ret+=inTop[s].substr(inTop[s].indexOf(': ')+2,2)+' ';}
-				else {ret+=inTop[s].substr(inTop[s].indexOf(': ')+2)+' ';}
+				if (crit=='竞技场') {ret+=nobr(inTop[s].substr(inTop[s].indexOf(': ')+2,2))+' ';}
+				else {ret+=nobr(inTop[s].substr(inTop[s].indexOf(': ')+2))+' ';}
 				cnt++;
 			}
 		}
@@ -128,14 +159,14 @@ function retTopTd(arr,crit,id){
 			}
 			a='<span id="cell'+id+'_t'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_t"+pos+"')")+'</span>';
 			a+='<span id="cell'+id+'_t'+pos+'_f" style="display:none">'+ret+' '+ahref('收起',"hideTop('"+id+"_t"+pos+"')")+'</span>';
-			return (ret?'顶配：':'')+a;
+			return a;
 		}
-		return (ret?'顶配：':'')+ret;
+		return ret;
 	}else{
 		for (var s in inSec){
 			if(inSec[s][0].indexOf(crit)==0) {
-				if (crit=='竞技场') {ret+=inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2)+'(第'+inSec[s][1]+') ';}
-				else {ret+=inSec[s][0].substr(inSec[s][0].indexOf(': ')+2)+'(第'+inSec[s][1]+') ';}
+				if (crit=='竞技场') {ret+=nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2))+nobr('(第'+inSec[s][1]+')')+' ';}
+				else {ret+=nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2))+nobr('(第'+inSec[s][1]+')')+' ';}
 				cnt++;
 			}
 		}
@@ -147,10 +178,10 @@ function retTopTd(arr,crit,id){
 				default: var pos=0;
 			}
 			a='<span id="cell'+id+'_s'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_s"+pos+"')")+'</span>';
-			a+='<span id="cell'+id+'_s'+pos+'_f" style="display:none">'+ret+' '+ahref('收起',"hideTop('"+id+"_s"+pos+"')")+'</span>';
-			return (ret?'高配：':'')+a;
+			a+='<span id="cell'+id+'_s'+pos+'_f" style="display:none">'+ret+' '+nobr(ahref('收起',"hideTop('"+id+"_s"+pos+"')"))+'</span>';
+			return a;
 		}
-		return (ret?'高配：':'')+ret;
+		return ret;
 	}
 }
 
@@ -230,7 +261,7 @@ function calctop_bytheme(id,them){
 	onChangeCriteria();
 	
 	var resultList = getTopCloByCate(criteria, showCnt, clothes[id].type.type, id);
-	if(jQuery.inArray(clothes[id], resultList)>-1){
+	if($.inArray(clothes[id], resultList)>-1){
 		if(clothes[id]==resultList[0]) {
 			inTop.push(them);
 		}else{
@@ -273,9 +304,21 @@ function chgcartMode(){
 	if ($('#cartMode').is(":checked")){
 		$('#cartContent').show();
 		refreshCart();
+		clear_top_id();
 	}else{
 		$('#cartContent').hide();
 	}
+}
+
+function clear_top_id(){
+	top_id='';
+	$('#textBox').css({'background':''});
+	var searchById=$("#textBox").val();
+	if(searchById.indexOf(': ')>-1) {
+		searchById=searchById.substr(searchById.indexOf(': ')+2);
+		$("#textBox").val(searchById);
+	}
+	return searchById;
 }
 
 function clearCart(){
@@ -286,12 +329,12 @@ function clearCart(){
 function refreshCart(){
 	$('#cart').html('');
 	for (var i in cartList){
-		$('#cart').prepend(clothes[cartList[i]].name+ahref('[×]','delCart('+cartList[i]+')')+'&ensp;');
+		$('#cart').append('<button class="btn btn-xs btn-default">'+clothes[cartList[i]].name+ahref('[×]','delCart('+cartList[i]+')')+'</button>&ensp;');
 	}
 }
 
 function addCart(id){
-	if(jQuery.inArray(id,cartList)<0){
+	if($.inArray(id,cartList)<0){
 		cartList.push(id);
 		refreshCart();
 	}
@@ -304,6 +347,39 @@ function delCart(id){
 		if(newArr[i]!=id) {cartList.push(newArr[i]);}
 	}
 	refreshCart();
+}
+
+function gen_setList(){
+	setList=[];
+	for (var i in clothes){
+		if(clothes[i].set&&$.inArray(clothes[i].set,setList)<0){
+			setList.push(clothes[i].set);
+		}
+	}
+}
+
+function nobr(text){
+	return '<span class="nobr">'+text+'</span>';
+}
+
+//below is modified from material.js
+
+function conv_source(src,subs,mainType){
+	if(src.indexOf(subs)>-1){
+		var pos1=src.indexOf(subs)+1;
+		var pos2=src.indexOf('/',pos1); 
+		if(pos2<0) {pos2=src.length;}
+		var str1=src.substr(0,pos1);
+		var str2=src.substr(pos1,pos2-pos1);
+		var str3=src.substr(pos2);
+		for (var p in clothes){
+			if(clothes[p].type.mainType==mainType&&clothes[p].id==str2) 
+			{str2='-'+clothes[p].name;}
+		}
+		return str1+str2+str3;
+	}else{
+		return src;
+	}
 }
 
 function td(text,attr){
@@ -328,6 +404,7 @@ function enterKey() {
 }
 
 //below is modified from nikki.js
+
 function onChangeCriteria() {
 	criteria = {};
 	for (var i in FEATURES) {
@@ -354,6 +431,7 @@ function onChangeCriteria() {
 }
 
 //below is duplicated from nikki.js
+
 var criteria = {};
 
 function accMul(arg1, arg2) {
