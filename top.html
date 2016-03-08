@@ -9,42 +9,18 @@
 	<title>Miracle Nikki - 顶配查询器</title>
 	<link rel="stylesheet" href="bootstrap/bootstrap.min.css">
 	<style>
-		td {
-			padding:5px;
-		}
-		tr:first-child { 
-			font-weight: bold;
-		}
-		body {
-			margin: 1em;
-			font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;
-		}
-		fieldset {
-			width:100%;
-			max-width:270px;
-			padding: .35em .625em .75em;
-			border: 1px solid silver;
-		}
-		legend {
-			border: 0;
-			width: auto;
-			margin-bottom:0;
-			font-size: 14px;
-		}
-		.unwrap {
-			word-break: keep-all;
-			color: #ff7890;
-		}
-		.nobr{
-			white-space: nowrap;
-		}
-		td.calcTd {
-			width:10%;
-		}
-		@media only screen and (max-width: 350px){
-			td.calcTd {width:16px;}
-			td.minWid {width:78px;}
-			td {padding:1px;}
+		.unwrap {word-break:keep-all; color:#ff7890;}
+		.nobr {white-space:nowrap;}
+		body {margin:1em; font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;}
+		fieldset {width:100%; max-width:270px; padding:.35em .625em .75em; border:1px solid silver;}
+		legend {border:0; width:auto; margin-bottom:0; font-size:14px;}
+		td {padding:5px;}
+		tr:first-child {font-weight:bold;}
+		table.calcByAll {width:100%; table-layout:fixed; min-width:300px;}
+		table.calcByAll tbody tr td:nth-child(-n+3) {width:10%;}
+		@media only screen and (max-width: 360px){
+			table.calcByAll  tr td {padding:1px;}
+			table.calcByAll  tr td:nth-child(-n+3) {width:16px;}
 		}
 	</style>
 	<script type='text/javascript' charset="UTF-8" src='jquery.js'></script>
