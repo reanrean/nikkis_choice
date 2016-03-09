@@ -111,7 +111,7 @@ function calctop_byall(){
 	if($('#limitMode').is(":checked")){var limitMode=1;}
 	else{var limitMode=0;}
 	var out='<table border="1" class="calcByAll">';
-	out+=tr(td('名称')+td('部位')+td('顶配')+td('竞技场')+td('联盟'+(limitMode?'(极限)':''))+(showNormal?td('关卡'):''));
+	out+=tr(td('名称')+td('部位')+td('顶配')+td('竞技场')+td('联盟'+(limitMode?'(极限)':''))+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
 	for (var i in cartList){
 		id=cartList[i];
 		calctop_byid(id);
