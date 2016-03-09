@@ -229,6 +229,8 @@ function chgScopeSub2(j,k){
 			}
 		}
 		levelDropNote+=table(1);
+	}else{
+		if(k.indexOf('请选择')<0) {var levelDropNote='没有找到相关资料';}
 	}
 	$("#levelDropInfo").html(levelDropInfo? levelDropInfo:'');
 	$("#levelDropNote").html(levelDropNote? levelDropNote:'');
