@@ -1,4 +1,5 @@
 $(document).ready(function () {
+	show_limitNote();
 	enterKey();
 	gen_setList();
 	$("#showCnt").val(5);
@@ -7,6 +8,7 @@ $(document).ready(function () {
 var top_id='';
 var showCnt;
 var maxHide=5;//theme num exceeding this value will be hidden
+var theme_name;
 var inTop=[];
 var inSec=[];
 var cartList=[];
@@ -106,8 +108,10 @@ function calctop(){
 function calctop_byall(){
 	if ($('#showNormal').is(":checked")){var showNormal=1;}
 	else{var showNormal=0;}
+	if($('#limitMode').is(":checked")){var limitMode=1;}
+	else{var limitMode=0;}
 	var out='<table border="1" class="calcByAll">';
-	out+=tr(td('名称')+td('部位')+td('顶配')+td('竞技场')+td('联盟')+(showNormal?td('关卡'):''));
+	out+=tr(td('名称')+td('部位')+td('顶配')+td('竞技场')+td('联盟'+(limitMode?'(极限)':''))+(showNormal?td('关卡'):''));
 	for (var i in cartList){
 		id=cartList[i];
 		calctop_byid(id);
@@ -198,7 +202,7 @@ function calctop_byid(id){
 	inTop=[];inSec=[];
 	
 	for (var b in competitionsRaw){
-		var theme_name='竞技场: '+b;
+		theme_name='竞技场: '+b;
 		if (allThemes[theme_name]) {
 			setFilters(allThemes[theme_name]);
 			calctop_bytheme(id,theme_name);
@@ -206,7 +210,7 @@ function calctop_byid(id){
 	}
 	
 	for (var c in tasksRaw){
-		var theme_name=c;
+		theme_name=c;
 		if (allThemes[theme_name]) {
 			setFilters(allThemes[theme_name]);
 			calctop_bytheme(id,theme_name);
@@ -214,7 +218,7 @@ function calctop_byid(id){
 	}
 	if ($('#showNormal').is(":checked")){
 		for (var d in levelsRaw){
-			var theme_name='关卡: '+d;
+			theme_name='关卡: '+d;
 			if (allThemes[theme_name]) {
 				setFilters(allThemes[theme_name]);
 				calctop_bytheme(id,theme_name);
@@ -297,6 +301,12 @@ function getTopCloByCate(filters,rescnt,type,id){
 		}
 	}
 	return result;
+}
+
+function show_limitNote(){
+	var tooltip='即微笑+飞吻以及飞吻分別打在最高分的两个属性时的极限搭配权重。此模式使用全衣柜下的极限权重，请注意收集度不同极限权重也可能会不同，并非一定适合所有玩家。';
+	var output='<a href="" onclick="return false;" tooltip="'+tooltip+'">说明</a>';
+	$('#limitNote').html(output);
 }
 
 function chgcartMode(){
@@ -411,6 +421,15 @@ function onChangeCriteria() {
 		var weight = parseFloat($('#' + f + "Weight").val());
 		if (!weight) {
 			weight = 1;
+		}
+		//rean mod
+		if($('#limitMode').is(":checked")){
+			for (var level in tasksAdd){
+				if (theme_name==tasksAdd[level][0]){
+					if (f==tasksAdd[level][1]) {weight=weight*1.27;}
+					if (f==tasksAdd[level][2]) {weight=weight*1.778;}
+				}
+			}
 		}
 		/*if (uiFilter["highscore"]) {
 			var highscore1 = $('#' + f + "1d778.active").length ? 1.778 : 1;
