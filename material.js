@@ -91,7 +91,7 @@ function chooseSet(){
 		}
 	}
 	setlist=getDistinct(setlist);
-	setlist.sort();
+	//setlist.sort();
 	setlist.unshift('请选择');
 	var chooseSub='&ensp;-&ensp;';
 	chooseSub+=selectBox('searchSetMain','searchSetMain()',setlist,setlist);
