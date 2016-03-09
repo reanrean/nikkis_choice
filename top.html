@@ -23,18 +23,25 @@
 			table.calcByAll tr td {padding:1px;}
 			table.calcByAll tr td:nth-child(-n+3) {width:16px;}
 		}
+		[tooltip]:hover:after {
+			margin-top:25px; margin-left:-100px; padding: 5px; width: 200px; 
+			position: absolute; content: attr(tooltip); display: inline-block; z-index: 255; 
+			word-break:break-all; color: black; background-color: #EAF2FA;
+		}
 	</style>
 	<script type='text/javascript' charset="UTF-8" src='jquery.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='wardrobe.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='scoring.js'></script>
-	<script type='text/javascript' charset="UTF-8" src='levels.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='model.js'></script>
+	<script type='text/javascript' charset="UTF-8" src='levels.js'></script>
+	<script type='text/javascript' charset="UTF-8" src='levels-hs.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='top.js'></script>
 </head>
 <body>
 	<p>
 		<b>奇迹暖暖顶配查询器</b><br/>
-		&emsp;分数计算引用自<a href="http://seal100x.github.io/nikkiup2u3/">奇迹暖暖配装器 by 黑的升华</a><br/>
+		&emsp;分数计算引用自 <a href="http://seal100x.github.io/nikkiup2u3/">配装器 by 黑的升华</a><br/>
+		&emsp;极限计算引用自 <a href="http://ivangift.github.io/nikkiup2u3/">配装器 by ip君</a><br/>
 		&emsp;查询制作 by Rean<br/>
 	</p>
 	<hr>
@@ -48,6 +55,7 @@
 		<legend>选项（重新计算生效）</legend>
 		计算<input type="text" id="showCnt" size="1" style="line-height:100%;"/>件高配信息<br>
 		<input type="checkbox" id="showNormal"/>计算主线关卡<br>
+		<input type="checkbox" id="limitMode" />极限权重模式 <span id="limitNote">说明</span><br>
 		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>多件选取模式
 	</fieldset>
 	<span id="cartContent" style="display:none">
