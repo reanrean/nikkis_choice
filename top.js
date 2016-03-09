@@ -6,6 +6,7 @@ $(document).ready(function () {
 
 var top_id='';
 var showCnt;
+var maxHide=5;//theme num exceeding this value will be hidden
 var inTop=[];
 var inSec=[];
 var cartList=[];
@@ -123,10 +124,10 @@ function calctop_byall(){
 		}
 		if(inSec.length>0){
 			if(inTop.length>0){cell='';}
-			cell+=td('高配');
-			cell+=td(retTopTd(inSec,'竞技场',id));
-			cell+=td(retTopTd(inSec,'联盟',id));
-			cell+=(showNormal?td(retTopTd(inSec,'关卡',id)):'');
+			cell+=td('高配','class="inSec"');
+			cell+=td(retTopTd(inSec,'竞技场',id),'class="inSec"');
+			cell+=td(retTopTd(inSec,'联盟',id),'class="inSec"');
+			cell+=(showNormal?td(retTopTd(inSec,'关卡',id),'class="inSec"'):'');
 			out+=tr(cell);
 		}
 		if(inTop.length==0 && inSec.length==0){
@@ -140,7 +141,6 @@ function calctop_byall(){
 function retTopTd(arr,crit,id){
 	var ret='';
 	var cnt=0;
-	var maxHide=7;//num exceeding this value will be hidden by default
 	
 	if(arr==inTop){
 		for (var s in inTop){
