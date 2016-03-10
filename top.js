@@ -203,6 +203,8 @@ function calctop_byall(){
 function retTopTd(arr,crit,id){
 	var ret='';
 	var cnt=0;
+	if($('#limitMode').is(":checked")){var limitMode=1;}
+	else{var limitMode=0;}
 	
 	if(arr==inTop){
 		for (var s in inTop){
@@ -218,8 +220,8 @@ function retTopTd(arr,crit,id){
 				case '联盟': var pos=2; break;
 				case '关卡': var pos=3; break;
 			}
-			a='<span id="cell'+id+'_t'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_t"+pos+"')")+'</span>';
-			a+='<span id="cell'+id+'_t'+pos+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_t"+pos+"')"))+'</span>';
+			a='<span id="cell'+id+'_t'+(limitMode?"l":"n")+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_t"+(limitMode?"l":"n")+pos+"')")+'</span>';
+			a+='<span id="cell'+id+'_t'+(limitMode?"l":"n")+pos+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_t"+(limitMode?"l":"n")+pos+"')"))+'</span>';
 			return a;
 		}
 		return ret;
@@ -238,8 +240,8 @@ function retTopTd(arr,crit,id){
 				case '关卡': var pos=3; break;
 				default: var pos=0;
 			}
-			a='<span id="cell'+id+'_s'+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_s"+pos+"')")+'</span>';
-			a+='<span id="cell'+id+'_s'+pos+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_s"+pos+"')"))+'</span>';
+			a='<span id="cell'+id+'_s'+(limitMode?"l":"n")+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_s"+(limitMode?"l":"n")+pos+"')")+'</span>';
+			a+='<span id="cell'+id+'_s'+(limitMode?"l":"n")+pos+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_s"+(limitMode?"l":"n")+pos+"')"))+'</span>';
 			return a;
 		}
 		return ret;
