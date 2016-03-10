@@ -20,10 +20,11 @@ function show(){
 }
 
 function go(){
-	var menu='<table width=50% style="table-layout: fixed">';
+	var menu='<table width=60% style="table-layout: fixed">';
 	var line=td(ahref('<b>Compare</b>','go_comp()'));
 		line+=td(ahref('<b>Add</b>','go_add()'));
 		line+=td(ahref('<b>CheckSource</b>','go_src()'));
+		line+=td('<a href="maint_top/hs-ip.html" target="_blank"><b>LevelWeight</b></a>');
 	menu+=tr(line);
 	$("#menu").html(menu);
 	$("#info").html('');
