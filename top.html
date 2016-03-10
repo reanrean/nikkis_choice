@@ -33,6 +33,7 @@
 	<script type='text/javascript' charset="UTF-8" src='wardrobe.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='scoring.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='model.js'></script>
+	<script type='text/javascript' charset="UTF-8" src='pattern.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='levels.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='levels-hs.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='top.js'></script>
@@ -41,7 +42,7 @@
 	<p>
 		<b>奇迹暖暖顶配查询器</b><br/>
 		&emsp;分数计算引用自 <a href="http://seal100x.github.io/nikkiup2u3/">配装器 by 黑的升华</a><br/>
-		&emsp;极限计算引用自 <a href="http://ivangift.github.io/nikkiup2u3/">配装器 by ip君</a><br/>
+		&emsp;极限权重引用自 <a href="http://ivangift.github.io/nikkiup2u3/">配装器 by ip君</a><br/>
 		&emsp;查询制作 by Rean<br/>
 	</p>
 	<hr>
@@ -56,11 +57,13 @@
 		计算<input type="text" id="showCnt" size="1" style="line-height:100%;"/>件高配信息<br>
 		<input type="checkbox" id="showNormal"/>计算主线关卡<br>
 		<input type="checkbox" id="limitMode" />极限权重模式 <span id="limitNote">说明</span><br>
-		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>多件选取模式
+		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>选取多件<span class="cartContent">（关卡大于<input type="text" id="maxHide" size="1" style="line-height:100%;"/>时折叠）</span>
 	</fieldset>
-	<span id="cartContent" style="display:none">
+	<span class="cartContent">
 	<hr>
-	<p><span id="cart"></span><button id="clearCart" class="btn btn-xs btn-default" onclick="clearCart()">清空</button></p>
+	<p>
+	<span id="cart"></span><button id="clearCart" class="btn btn-xs btn-default" onclick="addCart_All()">添加整个列表</button> <button id="clearCart" class="btn btn-xs btn-default" onclick="clearCart()">清空</button>
+	</p>
 	</span>
 	<hr>
 	<p id='topsearch_info'></p>
