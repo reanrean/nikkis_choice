@@ -178,10 +178,10 @@ function calctop_byall(){
 		
 		var cell=td(clothes[id].name,'rowspan="'+rowspan+'"')+td(clothes[id].type.type,'rowspan="'+rowspan+'"');
 		if(inTop.length>0){
-			cell+=td('顶配');
-			cell+=td(retTopTd(inTop,'竞技场',id));
-			cell+=td(retTopTd(inTop,'联盟',id));
-			cell+=(showNormal?td(retTopTd(inTop,'关卡',id)):'');
+			cell+=td('顶配','class="inTop"');
+			cell+=td(retTopTd(inTop,'竞技场',id),'class="inTop"');
+			cell+=td(retTopTd(inTop,'联盟',id),'class="inTop"');
+			cell+=(showNormal?td(retTopTd(inTop,'关卡',id),'class="inTop"'):'');
 			out+=tr(cell);
 		}
 		if(inSec.length>0){
