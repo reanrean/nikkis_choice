@@ -11,7 +11,8 @@
 	<style>
 		.unwrap {word-break:keep-all; color:#ff7890;}
 		.nobr {white-space:nowrap;}
-		.inSec {color:#939393;}
+		.inTop {color:red;}
+		.inSec {color:#939393; color:black;}
 		body {margin:1em; font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;}
 		fieldset {width:100%; max-width:270px; padding:.35em .625em .75em; border:1px solid silver;}
 		legend {border:0; width:auto; margin-bottom:0; font-size:14px;}
@@ -53,10 +54,10 @@
 	</p>
 	<fieldset>
 		<legend>选项（重新计算生效）</legend>
-		计算<input type="text" id="showCnt" size="1" style="line-height:100%;"/>件高配信息<br>
+		计算<input type="text" id="showCnt" size="2" style="line-height:100%;"/>件高配信息<br>
 		<input type="checkbox" id="showNormal"/>计算主线关卡<br>
 		<input type="checkbox" id="limitMode" />极限权重模式 <span id="limitNote">说明</span><br>
-		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>选取多件<span class="cartContent">（关卡大于<input type="text" id="maxHide" size="1" style="line-height:100%;"/>时折叠）</span>
+		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>选取多件<span class="cartContent">（结果大于<input type="text" id="maxHide" size="2" style="line-height:100%;"/>时折叠）</span>
 	</fieldset>
 	<span class="cartContent">
 	<hr>
