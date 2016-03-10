@@ -1,14 +1,15 @@
 $(document).ready(function () {
 	calcDependencies();
-	show_scope();
 	get_convertlist();
+	get_maxc();
+	show_scope();
 });
 
 var highlight=['星之海','韶颜倾城','格莱斯'];
 var highlight_style=['xzh','syqc','gls'];
 var src=['公','少','店·金币,店·钻石,店','迷,幻,飘渺,昼夜,云禅','兑',''];
 var src_desc=['公主级掉落','少女级掉落','商店购买','谜之屋','兑换','其它'];
-var maxc=12;//max chapter
+var maxc=1;
 var reqCnt=[];
 var parentInd=[];
 var extraInd=[];
@@ -595,6 +596,20 @@ function get_convertlist(){
 		convertlist.push(convert[i][2]);
 	}
 	convertlist=getDistinct(convertlist);
+}
+
+function get_maxc(){
+	for (var i in clothes){
+		if(clothes[i].source.indexOf('公')>0||clothes[i].source.indexOf('少')>0){
+			var srcs=clothes[i].source.split('/');
+			for (var s in srcs){
+				if ((srcs[s].indexOf('公')>0||srcs[s].indexOf('少')>0)&&srcs[s].indexOf('-')>0){
+					var chapter=srcs[s].substr(0,srcs[s].indexOf('-'));
+					if (parseInt(chapter)>maxc){maxc=parseInt(chapter);}
+				}
+			}
+		}
+	}
 }
 
 function tab(text,attr){
