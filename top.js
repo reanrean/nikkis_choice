@@ -81,10 +81,12 @@ function searchSetSub(setName){
 }
 
 function searchOrig(id){
-	for (var p in pattern) {
-		if (clothesSet[pattern[p][0]][pattern[p][1]]==clothes[id]&&pattern[p][5]!='设'){
-			for (var i in clothes) {
-				if (clothesSet[pattern[p][2]][pattern[p][3]]==clothes[i]) {return i;}
+	var srcs=clothes[id].source.split('/');
+	for (var s in srcs){
+		if (srcs[s].indexOf('定')==0||srcs[s].indexOf('进')==0){
+			var orig_num=srcs[s].substr(1);
+			for (var i in clothes){
+				if(clothes[i].type.mainType==clothes[id].type.mainType&&clothes[i].id==orig_num){return i;}
 			}
 		}
 	}
@@ -95,10 +97,15 @@ function searchDeriv(idList){
 	var retList=[];
 	for (var id in idList){
 		retList.push(idList[id]);
-		for (var p in pattern) {
-			if (clothesSet[pattern[p][2]][pattern[p][3]]==clothes[idList[id]]&&pattern[p][5]!='设'){
-				for (var i in clothes) {
-					if (clothesSet[pattern[p][0]][pattern[p][1]]==clothes[i]&&$.inArray(i, retList)<0) {retList.push(i);}
+		var orig_num=clothes[idList[id]].id;
+		for (var i in clothes){
+			if (clothes[i].source.indexOf(orig_num)>0&&clothes[i].type.mainType==clothes[idList[id]].type.mainType){
+				var srcs=clothes[i].source.split('/');
+				for (var s in srcs){
+					if (srcs[s]=='定'+orig_num||srcs[s]=='进'+orig_num){
+						retList.push(i);
+						break;
+					}
 				}
 			}
 		}
