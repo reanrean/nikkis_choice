@@ -1,4 +1,4 @@
-//note: copy full wardrobe from rean, replace '上衣' into '上衣'
+//note: copy full wardrobe from rean, replace '上裝' into '上衣'
 
 // Clothes: name, type, id, stars, gorgeous, simple, elegant, active, mature, cute, sexy, pure, cool, warm, extra, source, set
 // credits to jillhx@tieba
