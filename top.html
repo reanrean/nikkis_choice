@@ -13,6 +13,8 @@
 		.nobr {white-space:nowrap;}
 		.inTop {color:red;}
 		.inSec {color:#939393; color:black;}
+		a.aTooltip {color:inherit;}
+		a.aTooltip:hover {text-decoration:none;}
 		body {margin:1em; font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;}
 		fieldset {width:100%; max-width:270px; padding:.35em .625em .75em; border:1px solid silver;}
 		legend {border:0; width:auto; margin-bottom:0; font-size:14px;}
@@ -24,10 +26,13 @@
 			table.calcByAll tr td {padding:1px;}
 			table.calcByAll tr td:nth-child(-n+3) {width:16px;}
 		}
-		[tooltip]:hover:after {
-			margin-top:25px; margin-left:-100px; padding: 5px; width: 200px; 
+		[tooltip]:hover:before {
+			margin-top:25px; margin-left:-80px; padding: 5px; 
 			position: absolute; content: attr(tooltip); display: inline-block; z-index: 255; 
-			word-break:break-all; color: black; background-color: #EAF2FA;
+			white-space:pre; color: black; background-color: #EAF2FA;
+		}
+		.normTip [tooltip]:hover:before {
+			margin-left:0px; width: 170px; word-break:break-all; white-space:pre-wrap;
 		}
 	</style>
 	<script type='text/javascript' charset="UTF-8" src='jquery.js'></script>
@@ -56,7 +61,7 @@
 		<legend>选项（重新计算生效）</legend>
 		计算<input type="text" id="showCnt" size="2" style="line-height:100%;"/>件高配信息<br>
 		<input type="checkbox" id="showNormal"/>计算主线关卡<br>
-		<input type="checkbox" id="limitMode" />极限权重模式 <span id="limitNote">说明</span><br>
+		<input type="checkbox" id="limitMode" />极限权重模式 <span id="limitNote" class="normTip">说明</span><br>
 		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>选取多件<span class="cartContent">（结果大于<input type="text" id="maxHide" size="2" style="line-height:100%;"/>时折叠）</span>
 	</fieldset>
 	<span class="cartContent">
