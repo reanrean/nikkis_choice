@@ -208,9 +208,9 @@ function retTopTd(arr,crit,id){
 	
 	if(arr==inTop){
 		for (var s in inTop){
-			if(inTop[s].indexOf(crit)==0) {
-				if (crit=='竞技场') {ret+=(cnt>0?', ':'')+nobr(inTop[s].substr(inTop[s].indexOf(': ')+2,2));}
-				else {ret+=(cnt>0?', ':'')+nobr(inTop[s].substr(inTop[s].indexOf(': ')+2));}
+			if(inTop[s][0].indexOf(crit)==0) {
+				if (crit=='竞技场') {ret+=(cnt>0?', ':'')+addTooltip(nobr(inTop[s][0].substr(inTop[s][0].indexOf(': ')+2,2)),inTop[s][2]);}
+				else {ret+=(cnt>0?', ':'')+addTooltip(nobr(inTop[s][0].substr(inTop[s][0].indexOf(': ')+2)),inTop[s][2]);}
 				cnt++;
 			}
 		}
@@ -228,8 +228,8 @@ function retTopTd(arr,crit,id){
 	}else{
 		for (var s in inSec){
 			if(inSec[s][0].indexOf(crit)==0) {
-				if (crit=='竞技场') {ret+=(cnt>0?', ':'')+nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2)+'(第'+inSec[s][1]+')');}
-				else {ret+=(cnt>0?', ':'')+nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2)+'(第'+inSec[s][1]+')');}
+				if (crit=='竞技场') {ret+=(cnt>0?', ':'')+addTooltip(nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2)+'(第'+inSec[s][1]+')'),inSec[s][2]);}
+				else {ret+=(cnt>0?', ':'')+addTooltip(nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2)+'(第'+inSec[s][1]+')'),inSec[s][2]);}
 				cnt++;
 			}
 		}
@@ -302,35 +302,45 @@ function output_byid(id){ //need inTop,inSec
 		if(clothes[id].cool[1]) cell+='&ensp;保暖'+clothes[id].cool[1];
 		if(clothes[id].tags[0]) cell+='&ensp;'+clothes[id].tags.join(',');
 	output+=cell+'<br><br>';
+	output+='<span class="normTip">'
 	if(inTop.length>0){
 		output+='顶配：<br>';
 		for (var s in inTop){
-			output+='&emsp;'+inTop[s]+'<br>';
+			if(inTop[s][0].indexOf('关卡')==0) {inTop[s][0]='主线'+inTop[s][0];}
+			output+='&emsp;'+addTooltip(inTop[s][0],inTop[s][2])+'<br>';
 		}
 	}
 	if(inSec.length>0){
 		output+='高配：<br>';
 		for (var u in inSec){
-			output+='&emsp;'+inSec[u][0]+'(第'+inSec[u][1]+')<br>';
+			if(inSec[u][0].indexOf('关卡')==0) {inSec[u][0]='主线'+inSec[u][0];}
+			output+='&emsp;'+addTooltip(inSec[u][0]+'(第'+inSec[u][1]+')',inSec[u][2])+'<br>';
 		}
 	}
 	if(inTop.length==0 && inSec.length==0){
 		output+='沒有顶配/高配信息';
 	}
+	output+='</span>';
 	$('#topsearch_info').html(output);
 }
 
 function calctop_bytheme(id,them){
 	onChangeCriteria();
-	
 	var resultList = getTopCloByCate(criteria, $("#showCnt").val(), clothes[id].type.type, id);
+	var tmp='';
+	for (var r in resultList){
+		if (resultList[r]) {
+			if (r>0) {tmp+='\n';}
+			tmp+=resultList[r].sumScore+resultList[r].name;
+		}
+	}
 	if($.inArray(clothes[id], resultList)>-1){
 		if(clothes[id]==resultList[0]) {
-			inTop.push(them);
+			inTop.push([them,1,tmp]);
 		}else{
 			for (r=1;r<resultList.length;r++){
 				if(clothes[id]==resultList[r]){
-					inSec.push([them,r+1]);
+					inSec.push([them,r+1,tmp]);
 					break;
 				}
 			}
@@ -403,6 +413,7 @@ function addCart_All(){
 
 function refreshCart(){
 	$('#cart').html('');
+	cartList=getDistinct(cartList);
 	for (var i in cartList){
 		$('#cart').append('<button class="btn btn-xs btn-default">'+clothes[cartList[i]].name+ahref('[×]','delCart('+cartList[i]+')')+'</button>&ensp;');
 	}
@@ -431,10 +442,15 @@ function gen_setList(){
 			setList.push(clothes[i].set);
 		}
 	}
+	setList=getDistinct(setList);
 }
 
 function nobr(text){
 	return '<span class="nobr">'+text+'</span>';
+}
+
+function addTooltip(text,tooltip){
+	return '<a href="" onclick="return false;" tooltip="'+tooltip+'" class="aTooltip">'+text+'</a>';
 }
 
 function getDistinct(arr){//don't know why the concise method doesn't work...
