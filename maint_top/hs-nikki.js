@@ -1,5 +1,3 @@
-var output_row=[];
-
 function setBoost(criteria, boostType) {
   global.boostType = boostType;
   $(".boost").text("");
@@ -9,8 +7,7 @@ function setBoost(criteria, boostType) {
       criteria.boost2 = global.extreme.boost2;
       $("#" + criteria.boost1 + "Boost").text("<-暖暖的微笑");
       $("#" + criteria.boost2 + "Boost").text("<-迷人飞吻+暖暖的微笑");
-	  output_row.push([$("#theme").val(),criteria.boost1,criteria.boost2]);
-	  $('#output_row').append("['"+$("#theme").val()+"','"+criteria.boost1+"','"+criteria.boost2+"'],"+"<br>");
+	  $('#output_row').append("['"+$("#theme").val().replace('g','')+"','"+criteria.boost1+"','"+criteria.boost2+"'],"+"<br>");
       shoppingCart.clear();
       if (global.extreme.shoppingCart) {
         for (var i in global.extreme.shoppingCart.cart) {
@@ -35,20 +32,3 @@ function setBoost(criteria, boostType) {
       criteria.boost2 = null;
   }
 }
-
-/*
-function conv_wardrobe(){
-var cnt=0;
-	for(var i=0;i<wardrobe.length;i++){//assign values into str[] from wardrobe
-			if(wardrobe[i]){
-				if(wardrobe[i][1]=='上装'){wardrobe[i][1]='上衣';cnt++;}
-			}
-		}
-	alert(cnt);
-	for(var j=0;j<category.length;j++){
-		if(category[j]){
-				if(category[j]=='上装'){category[j]='上衣';alert('done');}
-			}
-	}
-}
-*/
