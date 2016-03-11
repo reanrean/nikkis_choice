@@ -161,6 +161,7 @@ function calctop(){
 			output_byid(top_id);
 		}
 	}
+	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+30)+"px");
 }
 
 function calctop_byall(){
