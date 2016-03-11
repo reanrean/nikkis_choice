@@ -171,30 +171,33 @@ function calctop_byall(){
 	else{var limitMode=0;}
 	var out='<table border="1" class="calcByAll">';
 	out+=tr(td('名称')+td('部位')+td('顶配')+td('竞技场')+td('联盟'+(limitMode?'(极限)':''))+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
-	for (var i in cartList){
-		id=cartList[i];
-		calctop_byid(id);
-		var rowspan=1;
-		if(inTop.length>0 && inSec.length>0) {rowspan++;}
-		
-		var cell=td(clothes[id].name,'rowspan="'+rowspan+'" class="inName"')+td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName"');
-		if(inTop.length>0){
-			cell+=td('顶配','class="inTop"');
-			cell+=td(retTopTd(inTop,'竞技场',id),'class="inTop"');
-			cell+=td(retTopTd(inTop,'联盟',id),'class="inTop"');
-			cell+=(showNormal?td(retTopTd(inTop,'关卡',id),'class="inTop"'):'');
-			out+=tr(cell);
-		}
-		if(inSec.length>0){
-			if(inTop.length>0){cell='';}
-			cell+=td('高配','class="inSec"');
-			cell+=td(retTopTd(inSec,'竞技场',id),'class="inSec"');
-			cell+=td(retTopTd(inSec,'联盟',id),'class="inSec"');
-			cell+=(showNormal?td(retTopTd(inSec,'关卡',id),'class="inSec"'):'');
-			out+=tr(cell);
-		}
-		if(inTop.length==0 && inSec.length==0){
-			out+=tr(cell+td('','class="inNone"')+td('','class="inNone"')+td('','class="inNone"')+(showNormal?td('','class="inNone"'):''));
+	for (var c in category){//sort by category
+		for (var i in cartList){
+			id=cartList[i];
+			if(clothes[id].type.type!=category[c]){continue;}
+			calctop_byid(id);
+			var rowspan=1;
+			if(inTop.length>0 && inSec.length>0) {rowspan++;}
+			
+			var cell=td(clothes[id].name,'rowspan="'+rowspan+'" class="inName"')+td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName"');
+			if(inTop.length>0){
+				cell+=td('顶配','class="inTop"');
+				cell+=td(retTopTd(inTop,'竞技场',id),'class="inTop"');
+				cell+=td(retTopTd(inTop,'联盟',id),'class="inTop"');
+				cell+=(showNormal?td(retTopTd(inTop,'关卡',id),'class="inTop"'):'');
+				out+=tr(cell);
+			}
+			if(inSec.length>0){
+				if(inTop.length>0){cell='';}
+				cell+=td('高配','class="inSec"');
+				cell+=td(retTopTd(inSec,'竞技场',id),'class="inSec"');
+				cell+=td(retTopTd(inSec,'联盟',id),'class="inSec"');
+				cell+=(showNormal?td(retTopTd(inSec,'关卡',id),'class="inSec"'):'');
+				out+=tr(cell);
+			}
+			if(inTop.length==0 && inSec.length==0){
+				out+=tr(cell+td('','class="inNone"')+td('','class="inNone"')+td('','class="inNone"')+(showNormal?td('','class="inNone"'):''));
+			}
 		}
 	}
 	out+='</table>';
