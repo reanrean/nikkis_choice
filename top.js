@@ -176,7 +176,7 @@ function calctop_byall(){
 		var rowspan=1;
 		if(inTop.length>0 && inSec.length>0) {rowspan++;}
 		
-		var cell=td(clothes[id].name,'rowspan="'+rowspan+'"')+td(clothes[id].type.type,'rowspan="'+rowspan+'"');
+		var cell=td(clothes[id].name,'rowspan="'+rowspan+'" class="inName"')+td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName"');
 		if(inTop.length>0){
 			cell+=td('顶配','class="inTop"');
 			cell+=td(retTopTd(inTop,'竞技场',id),'class="inTop"');
@@ -193,7 +193,7 @@ function calctop_byall(){
 			out+=tr(cell);
 		}
 		if(inTop.length==0 && inSec.length==0){
-			out+=tr(cell+td('')+td('')+td('')+(showNormal?td(''):''));
+			out+=tr(cell+td('','class="inNone"')+td('','class="inNone"')+td('','class="inNone"')+(showNormal?td('','class="inNone"'):''));
 		}
 	}
 	out+='</table>';
