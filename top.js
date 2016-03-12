@@ -338,7 +338,37 @@ function calctop_bytheme(id,them){
 	}
 	if($.inArray(clothes[id], resultList)>-1){
 		if(clothes[id]==resultList[0]) {
-			inTop.push([them,1,tmp]);
+			//compare dress vs top+bottom
+			if(clothes[id].type.type=='连衣裙'){
+				var result_top=getTopCloByCate(criteria, 1, '上装', id);
+				var result_bot=getTopCloByCate(criteria, 1, '下装', id);
+				if(clothes[id].sumScore>=result_top[0].sumScore+result_bot[0].sumScore){
+					inTop.push([them,1,tmp]);
+				}else{
+					var othScore=result_top[0].sumScore+result_bot[0].sumScore;
+					inSec.push([them,1,'['+othScore+result_top[0].name+'+'+result_bot[0].name+']\n'+tmp]);
+				}
+			}else if(clothes[id].type.type=='上装'){
+				var result_dress=getTopCloByCate(criteria, 1, '连衣裙', id);
+				var result_bot=getTopCloByCate(criteria, 1, '下装', id);
+				if(clothes[id].sumScore+result_bot[0].sumScore>=result_dress[0].sumScore){
+					inTop.push([them,1,tmp]);
+				}else{
+					var othScore=result_dress[0].sumScore;
+					inSec.push([them,1,'['+othScore+result_dress[0].name+']\n'+tmp]);
+				}
+			}else if(clothes[id].type.type=='下装'){
+				var result_dress=getTopCloByCate(criteria, 1, '连衣裙', id);
+				var result_top=getTopCloByCate(criteria, 1, '上装', id);
+				if(clothes[id].sumScore+result_top[0].sumScore>=result_dress[0].sumScore){
+					inTop.push([them,1,tmp]);
+				}else{
+					var othScore=result_dress[0].sumScore;
+					inSec.push([them,1,'['+othScore+result_dress[0].name+']\n'+tmp]);
+				}
+			}else{
+				inTop.push([them,1,tmp]);
+			}
 		}else{
 			for (r=1;r<resultList.length;r++){
 				if(clothes[id]==resultList[r]){
