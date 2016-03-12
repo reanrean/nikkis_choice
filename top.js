@@ -14,6 +14,7 @@ var inSec=[];
 var cartList=[];
 var currentList=[];
 var setList=[];
+var storeTop=[];
 
 function searchById(){
 	var searchById=clear_top_id();
@@ -143,12 +144,18 @@ function choose_topid(id){
 }
 
 function calctop(){
+	if (isNaN(parseInt($("#showCnt").val())) || $("#showCnt").val()<1) {$("#showCnt").val(1);}
+	$("#showCnt").val(parseInt($("#showCnt").val()));
+	if (isNaN(parseInt($("#maxHide").val())) || $("#maxHide").val()<1) {$("#maxHide").val(1);}
+	$("#maxHide").val(parseInt($("#maxHide").val()));
+	
 	if ($('#cartMode').is(":checked")){
 		if (cartList.length==0){
 			$('#alert_msg').html('选取列表为空_(:з」∠)_');
 		}else{
 			$('#alert_msg').html('');
 			$('#topsearch_info').html('');
+			storeTopByCate_all();
 			calctop_byall();
 		}
 	}else{
@@ -157,11 +164,12 @@ function calctop(){
 		}else{
 			$('#alert_msg').html('');
 			$('#topsearch_info').html('');
+			storeTopByCate_single(top_id);
 			calctop_byid(top_id);
 			output_byid(top_id);
 		}
 	}
-	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+30)+"px");
+	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+50)+"px");
 }
 
 function calctop_byall(){
@@ -262,13 +270,71 @@ function hideTop(id){
 	$('#cell'+id).show();
 }
 
+function storeTopByCate_single(id){
+	var cartCates=[];
+	if($.inArray(clothes[id].type.type, ['连衣裙','上装','下装'])>-1){
+		cartCates.push('连衣裙');
+		cartCates.push('上装');
+		cartCates.push('下装');
+	}else{
+		cartCates.push(clothes[id].type.type);
+	}
+	storeTopByCate(cartCates);
+}
+
+function storeTopByCate_all(){
+	var cartCates=[];
+	for (var i in cartList){
+		cartCates.push(clothes[cartList[i]].type.type);
+		if($.inArray(clothes[cartList[i]].type.type, ['连衣裙','上装','下装'])>-1){
+			cartCates.push('连衣裙');
+			cartCates.push('上装');
+			cartCates.push('下装');
+		}
+	}
+	cartCates=getDistinct(cartCates);
+	storeTopByCate(cartCates);
+}
+function storeTopByCate(cartCates){
+	for (var cate in cartCates){
+		for (var b in competitionsRaw){
+			theme_name='竞技场: '+b;
+			if (allThemes[theme_name]) {
+				setFilters(allThemes[theme_name]);
+				onChangeCriteria();
+				if (cate==0){storeTop[theme_name]=[];}//initialize as array
+				storeTop[theme_name].push([cartCates[cate],getTopCloByCate(criteria, $("#showCnt").val(), cartCates[cate])]);
+			}
+		}
+		for (var c in tasksRaw){
+			theme_name=c;
+			if (allThemes[theme_name]) {
+				setFilters(allThemes[theme_name]);
+				onChangeCriteria();
+				if (cate==0){storeTop[theme_name]=[];}//initialize as array
+				storeTop[theme_name].push([cartCates[cate],getTopCloByCate(criteria, $("#showCnt").val(), cartCates[cate])]);
+			}
+		}
+		if ($('#showNormal').is(":checked")){
+			for (var d in levelsRaw){
+				theme_name='关卡: '+d;
+				if (allThemes[theme_name]) {
+					setFilters(allThemes[theme_name]);
+					onChangeCriteria();
+					if (cate==0){storeTop[theme_name]=[];}//initialize as array
+				storeTop[theme_name].push([cartCates[cate],getTopCloByCate(criteria, $("#showCnt").val(), cartCates[cate])]);
+				}
+			}
+		}
+	}
+}
+
 function calctop_byid(id){
 	inTop=[];inSec=[];
 	
 	for (var b in competitionsRaw){
 		theme_name='竞技场: '+b;
 		if (allThemes[theme_name]) {
-			setFilters(allThemes[theme_name]);
 			calctop_bytheme(id,theme_name);
 		}
 	}
@@ -276,15 +342,14 @@ function calctop_byid(id){
 	for (var c in tasksRaw){
 		theme_name=c;
 		if (allThemes[theme_name]) {
-			setFilters(allThemes[theme_name]);
 			calctop_bytheme(id,theme_name);
 		}
 	}
+	
 	if ($('#showNormal').is(":checked")){
 		for (var d in levelsRaw){
 			theme_name='关卡: '+d;
 			if (allThemes[theme_name]) {
-				setFilters(allThemes[theme_name]);
 				calctop_bytheme(id,theme_name);
 			}
 		}
@@ -326,52 +391,78 @@ function output_byid(id){ //need inTop,inSec
 	$('#topsearch_info').html(output);
 }
 
+function get_storeTop_Cate(them,cate){
+	for (var t in storeTop[them]){
+		if (storeTop[them][t][0]==cate) {return storeTop[them][t][1];}
+	}
+}
+
 function calctop_bytheme(id,them){
-	onChangeCriteria();
-	var resultList = getTopCloByCate(criteria, $("#showCnt").val(), clothes[id].type.type, id);
+	var resultList = get_storeTop_Cate(them,clothes[id].type.type);
+	//resultList[r][0]=clothes, resultList[r][1]=clothes.sumScore
 	var tmp='';
+	var resultListClo=[];
+	//sort resultList
+	for (var r in resultList){
+		if(clothes[id]==resultList[r][0]){
+			//r=4 for butterfly
+			for (r2=0;r2<r;r2++){
+				if(resultList[r][1]==resultList[r2][1]){
+					var tmp_res=resultList[r];
+					for (k=r;k>r2;k--){//lower others ranking
+						resultList[k] = resultList[k-1];					
+					}
+					resultList[r2]=tmp_res;
+					break;
+				}
+			}
+			break;
+		}
+	}
+	
 	for (var r in resultList){
 		if (resultList[r]) {
 			if (r>0) {tmp+='\n';}
-			tmp+=resultList[r].sumScore+resultList[r].name;
+			tmp+=resultList[r][1]+resultList[r][0].name;
+			resultListClo.push(resultList[r][0]);
 		}
 	}
 	
-	//compare dress vs top+bottom
-	var moveTopToSec=0;
-	if(clothes[id].type.type=='连衣裙'){
-		var result_top=getTopCloByCate(criteria, 1, '上装', id);
-		var result_bot=getTopCloByCate(criteria, 1, '下装', id);
-		if(resultList[0].sumScore<result_top[0].sumScore+result_bot[0].sumScore){
-			moveTopToSec=1;
-			var othScore=result_top[0].sumScore+result_bot[0].sumScore;
-			tmp='['+othScore+result_top[0].name+'+'+result_bot[0].name+']\n'+tmp;
+	if($.inArray(clothes[id], resultListClo)>-1){
+		//compare dress vs top+bottom
+		var moveTopToSec=0;
+		if(clothes[id].type.type=='连衣裙'){
+			var result_top=get_storeTop_Cate(them,'上装');
+			var result_bot=get_storeTop_Cate(them, '下装');
+			if(resultList[0][1]<result_top[0][1]+result_bot[0][1]){
+				moveTopToSec=1;
+				var othScore=result_top[0][1]+result_bot[0][1];
+				tmp='['+othScore+result_top[0][0].name+'+'+result_bot[0][0].name+']\n'+tmp;
+			}
+		}else if(clothes[id].type.type=='上装'){
+			var result_dress=get_storeTop_Cate(them, '连衣裙');
+			var result_bot=get_storeTop_Cate(them, '下装');
+			if(resultList[0][1]+result_bot[0][1]<result_dress[0][1]){
+				moveTopToSec=1;
+				var othScore=result_dress[0][1];
+				tmp='['+othScore+result_dress[0][0].name+']\n'+tmp;
+			}
+		}else if(clothes[id].type.type=='下装'){
+			var result_dress=get_storeTop_Cate(them, '连衣裙');
+			var result_top=get_storeTop_Cate(them, '上装');
+			if(resultList[0][1]+result_top[0][1]<result_dress[0][1]){
+				moveTopToSec=1;
+				var othScore=result_dress[0][1];
+				tmp='['+othScore+result_dress[0][1].name+']\n'+tmp;
+			}
 		}
-	}else if(clothes[id].type.type=='上装'){
-		var result_dress=getTopCloByCate(criteria, 1, '连衣裙', id);
-		var result_bot=getTopCloByCate(criteria, 1, '下装', id);
-		if(resultList[0].sumScore+result_bot[0].sumScore<result_dress[0].sumScore){
-			moveTopToSec=1;
-			var othScore=result_dress[0].sumScore;
-			tmp='['+othScore+result_dress[0].name+']\n'+tmp;
-		}
-	}else if(clothes[id].type.type=='下装'){
-		var result_dress=getTopCloByCate(criteria, 1, '连衣裙', id);
-		var result_top=getTopCloByCate(criteria, 1, '上装', id);
-		if(resultList[0].sumScore+result_top[0].sumScore<result_dress[0].sumScore){
-			moveTopToSec=1;
-			var othScore=result_dress[0].sumScore;
-			tmp='['+othScore+result_dress[0].name+']\n'+tmp;
-		}
-	}
 	
-	if($.inArray(clothes[id], resultList)>-1){
-		if(clothes[id]==resultList[0]) {
+		if(clothes[id]==resultListClo[0]) {
 			if(moveTopToSec) {inSec.push([them,1,tmp]);}
 			else {inTop.push([them,1,tmp]);}
 		}else{
-			for (r=1;r<resultList.length;r++){
-				if(clothes[id]==resultList[r]){
+			for (r=1;r<resultListClo.length;r++){
+				if(clothes[id]==resultListClo[r]){
 					inSec.push([them,r+1,tmp]);
 					break;
 				}
@@ -380,24 +471,50 @@ function calctop_bytheme(id,them){
 	}
 }
 
-function getTopCloByCate(filters,rescnt,type,id){
+function getTopCloByCate(filters,rescnt,type){
 	var result = [];
 	for (var i in clothes) {
 		if (clothes[i].type.type!=type){continue;}//skip other categories
 		clothes[i].calc(filters);
 		if (!result[0]) {
-			result[0] = clothes[i];
-		} else {
-			for (j=0;j<rescnt;j++){//compare with [j]
-				if(!result[j] || clothes[i].sumScore > result[j].sumScore
-					|| (clothes[i].sumScore >= result[j].sumScore && i==id)){
-					//lower others ranking
-					for (k=rescnt-1;k>j;k--){
-						result[k] = result[k-1];
+			result[0] = [clothes[i],clothes[i].sumScore];
+		}else {
+			if(result[rescnt-1] && clothes[i].sumScore < result[rescnt-1][0].sumScore){
+				//do nothing
+			}else if(result[rescnt-1] && clothes[i].sumScore == result[rescnt-1][0].sumScore){
+				result.push([clothes[i],clothes[i].sumScore]);//push to end
+			}else{
+				for (j=0;j<rescnt;j++){//compare with [j]
+					if(!result[j] || clothes[i].sumScore > result[j][0].sumScore){
+						if (result[rescnt-1]&&result[rescnt-2]){
+							if (result[rescnt-1][0].sumScore == result[rescnt-2][0].sumScore){
+								for (k=result.length;k>j;k--){//lower others ranking
+									result[k] = result[k-1];
+								}
+								//put current clothes to [j]
+								result[j] = [clothes[i],clothes[i].sumScore];
+								break;
+							}else{//create new list
+								var result_orig=result;
+								result=[];
+								for(r=0;r<j;r++){
+									result[r]=result_orig[r];
+								}
+								for (k=rescnt-1;k>j;k--){//lower others ranking
+									result[k] = result_orig[k-1];
+								}
+								result[j]=[clothes[i],clothes[i].sumScore];
+								break;
+							}
+						}else{
+							for (k=rescnt-1;k>j;k--){//lower others ranking
+								if(result[k-1]) {result[k] = result[k-1];}
+							}
+							//put current clothes to [j]
+							result[j] = [clothes[i],clothes[i].sumScore];
+							break;
+						}
 					}
-					//put current clothes to [j]
-					result[j] = clothes[i];
-					break;
 				}
 			}
 		}
