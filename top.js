@@ -444,16 +444,14 @@ function calctop_bytheme(id,them){
 			var result_bot=get_storeTop_Cate(them, '下装');
 			if(resultList[0][1]+result_bot[0][1]<result_dress[0][1]){
 				moveTopToSec=1;
-				var othScore=result_dress[0][1];
-				tmp='['+othScore+result_dress[0][0].name+']\n'+tmp;
+				tmp='['+result_dress[0][1]+result_dress[0][0].name+']\n'+tmp;
 			}
 		}else if(clothes[id].type.type=='下装'){
 			var result_dress=get_storeTop_Cate(them, '连衣裙');
 			var result_top=get_storeTop_Cate(them, '上装');
 			if(resultList[0][1]+result_top[0][1]<result_dress[0][1]){
 				moveTopToSec=1;
-				var othScore=result_dress[0][1];
-				tmp='['+othScore+result_dress[0][1].name+']\n'+tmp;
+				tmp='['+result_dress[0][1]+result_dress[0][0].name+']\n'+tmp;
 			}
 		}
 	
