@@ -13,6 +13,7 @@ var inTop=[];
 var inSec=[];
 var cartList=[];
 var currentList=[];
+var currentSetList=[];
 var setList=[];
 var storeTop=[];
 
@@ -20,33 +21,40 @@ function searchById(){
 	var searchById=clear_top_id();
 	var searchById_match=0;
 	currentList=[];
+	currentSetList=[];
 	if(searchById){
-		var out='<p>查找：'+searchById+'</p>'
-		out+='<table border="1">';
-		out+=tr(td('名称')+td('分类')+td('编号')+td('来源'));
+		var out='<table border="1">';
+		out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
 		for (var i in setList){
 			if (setList[i].indexOf(searchById)>-1){
-				out+=tr(td(ahref(setList[i],"searchSet('"+setList[i]+"')"))+td('套装')+td('-')+td('-'));
+				out+=tr(td(ahref(setList[i],"searchSet('"+setList[i]+"')"))+td('套装')+td('-')+td('-')+td(''));
+				currentSetList.push(setList[i]);
 				searchById_match=1;
 			}
 		}
 		for (var i in clothes){
-			if(clothes[i].name.indexOf(searchById)>-1||parseInt(clothes[i].id)==parseInt(searchById)){
+			if(clothes[i].name.indexOf(searchById)>-1||clothes[i].source.indexOf(searchById)>-1){
 				currentList.push(i);
 			}
 		}
 		out+=appendCurrent();
 		out+='</table>';
-		if(currentList.length>0||searchById_match) {$('#topsearch_info').html(out);}
-		else {$("#topsearch_info").html('没有找到相关资料');}
+		var out1='<p>查找：'+searchById;
+		if(currentList.length>0||searchById_match) {
+			$('#topsearch_info').html(out);
+			out1+='　'+ahref('查找所有染色及进化',"searchSub(["+currentList+"],0,"+"'"+searchById+"')")+'</p>';
+		}else{
+			$("#topsearch_info").html('没有找到相关资料');
+			out1+='</p>';
+		}
+		$("#topsearch_note").html(out1);
 	}
 }
 
 function searchSet(setName){
 	currentList=[];
-	var out='<p>套装：'+setName+'　'+ahref('查找所有染色及进化',"searchSetSub('"+setName+"')")+'</p>';
-	out+='<table border="1">';
-	out+=tr(td('名称')+td('分类')+td('编号')+td('来源'));
+	var out='<table border="1">';
+	out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
 	for (var i in clothes){
 		if(clothes[i].set==setName){
 			currentList.push(i);
@@ -54,20 +62,18 @@ function searchSet(setName){
 	}
 	out+=appendCurrent();
 	out+='</table>';
+	var out1='<p>套装：'+setName+'　'+ahref('查找所有染色及进化',"searchSub(["+currentList+"],1,"+"'"+setName+"')")+'</p>';
 	$('#topsearch_info').html(out);
+	$("#topsearch_note").html(out1);
 }
 
-function searchSetSub(setName){
+function searchSub(idList,isSet,qString){
 	currentList=[];
-	var out='<p>套装：'+setName+'　所有染色及进化</p>';
-	out+='<table border="1">';
-	out+=tr(td('名称')+td('分类')+td('编号')+td('来源'));
-	var arrList=[];//find clothes in set
-	for (var i in clothes){
-		if(clothes[i].set==setName) {arrList.push(i);}
-	}
-	for (var i in arrList){
-		var orig=arrList[i];
+	var out1='<p>'+(isSet?'套装：':'查找：')+qString+'　所有染色及进化</p>';
+	var out='<table border="1">';
+	out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
+	for (var i in idList){
+		var orig=idList[i];
 		do{
 			currentList.push(orig);
 			orig=searchOrig(orig);
@@ -79,6 +85,7 @@ function searchSetSub(setName){
 	out+=appendCurrent();
 	out+='</table>';
 	$('#topsearch_info').html(out);
+	$("#topsearch_note").html(out1);
 }
 
 function searchOrig(id){
@@ -123,10 +130,11 @@ function appendCurrent(){
 			if(clothes[currentList[i]].type.type!=category[c]) {continue;}
 			var line=td(ahref(clothes[currentList[i]].name,'choose_topid('+currentList[i]+')'));
 				line+=td(clothes[currentList[i]].type.type);
-				line+=td(clothes[currentList[i]].id);
+				line+=td(clothes[currentList[i]].set);
 				var srcs=conv_source(clothes[currentList[i]].source,'进',clothes[currentList[i]].type.mainType);
 					srcs=conv_source(srcs,'定',clothes[currentList[i]].type.mainType);
 				line+=td(srcs);
+				line+=td(ahref('[×]','delCurrent('+currentList[i]+')'));
 			out+=tr(line);
 		}
 	}
@@ -545,6 +553,27 @@ function clear_top_id(){
 		$("#textBox").val(searchById);
 	}
 	return searchById;
+}
+
+
+function delCurrent(id){
+	var newArr=currentList;
+	currentList=[];
+	for (var i in newArr){
+		if(newArr[i]!=id) {currentList.push(newArr[i]);}
+	}
+	refreshCurrent();
+}
+
+function refreshCurrent(){
+	var out='<table border="1">';
+	out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
+	for (var i in currentSetList){
+		out+=tr(td(ahref(currentSetList[i],"searchSet('"+currentSetList[i]+"')"))+td('套装')+td('-')+td('-')+td(''));
+	}
+	out+=appendCurrent();
+	out+='</table>';
+	$('#topsearch_info').html(out);
 }
 
 function clearCart(){
