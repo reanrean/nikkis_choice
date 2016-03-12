@@ -179,7 +179,7 @@ function calctop_byall(){
 			var rowspan=1;
 			if(inTop.length>0 && inSec.length>0) {rowspan++;}
 			
-			var cell=td(clothes[id].name,'rowspan="'+rowspan+'" class="inName"')+td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName"');
+			var cell=td(clothes[id].name,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"')+td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
 			if(inTop.length>0){
 				cell+=td('顶配','class="inTop"');
 				cell+=td(retTopTd(inTop,'竞技场',id),'class="inTop"');
@@ -310,14 +310,12 @@ function output_byid(id){ //need inTop,inSec
 	if(inTop.length>0){
 		output+='顶配：<br>';
 		for (var s in inTop){
-			if(inTop[s][0].indexOf('关卡')==0) {inTop[s][0]='主线'+inTop[s][0];}
 			output+='&emsp;'+addTooltip(inTop[s][0],inTop[s][2])+'<br>';
 		}
 	}
 	if(inSec.length>0){
 		output+='高配：<br>';
 		for (var u in inSec){
-			if(inSec[u][0].indexOf('关卡')==0) {inSec[u][0]='主线'+inSec[u][0];}
 			output+='&emsp;'+addTooltip(inSec[u][0]+'(第'+inSec[u][1]+')',inSec[u][2])+'<br>';
 		}
 	}
