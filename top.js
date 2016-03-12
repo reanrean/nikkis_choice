@@ -576,13 +576,6 @@ function refreshCurrent(){
 	}
 	out+=appendCurrent();
 	out+='</table>';
-	var orig_note=$('#topsearch_note').html();
-	if (orig_note.indexOf('<a href')>0){
-		var qString=orig_note.substr(orig_note.indexOf('：')+1,orig_note.indexOf('　')-orig_note.indexOf('：')-1);
-		var orig_note_half=orig_note.substr(0,orig_note.indexOf('　')+1);
-		var out1=orig_note_half+ahref('查找所有染色及进化',"searchSub(0,"+"'"+qString+"')");
-		$('#topsearch_note').html(out1);
-	}
 	$('#topsearch_info').html(out);
 }
 
