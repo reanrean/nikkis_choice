@@ -42,7 +42,7 @@ function searchById(){
 		var out1='查找：'+searchById;
 		if(currentList.length>0||searchById_match) {
 			$('#topsearch_info').html(out);
-			out1+='　'+ahref('查找所有染色及进化',"searchSub(["+currentList+"],0,"+"'"+searchById+"')");
+			out1+='　'+ahref('查找所有染色及进化',"searchSub(0,"+"'"+searchById+"')");
 		}
 		else {$("#topsearch_info").html('没有找到相关资料');}
 		$("#topsearch_note").html(out1);
@@ -60,12 +60,13 @@ function searchSet(setName){
 	}
 	out+=appendCurrent();
 	out+='</table>';
-	var out1='套装：'+setName+'　'+ahref('查找所有染色及进化',"searchSub(["+currentList+"],1,"+"'"+setName+"')");
+	var out1='套装：'+setName+'　'+ahref('查找所有染色及进化',"searchSub(1,"+"'"+setName+"')");
 	$('#topsearch_info').html(out);
 	$("#topsearch_note").html(out1);
 }
 
-function searchSub(idList,isSet,qString){
+function searchSub(isSet,qString){
+	var idList=currentList;
 	currentList=[];
 	var out1=(isSet?'套装：':'查找：')+qString+'　所有染色及进化';
 	var out='<table border="1">';
@@ -579,7 +580,7 @@ function refreshCurrent(){
 	if (orig_note.indexOf('<a href')>0){
 		var qString=orig_note.substr(orig_note.indexOf('：')+1,orig_note.indexOf('　')-orig_note.indexOf('：')-1);
 		var orig_note_half=orig_note.substr(0,orig_note.indexOf('　')+1);
-		var out1=orig_note_half+ahref('查找所有染色及进化',"searchSub(["+currentList+"],0,"+"'"+qString+"')");
+		var out1=orig_note_half+ahref('查找所有染色及进化',"searchSub(0,"+"'"+qString+"')");
 		$('#topsearch_note').html(out1);
 	}
 	$('#topsearch_info').html(out);
