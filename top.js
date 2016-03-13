@@ -169,14 +169,13 @@ function calctop(){
 	if (isNaN(parseInt($("#maxHide").val())) || $("#maxHide").val()<1) {$("#maxHide").val(1);}
 	$("#maxHide").val(parseInt($("#maxHide").val()));
 	
-	$('#topsearch_note').html('');
-	
 	if ($('#cartMode').is(":checked")){
 		if (cartList.length==0){
 			$('#alert_msg').html('选取列表为空_(:з」∠)_');
 		}else{
 			$('#alert_msg').html('');
 			$('#topsearch_info').html('');
+			$('#topsearch_note').html('');
 			storeTopByCate_all();
 			calctop_byall();
 		}
@@ -186,6 +185,7 @@ function calctop(){
 		}else{
 			$('#alert_msg').html('');
 			$('#topsearch_info').html('');
+			$('#topsearch_note').html('');
 			storeTopByCate_single(top_id);
 			calctop_byid(top_id);
 			output_byid(top_id);
