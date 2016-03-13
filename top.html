@@ -48,7 +48,7 @@
 		<b>奇迹暖暖顶配查询器</b><br/>
 		&emsp;分数计算引用自 <a href="http://seal100x.github.io/nikkiup2u3/">配装器 by 黑的升华</a><br/>
 		&emsp;极限权重引用自 <a href="http://ivangift.github.io/nikkiup2u3/">配装器 by ip君</a><br/>
-		&emsp;查询制作 by Rean<br/>
+		&emsp;查询制作 by <a href="../../">Rean</a><br/>
 	</p>
 	<hr>
 	<p>
@@ -57,13 +57,19 @@
 		<button id="calc" onclick="calctop()">计算</button>
 		<span id='alert_msg' class="unwrap"></span>
 	</p>
+	<span id="show_opt">　<a href="" onclick="show_opt();return false;">↓展开选项↓</a></span>
+	<span id="options">
 	<fieldset>
-		<legend>选项（重新计算生效）</legend>
+		<legend><a href="" onclick="hide_opt();return false;">选项（重新计算生效）</a></legend>
 		计算<input type="text" id="showCnt" size="2" style="line-height:100%;"/>件高配信息<br>
 		<input type="checkbox" id="showNormal"/>计算主线关卡<br>
 		<input type="checkbox" id="limitMode" />极限权重模式 <span id="limitNote" class="normTip">说明</span><br>
-		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>选取多件<span class="cartContent">（结果大于<input type="text" id="maxHide" size="2" style="line-height:100%;"/>时折叠）</span>
-	</fieldset>
+		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>选取多件
+		<span class="cartContent">
+			<br>　结果大于<input type="text" id="maxHide" size="2" style="line-height:100%;"/>时折叠
+			<br>　<input type="checkbox" id="hideNores" />只显示顶配/高配部件
+		</span>
+	</fieldset></span>
 	<span class="cartContent">
 	<hr>
 	<p>
