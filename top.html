@@ -62,13 +62,13 @@
 	<fieldset>
 		<legend><a href="" onclick="hide_opt();return false;">选项（重新计算生效）</a></legend>
 		计算<input type="text" id="showCnt" size="2" style="line-height:100%;"/>件高配信息<br>
-		<input type="checkbox" id="showNormal"/>计算主线关卡<br>
+		计算 <input type="checkbox" id="showJJC" checked />竞技场 <input type="checkbox" id="showAlly" checked />联盟 <input type="checkbox" id="showNormal"/>主线<br>
 		<input type="checkbox" id="limitMode" />极限权重模式 <span id="limitNote" class="normTip">说明</span><br>
 		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>选取多件
 		<span class="cartContent">
 			<br>　结果大于<input type="text" id="maxHide" size="2" style="line-height:100%;"/>时折叠
 			<br>　<input type="checkbox" id="hideNores" />只显示顶配/高配部件
-			<br>　<input type="checkbox" id="showSource" />悬停名称显示来源
+			<span style="display:none"><br>　<input type="checkbox" id="showSource" />悬停名称显示来源</span>
 		</span>
 	</fieldset></span>
 	<span class="cartContent">
