@@ -8,8 +8,6 @@ $(document).ready(function () {
 	$("#maxHide").val(5);
 });
 
-var showSource=0;//do not show source as tooltip by default
-
 var top_id='';
 var theme_name;
 var inTop=[];
@@ -199,6 +197,8 @@ function calctop_byall(){
 	else{var showNormal=0;}
 	if($('#limitMode').is(":checked")){var limitMode=1;}
 	else{var limitMode=0;}
+	if($('#showSource').is(":checked")){var showSource=1;}
+	else{var showSource=0;}
 	var out='<table border="1" class="calcByAll">';
 	out+=tr(td('名称')+td('部位')+td('顶配')+td('竞技场')+td('联盟'+(limitMode?'(极限)':''))+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
 	for (var c in category){//sort by category
@@ -388,18 +388,23 @@ function calctop_byid(id){
 function output_byid(id){ //need inTop,inSec
 	var output='<b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id+'<br>';
 	var cell='';
-		if(clothes[id].simple[0]) cell+='简约'+clothes[id].simple[0];
-		if(clothes[id].simple[1]) cell+='华丽'+clothes[id].simple[1];
-		if(clothes[id].active[0]) cell+='&ensp;活泼'+clothes[id].active[0];
-		if(clothes[id].active[1]) cell+='&ensp;优雅'+clothes[id].active[1];
-		if(clothes[id].cute[0]) cell+='&ensp;可爱'+clothes[id].cute[0];
-		if(clothes[id].cute[1]) cell+='&ensp;成熟'+clothes[id].cute[1];
-		if(clothes[id].pure[0]) cell+='&ensp;清纯'+clothes[id].pure[0];
-		if(clothes[id].pure[1]) cell+='&ensp;性感'+clothes[id].pure[1];
-		if(clothes[id].cool[0]) cell+='&ensp;清凉'+clothes[id].cool[0];
-		if(clothes[id].cool[1]) cell+='&ensp;保暖'+clothes[id].cool[1];
-		if(clothes[id].tags[0]) cell+='&ensp;'+clothes[id].tags.join(',');
-	output+=cell+'<br><br>';
+		if(clothes[id].simple[0]) {cell+='简约'+clothes[id].simple[0];}
+		if(clothes[id].simple[1]) {cell+='华丽'+clothes[id].simple[1];}
+		if(clothes[id].active[0]) {cell+='&ensp;活泼'+clothes[id].active[0];}
+		if(clothes[id].active[1]) {cell+='&ensp;优雅'+clothes[id].active[1];}
+		if(clothes[id].cute[0]) {cell+='&ensp;可爱'+clothes[id].cute[0];}
+		if(clothes[id].cute[1]) {cell+='&ensp;成熟'+clothes[id].cute[1];}
+		if(clothes[id].pure[0]) {cell+='&ensp;清纯'+clothes[id].pure[0];}
+		if(clothes[id].pure[1]) {cell+='&ensp;性感'+clothes[id].pure[1];}
+		if(clothes[id].cool[0]) {cell+='&ensp;清凉'+clothes[id].cool[0];}
+		if(clothes[id].cool[1]) {cell+='&ensp;保暖'+clothes[id].cool[1];}
+		if(clothes[id].tags[0]) {cell+='&ensp;'+clothes[id].tags.join(',');}
+	output+=cell+'<br>';
+	var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
+		srcs=conv_source(srcs,'定',clothes[id].type.mainType);
+	if(clothes[id].set) {output+='套装:'+clothes[id].set+'&ensp;'}
+	output+='来源:'+srcs+'<br><br>';
+	
 	output+='<span class="normTip">'
 	if(inTop.length>0){
 		output+='顶配：<br>';
@@ -514,7 +519,7 @@ function getTopCloByCate(filters,rescnt,type){
 				for (j=0;j<rescnt;j++){//compare with [j]
 					if(!result[j] || clothes[i].sumScore > result[j][0].sumScore){
 						if (result[rescnt-1]&&result[rescnt-2]){
-							if (result[rescnt-1][0].sumScore == result[rescnt-2][0].sumScore){
+							if (result[rescnt-1][0].sumScore == result[rescnt-2][0].sumScore){//insert into list
 								for (k=result.length;k>j;k--){//lower others ranking
 									result[k] = result[k-1];
 								}
@@ -533,6 +538,9 @@ function getTopCloByCate(filters,rescnt,type){
 								result[j]=[clothes[i],clothes[i].sumScore];
 								break;
 							}
+						}else if(rescnt==1){//create new list with only 1 element
+							result=[];
+							result[j] = [clothes[i],clothes[i].sumScore];
 						}else{
 							for (k=rescnt-1;k>j;k--){//lower others ranking
 								if(result[k-1]) {result[k] = result[k-1];}
