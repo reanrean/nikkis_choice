@@ -1,5 +1,5 @@
 // Clothes: name, type, id, stars, gorgeous, simple, elegant, active, mature, cute, sexy, pure, cool, warm, extra, source, set
-// credits to jillhx@tieba
+// credits to @amy_翡翠
 var wardrobe = [
   ['默认粉毛','发型','001','2','','S','','A','','A','','A','','A','','系统送',''],
   ['运动少年','发型','004','3','','S','','A','','A','','S','A','','中性风','店·金币/迷/幻',''],
