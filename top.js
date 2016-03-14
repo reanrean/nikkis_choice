@@ -606,8 +606,9 @@ function clearCart(){
 
 function addCart_All(){
 	for (var i in currentList){
-		addCart(currentList[i]);
+		cartList.push(currentList[i]);
 	}
+	refreshCart();
 }
 
 function refreshCart(){
@@ -619,10 +620,8 @@ function refreshCart(){
 }
 
 function addCart(id){
-	if($.inArray(id,cartList)<0){
-		cartList.push(id);
-		refreshCart();
-	}
+	cartList.push(id);
+	refreshCart();
 }
 
 function delCart(id){
@@ -673,7 +672,6 @@ function show_opt(){
 	$('#options').show();
 	$('#show_opt').hide();
 }
-
 
 //below is modified from material.js
 
