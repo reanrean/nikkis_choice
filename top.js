@@ -167,32 +167,40 @@ function calctop(){
 	if (isNaN(parseInt($("#maxHide").val())) || $("#maxHide").val()<1) {$("#maxHide").val(1);}
 	$("#maxHide").val(parseInt($("#maxHide").val()));
 	
-	if ($('#cartMode').is(":checked")){
-		if (cartList.length==0){
-			$('#alert_msg').html('选取列表为空_(:з」∠)_');
-		}else{
-			$('#alert_msg').html('');
-			$('#topsearch_info').html('');
-			$('#topsearch_note').html('');
-			storeTopByCate_all();
-			calctop_byall();
-		}
+	if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
+		$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
 	}else{
-		if (!top_id) {
-			$('#alert_msg').html('请选择一件衣服_(:з」∠)_');
+		if ($('#cartMode').is(":checked")){
+			if (cartList.length==0){
+				$('#alert_msg').html('选取列表为空_(:з」∠)_');
+			}else{
+				$('#alert_msg').html('');
+				$('#topsearch_info').html('');
+				$('#topsearch_note').html('');
+				storeTopByCate_all();
+				calctop_byall();
+			}
 		}else{
-			$('#alert_msg').html('');
-			$('#topsearch_info').html('');
-			$('#topsearch_note').html('');
-			storeTopByCate_single(top_id);
-			calctop_byid(top_id);
-			output_byid(top_id);
+			if (!top_id) {
+				$('#alert_msg').html('请选择一件衣服_(:з」∠)_');
+			}else{
+				$('#alert_msg').html('');
+				$('#topsearch_info').html('');
+				$('#topsearch_note').html('');
+				storeTopByCate_single(top_id);
+				calctop_byid(top_id);
+				output_byid(top_id);
+			}
 		}
 	}
 	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+50)+"px");
 }
 
 function calctop_byall(){
+	if ($('#showJJC').is(":checked")){var showJJC=1;}
+	else{var showJJC=0;}
+	if ($('#showAlly').is(":checked")){var showAlly=1;}
+	else{var showAlly=0;}
 	if ($('#showNormal').is(":checked")){var showNormal=1;}
 	else{var showNormal=0;}
 	if($('#limitMode').is(":checked")){var limitMode=1;}
@@ -200,7 +208,7 @@ function calctop_byall(){
 	if($('#showSource').is(":checked")){var showSource=1;}
 	else{var showSource=0;}
 	var out='<table border="1" class="calcByAll">';
-	out+=tr(td('名称')+td('部位')+td('顶配')+td('竞技场')+td('联盟'+(limitMode?'(极限)':''))+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
+	out+=tr(td('名称')+td('部位')+td('顶配')+(showJJC?td('竞技场'):'')+(showAlly?td('联盟'+(limitMode?'(极限)':'')):'')+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
 	for (var c in category){//sort by category
 		for (var i in cartList){
 			id=cartList[i];
@@ -219,21 +227,21 @@ function calctop_byall(){
 			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
 			if(inTop.length>0){
 				cell+=td('顶配','class="inTop"');
-				cell+=td(retTopTd(inTop,'竞技场',id),'class="inTop"');
-				cell+=td(retTopTd(inTop,'联盟',id),'class="inTop"');
+				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id),'class="inTop"'):'');
+				cell+=(showAlly?td(retTopTd(inTop,'联盟',id),'class="inTop"'):'');
 				cell+=(showNormal?td(retTopTd(inTop,'关卡',id),'class="inTop"'):'');
 				out+=tr(cell);
 			}
 			if(inSec.length>0){
 				if(inTop.length>0){cell='';}
 				cell+=td('高配','class="inSec"');
-				cell+=td(retTopTd(inSec,'竞技场',id),'class="inSec"');
-				cell+=td(retTopTd(inSec,'联盟',id),'class="inSec"');
+				cell+=(showJJC?td(retTopTd(inSec,'竞技场',id),'class="inSec"'):'');
+				cell+=(showAlly?td(retTopTd(inSec,'联盟',id),'class="inSec"'):'');
 				cell+=(showNormal?td(retTopTd(inSec,'关卡',id),'class="inSec"'):'');
 				out+=tr(cell);
 			}
 			if(inTop.length==0 && inSec.length==0 && !($('#hideNores').is(":checked"))){
-				out+=tr(cell+td('','class="inNone"')+td('','class="inNone"')+td('','class="inNone"')+(showNormal?td('','class="inNone"'):''));
+				out+=tr(cell+td('','class="inNone"')+(showJJC?td('','class="inNone"'):'')+(showAlly?td('','class="inNone"'):'')+(showNormal?td('','class="inNone"'):''));
 			}
 		}
 	}
@@ -326,22 +334,26 @@ function storeTopByCate_all(){
 }
 function storeTopByCate(cartCates){
 	for (var cate in cartCates){
-		for (var b in competitionsRaw){
-			theme_name='竞技场: '+b;
-			if (allThemes[theme_name]) {
-				setFilters(allThemes[theme_name]);
-				onChangeCriteria();
-				if (cate==0){storeTop[theme_name]=[];}//initialize as array
-				storeTop[theme_name].push([cartCates[cate],getTopCloByCate(criteria, $("#showCnt").val(), cartCates[cate])]);
+			if ($('#showJJC').is(":checked")){
+			for (var b in competitionsRaw){
+				theme_name='竞技场: '+b;
+				if (allThemes[theme_name]) {
+					setFilters(allThemes[theme_name]);
+					onChangeCriteria();
+					if (cate==0){storeTop[theme_name]=[];}//initialize as array
+					storeTop[theme_name].push([cartCates[cate],getTopCloByCate(criteria, $("#showCnt").val(), cartCates[cate])]);
+				}
 			}
 		}
-		for (var c in tasksRaw){
-			theme_name=c;
-			if (allThemes[theme_name]) {
-				setFilters(allThemes[theme_name]);
-				onChangeCriteria();
-				if (cate==0){storeTop[theme_name]=[];}//initialize as array
-				storeTop[theme_name].push([cartCates[cate],getTopCloByCate(criteria, $("#showCnt").val(), cartCates[cate])]);
+		if ($('#showAlly').is(":checked")){
+			for (var c in tasksRaw){
+				theme_name=c;
+				if (allThemes[theme_name]) {
+					setFilters(allThemes[theme_name]);
+					onChangeCriteria();
+					if (cate==0){storeTop[theme_name]=[];}//initialize as array
+					storeTop[theme_name].push([cartCates[cate],getTopCloByCate(criteria, $("#showCnt").val(), cartCates[cate])]);
+				}
 			}
 		}
 		if ($('#showNormal').is(":checked")){
@@ -361,20 +373,22 @@ function storeTopByCate(cartCates){
 function calctop_byid(id){
 	inTop=[];inSec=[];
 	
-	for (var b in competitionsRaw){
-		theme_name='竞技场: '+b;
-		if (allThemes[theme_name]) {
-			calctop_bytheme(id,theme_name);
+	if ($('#showJJC').is(":checked")){
+		for (var b in competitionsRaw){
+			theme_name='竞技场: '+b;
+			if (allThemes[theme_name]) {
+				calctop_bytheme(id,theme_name);
+			}
 		}
 	}
-	
-	for (var c in tasksRaw){
-		theme_name=c;
-		if (allThemes[theme_name]) {
-			calctop_bytheme(id,theme_name);
+	if ($('#showAlly').is(":checked")){
+		for (var c in tasksRaw){
+			theme_name=c;
+			if (allThemes[theme_name]) {
+				calctop_bytheme(id,theme_name);
+			}
 		}
 	}
-	
 	if ($('#showNormal').is(":checked")){
 		for (var d in levelsRaw){
 			theme_name='关卡: '+d;
