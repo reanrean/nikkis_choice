@@ -709,9 +709,9 @@ function show_opt(){
 function getMerc(id){
 	for (var m in merchant){
 		if(clothes[id].type.mainType==merchant[m][0]&&clothes[id].name==merchant[m][1]){
-			var res=merchant[m][2];
-			if(merchant[m][3].indexOf('金')>-1||merchant[m][3].indexOf('钻')>-1) {res+=merchant[m][3].substr(0,1);}
-			return res;
+			//var res=merchant[m][2];
+			//if(merchant[m][3].indexOf('金')>-1||merchant[m][3].indexOf('钻')>-1) {res+=merchant[m][3].substr(0,1);}
+			return merchant[m][2]+merchant[m][3];
 		}
 	}
 	return;
