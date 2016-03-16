@@ -67,7 +67,7 @@ function chgScope(){
 			break;
 		case '3': 
 			//20160304: move 3-setSearch into chgScope-'2'
-			var chapVal=[1,2,4,0];var chapText=['设计图','进化','特殊属性','自定义'];
+			var chapVal=[0,4,1,2];var chapText=['自定义','特殊属性','设计图','进化'];
 			chooseLevel+=selectBox("degree_level","chgScopeSub()",chapVal,chapText);
 			$("#chooseLevel").html(chooseLevel);
 			chgScopeSub();
