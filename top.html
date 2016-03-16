@@ -22,9 +22,11 @@
 		tr:first-child {font-weight:bold;}
 		table.calcByAll {width:100%; table-layout:fixed; min-width:285px;}
 		table.calcByAll tr td:nth-child(-n+3) {width:10%;}
+		table.calcSrc tr td:nth-child(3),table.calcSrc tr td:nth-child(4) {width:7.5%;}
 		@media only screen and (max-width: 360px){
 			table.calcByAll tr td {padding:1px;}
 			table.calcByAll tr td:nth-child(-n+3) {width:16px;}
+			table.calcSrc tr td:nth-child(4) {width:16px;}
 		}
 		[tooltip]:hover:before {
 			margin-top:25px; margin-left:-80px; padding: 5px; 
@@ -39,6 +41,7 @@
 	<script type='text/javascript' charset="UTF-8" src='wardrobe.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='scoring.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='model.js'></script>
+	<script type='text/javascript' charset="UTF-8" src='merchant.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='levels.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='levels-hs.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='top.js'></script>
@@ -67,8 +70,8 @@
 		<input type="checkbox" id="cartMode" onclick="chgcartMode()"/>选取多件
 		<span class="cartContent">
 			<br>　结果大于<input type="text" id="maxHide" size="2" style="line-height:100%;"/>时折叠
-			<br>　<input type="checkbox" id="hideNores" />只显示顶配/高配部件
-			<span style="display:none"><br>　<input type="checkbox" id="showSource" />悬停名称显示来源</span>
+			<br>　<input type="checkbox" id="hideNores" />只显示有结果的部件
+			<br>　显示 <input type="checkbox" id="showSource" />来源 <input type="checkbox" id="showMerc" />兑换数量
 		</span>
 	</fieldset></span>
 	<span class="cartContent">
