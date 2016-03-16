@@ -207,8 +207,10 @@ function calctop_byall(){
 	else{var limitMode=0;}
 	if($('#showSource').is(":checked")){var showSource=1;}
 	else{var showSource=0;}
-	var out='<table border="1" class="calcByAll">';
-	out+=tr(td('名称')+td('部位')+td('顶配')+(showJJC?td('竞技场'):'')+(showAlly?td('联盟'+(limitMode?'(极限)':'')):'')+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
+	if($('#showMerc').is(":checked")){var showMerc=1;}
+	else{var showMerc=0;}
+	var out='<table border="1" class="calcByAll'+((showMerc||showSource)?' calcSrc':'')+'">';
+	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('顶配')+(showJJC?td('竞技场'):'')+(showAlly?td('联盟'+(limitMode?'(极限)':'')):'')+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
 	for (var c in category){//sort by category
 		for (var i in cartList){
 			id=cartList[i];
@@ -217,14 +219,22 @@ function calctop_byall(){
 			var rowspan=1;
 			if(inTop.length>0 && inSec.length>0) {rowspan++;}
 			
-			if (showSource){
-				var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
-					srcs=conv_source(srcs,'定',clothes[id].type.mainType);
-				var cell=td('<span class="normTip">'+addTooltip(clothes[id].name,srcs)+'</span>','rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
-			}else {
-				var cell=td(clothes[id].name,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
-			}
+			var cell=td(clothes[id].name,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
 			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
+			if(showSource||showMerc){
+				var cell_3rd='';
+				if(showSource){
+					var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
+					srcs=conv_source(srcs,'定',clothes[id].type.mainType);
+					cell_3rd+=srcs;
+				}
+				if(showSource&&showMerc) {cell_3rd+='<br>';}
+				if(showMerc){
+					var price=getMerc(id);
+					cell_3rd+=(price?price:'');
+				}
+				cell+=td(cell_3rd,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
+			}
 			if(inTop.length>0){
 				cell+=td('顶配','class="inTop"');
 				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id),'class="inTop"'):'');
@@ -414,10 +424,11 @@ function output_byid(id){ //need inTop,inSec
 		if(clothes[id].cool[1]) {cell+='&ensp;保暖'+clothes[id].cool[1];}
 		if(clothes[id].tags[0]) {cell+='&ensp;'+clothes[id].tags.join(',');}
 	output+=cell+'<br>';
+	if(clothes[id].set) {output+='套装:'+clothes[id].set+'&ensp;'}
 	var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
 		srcs=conv_source(srcs,'定',clothes[id].type.mainType);
-	if(clothes[id].set) {output+='套装:'+clothes[id].set+'&ensp;'}
-	output+='来源:'+srcs+'<br><br>';
+	var price=getMerc(id);
+	output+='来源:'+srcs+(price?'('+price+')':'')+'<br><br>';
 	
 	output+='<span class="normTip">'
 	if(inTop.length>0){
@@ -572,7 +583,7 @@ function getTopCloByCate(filters,rescnt,type){
 }
 
 function show_limitNote(){
-	var tooltip='即微笑+飞吻以及飞吻分別打在最高分的两个属性时的极限搭配权重。此模式使用全衣柜下的极限权重，请注意收集度不同极限权重也可能会不同，并非一定适合所有玩家。';
+	var tooltip='即微笑+飞吻以及飞吻分別打在最高分的两个属性时的极限搭配权重(竞技场不计算)。此模式使用全衣柜下的极限权重，请注意收集度不同极限权重也可能会不同，并非一定适合所有玩家。';
 	var output='<a href="" onclick="return false;" tooltip="'+tooltip+'">说明</a>';
 	$('#limitNote').html(output);
 }
@@ -693,6 +704,17 @@ function hide_opt(){
 function show_opt(){
 	$('#options').show();
 	$('#show_opt').hide();
+}
+
+function getMerc(id){
+	for (var m in merchant){
+		if(clothes[id].type.mainType==merchant[m][0]&&clothes[id].name==merchant[m][1]){
+			var res=merchant[m][2];
+			if(merchant[m][3].indexOf('金')>-1||merchant[m][3].indexOf('钻')>-1) {res+=merchant[m][3].substr(0,1);}
+			return res;
+		}
+	}
+	return;
 }
 
 //below is modified from material.js
