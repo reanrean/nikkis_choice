@@ -39,7 +39,11 @@ function searchById(){
 			}else if(searchById.indexOf('*')>-1){
 				var searchArr=searchById.split('*');
 				for (m=0;m<searchArr.length;m++){
-					if (searchArr[m]!=''){
+					if (searchArr[m]=='套装'){
+						if(!clothes[i].set) {break;}
+					}else if (searchArr[m]=='非套装'){
+						if(clothes[i].set) {break;}
+					}else if (searchArr[m]!=''){
 						if(clothes[i].name.indexOf(searchArr[m])<0&&clothes[i].source.indexOf(searchArr[m])<0){break;}
 					}
 					if (m==searchArr.length-1) {currentList.push(i);}
@@ -226,12 +230,11 @@ function calctop_byall(){
 				if(showSource){
 					var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
 					srcs=conv_source(srcs,'定',clothes[id].type.mainType);
-					cell_3rd+=srcs;
+					cell_3rd=srcs;
 				}
-				if(showSource&&showMerc) {cell_3rd+='<br>';}
 				if(showMerc){
 					var price=getMerc(id);
-					cell_3rd+=(price?price:'');
+					cell_3rd=(price?price:cell_3rd);
 				}
 				cell+=td(cell_3rd,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
 			}
@@ -251,7 +254,8 @@ function calctop_byall(){
 				out+=tr(cell);
 			}
 			if(inTop.length==0 && inSec.length==0 && !($('#hideNores').is(":checked"))){
-				out+=tr(cell+td('','class="inNone"')+(showJJC?td('','class="inNone"'):'')+(showAlly?td('','class="inNone"'):'')+(showNormal?td('','class="inNone"'):''));
+				out+=tr(cell+td('-','class="inNone"')+(showJJC?td('','class="inNone"'):'')+(showAlly?td('','class="inNone"'):'')+(showNormal?td('','class="inNone"'):''));
+				//out+=tr(cell+td('-','class="inNone" colspan="'+(showJJC+showAlly+showNormal+1)+'"'));
 			}
 		}
 	}
