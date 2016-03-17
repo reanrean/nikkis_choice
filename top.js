@@ -44,7 +44,7 @@ function searchById(){
 					}else if (searchArr[m]=='非套装'){
 						if(clothes[i].set) {break;}
 					}else if (searchArr[m]!=''){
-						if(clothes[i].name.indexOf(searchArr[m])<0&&clothes[i].source.indexOf(searchArr[m])<0){break;}
+						if(clothes[i].name.indexOf(searchArr[m])<0&&clothes[i].source.indexOf(searchArr[m])<0&&clothes[i].type.type.indexOf(searchArr[m])<0){break;}
 					}
 					if (m==searchArr.length-1) {currentList.push(i);}
 				}
