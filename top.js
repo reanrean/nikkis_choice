@@ -268,9 +268,10 @@ function calctop_byall(){
 	$('#topsearch_info').html(out);
 }
 
-function retTopTd(arr,crit,id){
+function retTopTd(arr,crit,id,cartNumIfMult){
 	var ret='';
 	var cnt=0;
+	if (!cartNumIfMult) {cartNumIfMult=0;}
 	
 	if(arr==inTop){
 		for (var s in inTop){
@@ -286,8 +287,8 @@ function retTopTd(arr,crit,id){
 				case '联盟': var pos=2; break;
 				case '关卡': var pos=3; break;
 			}
-			a='<span id="cell'+id+'_t'+(limitMode?"l":"n")+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_t"+(limitMode?"l":"n")+pos+"')")+'</span>';
-			a+='<span id="cell'+id+'_t'+(limitMode?"l":"n")+pos+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_t"+(limitMode?"l":"n")+pos+"')"))+'</span>';
+			a='<span id="cell'+id+'_t'+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_t"+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+"')")+'</span>';
+			a+='<span id="cell'+id+'_t'+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_t"+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+"')"))+'</span>';
 			return a;
 		}
 		return ret;
@@ -306,8 +307,8 @@ function retTopTd(arr,crit,id){
 				case '关卡': var pos=3; break;
 				default: var pos=0;
 			}
-			a='<span id="cell'+id+'_s'+(limitMode?"l":"n")+pos+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_s"+(limitMode?"l":"n")+pos+"')")+'</span>';
-			a+='<span id="cell'+id+'_s'+(limitMode?"l":"n")+pos+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_s"+(limitMode?"l":"n")+pos+"')"))+'</span>';
+			a='<span id="cell'+id+'_s'+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_s"+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+"')")+'</span>';
+			a+='<span id="cell'+id+'_s'+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_s"+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+"')"))+'</span>';
 			return a;
 		}
 		return ret;
