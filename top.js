@@ -1,4 +1,8 @@
 $(document).ready(function () {
+	init_top();
+});
+
+function init_top(){
 	$('.cartContent').hide();
 	$('#show_opt').hide();
 	show_limitNote();
@@ -6,7 +10,7 @@ $(document).ready(function () {
 	gen_setList();
 	$("#showCnt").val(5);
 	$("#maxHide").val(5);
-});
+}
 
 var top_id='';
 var theme_name;
@@ -17,6 +21,7 @@ var currentList=[];
 var currentSetList=[];
 var setList=[];
 var storeTop=[];
+var limitMode=0;
 
 function searchById(){
 	var searchById=clear_top_id();
@@ -171,6 +176,8 @@ function calctop(){
 	if (isNaN(parseInt($("#maxHide").val())) || $("#maxHide").val()<1) {$("#maxHide").val(1);}
 	$("#maxHide").val(parseInt($("#maxHide").val()));
 	
+	limitMode=($('#limitMode').is(":checked") ? 1 : 0 );
+	
 	if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
 		$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
 	}else{
@@ -207,8 +214,6 @@ function calctop_byall(){
 	else{var showAlly=0;}
 	if ($('#showNormal').is(":checked")){var showNormal=1;}
 	else{var showNormal=0;}
-	if($('#limitMode').is(":checked")){var limitMode=1;}
-	else{var limitMode=0;}
 	if($('#showSource').is(":checked")){var showSource=1;}
 	else{var showSource=0;}
 	if($('#showMerc').is(":checked")){var showMerc=1;}
@@ -266,8 +271,6 @@ function calctop_byall(){
 function retTopTd(arr,crit,id){
 	var ret='';
 	var cnt=0;
-	if($('#limitMode').is(":checked")){var limitMode=1;}
-	else{var limitMode=0;}
 	
 	if(arr==inTop){
 		for (var s in inTop){
@@ -773,7 +776,7 @@ function onChangeCriteria() {
 			weight = 1;
 		}
 		//rean mod
-		if($('#limitMode').is(":checked")){
+		if(limitMode){
 			for (var level in tasksAdd){
 				if (theme_name==tasksAdd[level][0]){
 					if (f==tasksAdd[level][1]) {weight=weight*1.27;}
