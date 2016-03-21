@@ -58,7 +58,7 @@ function calctop(){
 			}else{
 				$('#alert_msg').html('');
 				$('#topsearch_info').html('');
-				$('#topsearch_note').html('');
+				$('#topsearch_note').html('本页内容：');
 				for(var l=0;l<cartNum;l++){
 					var listname=($('#cartName'+(l+1)).val() ? $('#cartName'+(l+1)).val() : $('#cartName'+(l+1)).attr('placeholder'));
 					limitMode=0;
@@ -68,6 +68,8 @@ function calctop(){
 					limitMode=1;
 					storeTopByCate_all();
 					$('#topsearch_info').append('<span class="limit">'+calctop_byall(l)+'</span>');
+					
+					$('#topsearch_note').append('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
 				}
 			}
 		}
