@@ -1,5 +1,4 @@
 function init_top(){
-	show_limitNote();
 	enterKey();
 	gen_setList();
 	$("#showCnt").val(5);
