@@ -17,7 +17,7 @@ function addCartNum(){
 	line+='<span id="cart'+cartNum+'"></span>';
 	line+='<button class="btn btn-xs btn-default" onclick="addCart_All('+cartNum+')">添加整个列表</button> ';
 	line+='<button class="btn btn-xs btn-default" onclick="clearCart('+cartNum+')">清空</button> ';
-	line+='<button class="btn btn-xs btn-default" onclick="chooseCurCart('+cartNum+')">选为默认</button>';
+	line+='<button class="btn btn-xs btn-default" onclick="chooseCurCart('+cartNum+')">添加单品到此</button>';
 	line+='</p>';
 	$('#cartContent').append(line);
 	currentCart=cartNum-1;
@@ -113,17 +113,17 @@ function calctop_byall(cartList_num){
 			}
 			if(inTop.length>0){
 				cell+=td('顶配','class="inTop"');
-				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id),'class="inTop"'):'');
-				cell+=(showAlly?td(retTopTd(inTop,'联盟',id),'class="inTop"'):'');
-				cell+=(showNormal?td(retTopTd(inTop,'关卡',id),'class="inTop"'):'');
+				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id,cartList_num),'class="inTop"'):'');
+				cell+=(showAlly?td(retTopTd(inTop,'联盟',id,cartList_num),'class="inTop"'):'');
+				cell+=(showNormal?td(retTopTd(inTop,'关卡',id,cartList_num),'class="inTop"'):'');
 				out+=tr(cell);
 			}
 			if(inSec.length>0){
 				if(inTop.length>0){cell='';}
 				cell+=td('高配','class="inSec"');
-				cell+=(showJJC?td(retTopTd(inSec,'竞技场',id),'class="inSec"'):'');
-				cell+=(showAlly?td(retTopTd(inSec,'联盟',id),'class="inSec"'):'');
-				cell+=(showNormal?td(retTopTd(inSec,'关卡',id),'class="inSec"'):'');
+				cell+=(showJJC?td(retTopTd(inSec,'竞技场',id,cartList_num),'class="inSec"'):'');
+				cell+=(showAlly?td(retTopTd(inSec,'联盟',id,cartList_num),'class="inSec"'):'');
+				cell+=(showNormal?td(retTopTd(inSec,'关卡',id,cartList_num),'class="inSec"'):'');
 				out+=tr(cell);
 			}
 			if(inTop.length==0 && inSec.length==0 && !($('#hideNores').is(":checked"))){
