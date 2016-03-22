@@ -61,11 +61,11 @@ function calctop(){
 				for(var l=0;l<cartNum;l++){
 					var listname=($('#cartName'+(l+1)).val() ? $('#cartName'+(l+1)).val() : $('#cartName'+(l+1)).attr('placeholder'));
 					limitMode=0;
-					storeTopByCate_all();
+					storeTopByCate_all(l);
 					$('#topsearch_info').append('<a id="'+(l+1)+'"></a>');
 					$('#topsearch_info').append('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l)+'</span>');
 					limitMode=1;
-					storeTopByCate_all();
+					storeTopByCate_all(l);
 					$('#topsearch_info').append('<span class="limit">'+calctop_byall(l)+'</span>');
 					
 					$('#topsearch_note').append('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
@@ -136,16 +136,14 @@ function calctop_byall(cartList_num){
 	return out;
 }
 
-function storeTopByCate_all(){
+function storeTopByCate_all(l){
 	var cartCates=[];
-	for (var l in cartList){
-		for (var i in cartList[l]){
-			cartCates.push(clothes[cartList[l][i]].type.type);
-			if($.inArray(clothes[cartList[l][i]].type.type, ['连衣裙','上装','下装'])>-1){
-				cartCates.push('连衣裙');
-				cartCates.push('上装');
-				cartCates.push('下装');
-			}
+	for (var i in cartList[l]){
+		cartCates.push(clothes[cartList[l][i]].type.type);
+		if($.inArray(clothes[cartList[l][i]].type.type, ['连衣裙','上装','下装'])>-1){
+			cartCates.push('连衣裙');
+			cartCates.push('上装');
+			cartCates.push('下装');
 		}
 	}
 	cartCates=getDistinct(cartCates);
