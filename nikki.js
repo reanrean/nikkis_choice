@@ -59,6 +59,7 @@ function onChangeCriteria() {
 	if (global.additionalBonus && global.additionalBonus.length > 0) {
 		criteria.bonus = global.additionalBonus;
 	}
+	criteria.levelName = $("#theme").val();
 	chooseAccessories(criteria);
 	drawLevelInfo();
 	refreshTable();
@@ -666,7 +667,7 @@ function init() {
 }
 
 function wardrobe_cnt(){
-	var cnt=0;
+	/*var cnt=0;
 	var cate=[];
 	var own=[];
 	var res="Count: ";
@@ -689,7 +690,7 @@ function wardrobe_cnt(){
 		res+=category[c]+own[c]+"/"+cate[c]+" ";
 	}
 	$('#wardrobe_cnt').html(res);//currently unuse
-	
+	*/
 	var lastupd='衣柜数据更新日期：'+wardrobe_lastupd+'　<a href="maint.html" target="_blank">维护</a>';
 	$('#wardrobe_cnt').html(lastupd);
 }
