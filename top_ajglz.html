@@ -16,6 +16,7 @@
 		.inName {word-break:break-all;}
 		a.aTooltip {color:inherit;}
 		a.aTooltip:hover {text-decoration:none;}
+		a.monkey {color:inherit;text-decoration:none;}
 		body {margin:1em; font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;}
 		fieldset {width:100%; max-width:270px; padding:.35em .625em .75em; border:1px solid silver;}
 		legend {border:0; width:auto; margin-bottom:0; font-size:14px;}
@@ -47,6 +48,7 @@
 	<script type='text/javascript' charset="UTF-8" src='levels-hs.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='top.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='top_ajglz.js'></script>
+	<script type='text/javascript' charset="UTF-8" src='sha1.js'></script>
 </head>
 <body>
 	<p>
@@ -63,21 +65,24 @@
 	<span id="options">
 	<fieldset>
 		<legend>选项（重新计算生效）</legend>
-		计算 <input type="checkbox" id="showJJC" checked />竞技场 <input type="checkbox" id="showAlly" checked />联盟 <input type="checkbox" id="showNormal"/>主线<br>
+		计算 <input type="checkbox" id="showJJC" checked />竞技场 <input type="checkbox" id="showAlly" checked />联盟 <input type="checkbox" id="showNormal" checked />主线<br>
 		计算<input type="text" id="showCnt" size="2" style="line-height:100%;"/>件高配信息<br>
 		结果大于<input type="text" id="maxHide" size="2" style="line-height:100%;"/>时折叠<br>
 		<input type="checkbox" id="hideNores" />只显示有结果的部件<br>
 		显示 <input type="checkbox" id="showSource" />来源 <input type="checkbox" id="showMerc" />兑换数量<br>
-		分类数量：<button class="btn btn-xs btn-default" onclick="addCartNum()">＋</button><button class="btn btn-xs btn-default" onclick="delCartNum()">－</button><br>
 		<span style="display:none"><input type="checkbox" id="cartMode" onclick="chgcartMode()" checked />选取多件</span>
 	</fieldset></span>
 	<span id="cartContent">
 	<hr>
-	<p>点击单品会添加到：<span id="currentCart"></span></p>
+	<p>标题：<input type="text" id="ajglz_title" placeholder="XXXX"/>&emsp;更新人员：<input type="text" id="ajglz_staff" placeholder="Rean翎"/></p>
+	<p>分类数量：<span id="cartNum"></span>&ensp;<button class="btn btn-xs btn-default" onclick="addCartNum()">＋</button><button class="btn btn-xs btn-default" onclick="delCartNum()">－</button>&emsp;点击单品添加到：<span id="currentCart"></span></p>
 	</span>
 	<hr>
 	<p id='topsearch_note'></p>
 	<p id='topsearch_info'></p>
+	<hr>
+	<p id="p_passcode"><input type="password" id="passcode" placeholder="懒人密钥"/><a href="" onclick="verify();return false;" class="monkey">&#x1f648;</a></p>
+	<p id="p_content" style="display:none"><textarea id="ajglz_out" rows=15 style="width:100%"></textarea></p>
 
 	<span style="display:none">
 	<div class='facet'><!-- for criteria use -->
