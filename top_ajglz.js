@@ -62,6 +62,7 @@ function chooseCurCart(n){
 }
 
 function calctop(){
+	var date1=new Date();
 	if (isNaN(parseInt($("#showCnt").val())) || $("#showCnt").val()<1) {$("#showCnt").val(1);}
 	$("#showCnt").val(parseInt($("#showCnt").val()));
 	if (isNaN(parseInt($("#maxHide").val())) || $("#maxHide").val()<1) {$("#maxHide").val(1);}
@@ -95,7 +96,8 @@ function calctop(){
 					indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
 				}
 				$('#ajglz_out').val(header()+indexes+middle()+topsearch_info.replace(/\n/g,"\\n")+footer());
-				$('#topsearch_note').html('&emsp;&#x1f64a;计算完成&#x1f64a;<br>↓↓下方复制代码↓↓');
+				var date2=new Date();
+				$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 			}
 		}
 	//$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+50)+"px");
