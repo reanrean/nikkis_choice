@@ -79,20 +79,23 @@ function calctop(){
 			}else{
 				$('#alert_msg').html('');
 				$('#topsearch_info').html('');
-				$('#topsearch_note').html('本页内容：');
+				$('#topsearch_note').html('');
+				var indexes='本页内容：';
+				var topsearch_info='';
 				for(var l=0;l<cartNum;l++){
 					var listname=($('#cartName'+(l+1)).val() ? $('#cartName'+(l+1)).val() : $('#cartName'+(l+1)).attr('placeholder'));
 					limitMode=0;
 					storeTopByCate_all(l);
-					$('#topsearch_info').append('<a id="'+(l+1)+'"></a>');
-					$('#topsearch_info').append('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l)+'</span>');
+					topsearch_info+=('<a id="'+(l+1)+'"></a>');
+					topsearch_info+=('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l)+'</span>');
 					limitMode=1;
 					storeTopByCate_all(l);
-					$('#topsearch_info').append('<span class="limit">'+calctop_byall(l)+'</span>');
+					topsearch_info+=('<span class="limit">'+calctop_byall(l)+'</span>');
 					
-					$('#topsearch_note').append('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
-				}				
-				$('#ajglz_out').val(header()+$('#topsearch_note').html()+middle()+$('#topsearch_info').html()+footer());
+					indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
+				}
+				$('#ajglz_out').val(header()+indexes+middle()+topsearch_info.replace(/\n/g,"\\n")+footer());
+				$('#topsearch_note').html('&emsp;&#x1f64a;计算完成&#x1f64a;<br>↓↓下方复制代码↓↓');
 			}
 		}
 	//$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+50)+"px");
