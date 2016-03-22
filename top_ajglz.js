@@ -4,10 +4,30 @@ function init_top(){
 	$("#showCnt").val(5);
 	$("#maxHide").val(5);
 	addCartNum();
+	init_passcode();
+}
+
+function init_passcode(){
+	$('#passcode').keydown(function(e) {
+		if (e.keyCode==13) {
+			$(this).blur();
+			verify();
+		}
+	});
 }
 
 var cartNum=0;
 var currentCart=0;
+
+function verify(){
+	var pass='6394210ce21ac27fb5de7645824dff9be9ba0690';
+	var userInput=$.sha1($("#passcode").val());
+	$("#passcode").val('');
+	if (userInput==pass){
+		$("#p_passcode").hide();
+		$("#p_content").show();
+	}
+}
 
 function addCartNum(){
 	cartNum++;
@@ -22,6 +42,7 @@ function addCartNum(){
 	currentCart=cartNum-1;
 	$('#currentCart').html($('#cartName'+(currentCart+1)).val() ? $('#cartName'+(currentCart+1)).val() : $('#cartName'+(currentCart+1)).attr('placeholder'));
 	cartList[cartNum-1]=[];
+	$('#cartNum').html(cartNum);
 }
 
 function delCartNum(){
@@ -31,6 +52,7 @@ function delCartNum(){
 		$('#cartContent hr:last').remove();
 		currentCart=cartNum-1;
 		$('#currentCart').html($('#cartName'+(currentCart+1)).val() ? $('#cartName'+(currentCart+1)).val() : $('#cartName'+(currentCart+1)).attr('placeholder'));
+		$('#cartNum').html(cartNum);
 	}
 }
 
@@ -69,10 +91,11 @@ function calctop(){
 					$('#topsearch_info').append('<span class="limit">'+calctop_byall(l)+'</span>');
 					
 					$('#topsearch_note').append('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
-				}
+				}				
+				$('#ajglz_out').val(header()+$('#topsearch_note').html()+middle()+$('#topsearch_info').html()+footer());
 			}
 		}
-	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+50)+"px");
+	//$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+50)+"px");
 }
 
 function calctop_byall(cartList_num){
@@ -182,4 +205,39 @@ function delCart(id,n){
 		if(newArr[i]!=id) {cartList[n].push(newArr[i]);}
 	}
 	refreshCart(n);
+}
+
+function header(){
+ var h='<!DOCTYPE html>';
+	h+='<head>';
+	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
+	h+='<meta http-equiv="Content-Type" content="text/html"; charset=utf-8" />';
+	h+='<link rel="stylesheet" type="text/css" href="../../css/style.css" />';
+	h+='<link rel="stylesheet" type="text/css" href="dp-style.css" />';
+	h+='<script type="text/javascript" src="dp.js"></script>';
+	h+='</head>';
+	h+='<body>';
+	h+='<div class="myframe">';
+	h+='<p class="title1">';
+	h+=$('#ajglz_title').val() ? $('#ajglz_title').val() : $('#ajglz_title').attr('placeholder');
+	h+='</p>';
+	h+='<hr class="mhr"/>';
+	h+='<p class="normal"><span class="title3">更新时间：</span>';
+	var d=new Date();
+	h+=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+	h+='<br>';
+	h+='<span class="title3">更新人员：</span>';
+	h+=$('#ajglz_staff').val() ? $('#ajglz_staff').val() : $('#ajglz_staff').attr('placeholder');
+	h+='</p>';
+	h+='<hr class="mhr"/>';
+	h+='<p class="normal">';
+	return h;
+}
+
+function middle(){
+	return '</p><p id="radio"></p>';
+}
+
+function footer(){
+	return '</div></body></html>';
 }
