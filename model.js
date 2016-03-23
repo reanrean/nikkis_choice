@@ -92,8 +92,7 @@ Clothes = function(csv) {
           }
         }else if($.inArray(this.type.type, Flist[filters.levelName]["type"])>-1){
           if (!Flist[filters.levelName][this.name]){
-            if ($.inArray(this.type.type, ["连衣裙","上装","下装"])>-1) isf = 0.1;
-            else isf = 0;
+            isf = 0.1;
           }
         }
       }
@@ -125,6 +124,7 @@ Clothes = function(csv) {
         }
       }
 
+	  this.isF = (isf==1? 0:1);
       this.tmpScore = Math.round(s);
       this.bonusScore = 0;
 	  this.sumScore = 0;
@@ -301,7 +301,7 @@ var shoppingCart = {
   toList: function(sortBy) {
     var ret = [];
     for (var t in this.cart) {
-      if(this.cart[t].sumScore>0) ret.push(this.cart[t]);
+      ret.push(this.cart[t]);
     }
     return ret.sort(sortBy);
   },
