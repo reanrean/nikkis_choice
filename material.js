@@ -298,22 +298,18 @@ function showLevelDropInfo(){
 	$("#levelDropNote").html(levelDropNote);
 }
 
-function genFactor_main(ConsumeId){
-	if(ConsumeId){
-		genFactor2(clothes[ConsumeId],1);
-	}else{
-		do{
-			var total=0;
-			for (var i in clothes){//add extra count once only
-				if(extraInd[i]&&(!extraAdded[i])){
-					reqCnt[i]+=1; 
-					genFactor2(clothes[i],1); 
-					extraAdded[i]=1; 
-					total+=1;
-				}
+function genFactor_main(){
+	do{
+		var total=0;
+		for (var i in clothes){//add extra count once only
+			if(extraInd[i]&&(!extraAdded[i])){
+				reqCnt[i]+=1; 
+				genFactor2(clothes[i],1); 
+				extraAdded[i]=1; 
+				total+=1;
 			}
-		}while(total>0);
-	}
+		}
+	}while(total>0);
 }
 
 function genFactor(id,showConstructInd,showConsumeInd){
@@ -321,9 +317,8 @@ function genFactor(id,showConstructInd,showConsumeInd){
 	if(!showConsumeInd){showConsumeInd=0;}
 	clearCnt();
 	
-	extraInd[id]=1;
-	if(showConsumeInd){genFactor_main(id);}
-	else {genFactor_main();}
+	if(showConsumeInd){genFactor2(clothes[id],1);}
+	else {extraInd[id]=1; genFactor_main();}
 	
 	var cell='';
 	var output=table()+tr(tab('<b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id,'colspan="3"'));
