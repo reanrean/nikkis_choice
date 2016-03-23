@@ -213,12 +213,11 @@ function drawLevelInfo() {
 				var $notF = $("<font>").text("可穿戴部件:  ").addClass("not_f");
 				$categoryF.append($notF).append(currentLevel.hint[1]);
 			}
+			$categoryF.append($("<br>"));
 			if (currentLevel.hint[2] && currentLevel.hint[2] != '') {
 				var $isF = $("<font>").text("会导致F的部件: ").addClass("is_f");
 				$categoryF.append($isF).append(currentLevel.hint[2]);
 			}
-		}
-		if (currentLevel.hint) {
 		}
 		if (currentLevel.skills) {
 			var $shaonv,
@@ -289,6 +288,7 @@ function filterTopAccessories(filters) {
 	for (var i in clothes) {
 		if (matches(clothes[i], {}, filters)) {
 			clothes[i].calc(filters);
+			if (clothes[i].isF) continue;
 			if (!result[clothes[i].type.type]) {
 				result[clothes[i].type.type] = clothes[i];
 			} else if (clothes[i].sumScore > result[clothes[i].type.type].sumScore) {
@@ -334,6 +334,7 @@ function filterTopClothes(filters) {
 	for (var i in clothes) {
 		if (matches(clothes[i], {}, filters)) {
 			clothes[i].calc(filters);
+			if (clothes[i].isF) continue;
 			if (!result[clothes[i].type.type]) {
 				result[clothes[i].type.type] = clothes[i];
 			} else if (clothes[i].sumScore > result[clothes[i].type.type].sumScore) {
@@ -349,6 +350,9 @@ function filterTopClothes(filters) {
 			delete result["上装"];
 			delete result["下装"];
 		}
+	}else if((result["上装"] || result["下装"]) && result["连衣裙"]){
+		delete result["上装"];
+		delete result["下装"];
 	}
 	return result;
 }
@@ -667,30 +671,6 @@ function init() {
 }
 
 function wardrobe_cnt(){
-	/*var cnt=0;
-	var cate=[];
-	var own=[];
-	var res="Count: ";
-	for (var c in category){
-		cate[c]=0;
-		own[c]=0;
-	}
-	for (var i in clothes) {
-		for (var c in category){
-			if(clothes[i].type.type==category[c]){
-				cate[c]+=1;
-				cnt+=1;
-				if(clothes[i].own){
-					own[c]+=1;
-				}
-			}
-		}	
-	}
-	for (var c in category){
-		res+=category[c]+own[c]+"/"+cate[c]+" ";
-	}
-	$('#wardrobe_cnt').html(res);//currently unuse
-	*/
 	var lastupd='衣柜数据更新日期：'+wardrobe_lastupd+'　<a href="maint.html" target="_blank">维护</a>';
 	$('#wardrobe_cnt').html(lastupd);
 }
