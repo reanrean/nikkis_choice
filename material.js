@@ -298,25 +298,32 @@ function showLevelDropInfo(){
 	$("#levelDropNote").html(levelDropNote);
 }
 
-function genFactor_main(){
-	do{
-		var total=0;
-		for (var i in clothes){//add extra count once only
-			if(extraInd[i]&&(!extraAdded[i])){
-				reqCnt[i]+=1; 
-				genFactor2(clothes[i],1); 
-				extraAdded[i]=1; 
-				total+=1;
+function genFactor_main(ConsumeId){
+	if(ConsumeId){
+		genFactor2(clothes[ConsumeId],1);
+	}else{
+		do{
+			var total=0;
+			for (var i in clothes){//add extra count once only
+				if(extraInd[i]&&(!extraAdded[i])){
+					reqCnt[i]+=1; 
+					genFactor2(clothes[i],1); 
+					extraAdded[i]=1; 
+					total+=1;
+				}
 			}
-		}
-	}while(total>0);
+		}while(total>0);
+	}
 }
 
-function genFactor(id,showConstructInd){
+function genFactor(id,showConstructInd,showConsumeInd){
+	if(!showConstructInd){showConstructInd=0;}
+	if(!showConsumeInd){showConsumeInd=0;}
 	clearCnt();
 	
 	extraInd[id]=1;
-	genFactor_main();
+	if(showConsumeInd){genFactor_main(id);}
+	else {genFactor_main();}
 	
 	var cell='';
 	var output=table()+tr(tab('<b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id,'colspan="3"'));
@@ -356,9 +363,8 @@ function genFactor(id,showConstructInd){
 			}
 		}
 		output+=tr(tab(cell,'colspan="3"'));
-		if (showConstructInd) {output+=genBasicMaterial(1);}
-		else {output+=genBasicMaterial();}
-	}else if(clothes[id].source.indexOf('重构')>-1){ //if construct show formula *hardcoded
+		output+=genBasicMaterial(0,id,showConstructInd,showConsumeInd);
+	}else if(clothes[id].source.indexOf('重构')>-1){ //if construct show formula *hardcoded name
 		cell+=' = ';
 		for (var con in construct) {
 			if (construct[con][0]==clothes[id].type.mainType && construct[con][1]==clothes[id].name){
@@ -468,7 +474,8 @@ function searchById(){
 	}
 }
 
-function searchSet(setName,showConstructInd){
+function searchSet(setName,showConstructInd,showConsumeInd){//showConsumeInd is dummy now
+	if(!showConstructInd){showConstructInd=0;}
 	clearCnt();
 	
 	var setCnt=0;
@@ -484,20 +491,23 @@ function searchSet(setName,showConstructInd){
 	var cell='<b>套装：</b>'+ahref(setName,"chgScopeSub2(3,'"+setName+"')")+'　全'+setCnt+'个部件材料总览';
 	output+=tr(tab(cell,'colspan="3"'));
 	output+=tr(tab('','colspan="3"'));
-	if (showConstructInd) {output+=genBasicMaterial(1);}
-	else {output+=genBasicMaterial();}
+	output+=genBasicMaterial(1,setName,showConstructInd,0);
 	output+=table(1);
 	
 	$("#levelDropInfo").html(output);
 	$("#levelDropNote").html('');	
 }
 
-function genBasicMaterial(showConstructInd){
+function genBasicMaterial(setInd,id,showConstructInd,showConsumeInd){
+	if(!showConstructInd){showConstructInd=0; var constxt='查看重构材料'; var oppoConstructInd=1;}
+	else{var constxt='查看部件材料'; var oppoConstructInd=0;}
+	if(!showConsumeInd){showConsumeInd=0; var reqtxt='需求数量'; var oppoConsumeInd=1;}
+	else{var reqtxt='消耗数量'; var oppoConsumeInd=0;}
 	var header=[];
 	var content=[];
-	var output=tr(tab('基础材料')+tab('来源')+tab('需求数量'),'style="font-weight:bold;"');
+	var output=tr(tab('基础材料')+tab('来源')+tab(setInd?reqtxt:ahref(reqtxt,'genFactor('+id+','+showConstructInd+','+oppoConsumeInd+')')),'style="font-weight:bold;"');
 	for (var s in src){//sort by source
-		header[s]=tr(tab('<u>'+src_desc[s]+'</u>'+((src[s]=='重构'&&(!showConstructInd))?'　'+ahref('查看重构材料','showConstruct()'):''),'colspan="3"'));
+		header[s]=tr(tab('<u>'+src_desc[s]+'</u>'+((src[s]=='重构')?'　'+ahref(constxt,(setInd?"searchSet('"+id+"'":'genFactor('+id)+','+oppoConstructInd+','+showConsumeInd+')'):''),'colspan="3"'));
 		
 		if(s<2){
 			for (l1=1;l1<=maxc;l1++){
@@ -518,7 +528,7 @@ function genBasicMaterial(showConstructInd){
 					}}
 				}
 			}
-		}else if (src[s]=='重构'&&showConstructInd){ //* for construct
+		}else if (src[s]=='重构'&&showConstructInd){ //for construct *hardcoded name
 			var constructMaterial=[0,0,0];//rarity 3,4,5
 			var constructMaterialName=['希望之环','重生耳环','永恒之链'];
 			for (var i in clothes){ if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])&&clothes[i].source.indexOf(src[s])>-1){
@@ -535,7 +545,7 @@ function genBasicMaterial(showConstructInd){
 			for (var i in constructMaterial){
 				if (constructMaterial[i]>0){
 					if(!content[s]){content[s]='';}
-					content[s]+=tr(tab(constructMaterialName[i])+tab('分解')+tab(constructMaterial[i]+1));
+					content[s]+=tr(tab(constructMaterialName[i])+tab('分解')+tab(constructMaterial[i]+(showConsumeInd?0:1)));
 				}
 			}
 		}else{
@@ -607,25 +617,6 @@ function conv_source(src,subs,mainType){
 		return str1+str2+str3;
 	}else{
 		return src;
-	}
-}
-
-function showConstruct(){ //*hardcoded here *assumes unique name(lazy!)
-	var orig_html=$("#levelDropInfo").html();
-	var name1_1=orig_html.indexOf('<b>')+3;
-	var name1_2=orig_html.indexOf('</b>');
-	var name1=orig_html.substr(name1_1,name1_2-name1_1);
-	if(name1.indexOf('套装')==0){
-		var name2_1=orig_html.indexOf('return false;">')+'return false;">'.length;
-		var name2_2=orig_html.indexOf('</a>');
-		var name2=orig_html.substr(name2_1,name2_2-name2_1);
-		searchSet(name2,1);
-	}else{
-		var id=-1;
-		for (var i in clothes){
-			if(clothes[i].name==name1) {id=i;break;}
-		}
-		genFactor(id,1);
 	}
 }
 
