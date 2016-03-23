@@ -472,7 +472,6 @@ function calctop_bytheme(id,them){
 	//sort resultList
 	for (var r in resultList){
 		if(clothes[id]==resultList[r][0]){
-			//r=4 for butterfly
 			for (r2=0;r2<r;r2++){
 				if(resultList[r][1]==resultList[r2][1]){
 					var tmp_res=resultList[r];
@@ -541,6 +540,7 @@ function getTopCloByCate(filters,rescnt,type){
 	for (var i in clothes) {
 		if (clothes[i].type.type!=type){continue;}//skip other categories
 		clothes[i].calc(filters);
+		if (clothes[i].isF) {continue;}
 		if (!result[0]) {
 			result[0] = [clothes[i],clothes[i].sumScore];
 		}else {
@@ -800,43 +800,7 @@ function onChangeCriteria() {
 	if (global.additionalBonus && global.additionalBonus.length > 0) {
 		criteria.bonus = global.additionalBonus;
 	}
-	criteria.levelName = $("#theme").val();
-}
-
-function setFilters(level) {
-	$("#theme").val(theme_name);
-	currentLevel = level;
-	global.additionalBonus = currentLevel.additionalBonus;
-	var weights = level.weight;
-	for (var i in FEATURES) {
-		var f = FEATURES[i];
-		var weight = weights[f];
-		/*if (uiFilter["balance"]) {
-			if (weight > 0) {
-				weight = 1;
-			} else if (weight < 0) {
-				weight = -1;
-			}
-		}*/
-		$('#' + f + 'Weight').val(Math.abs(weight));
-		var radios = $('input[name=' + f + ']:radio');
-		for (var j = 0; j < radios.length; j++) {
-			var element = $(radios[j]);
-			if (parseInt(element.attr("value")) * weight > 0) {
-				element.prop("checked", true);
-				element.parent().addClass("active");
-			} else if (element.parent()) {
-				element.parent().removeClass("active");
-			}
-		}
-	}
-	clearTag('tag1');
-	clearTag('tag2');
-	if (level.bonus) {
-		for (var i in level.bonus) {
-			bonusToTag(parseInt(i) + 1, level.bonus[i]);
-		}
-	}
+	criteria.levelName = theme_name;
 }
 
 //below is duplicated from nikki.js
@@ -914,4 +878,39 @@ function onChangeUiFilter() {
 		}
 	}
 	refreshTable();
+}
+
+function setFilters(level) {
+	currentLevel = level;
+	global.additionalBonus = currentLevel.additionalBonus;
+	var weights = level.weight;
+	for (var i in FEATURES) {
+		var f = FEATURES[i];
+		var weight = weights[f];
+		/*if (uiFilter["balance"]) {
+			if (weight > 0) {
+				weight = 1;
+			} else if (weight < 0) {
+				weight = -1;
+			}
+		}*/
+		$('#' + f + 'Weight').val(Math.abs(weight));
+		var radios = $('input[name=' + f + ']:radio');
+		for (var j = 0; j < radios.length; j++) {
+			var element = $(radios[j]);
+			if (parseInt(element.attr("value")) * weight > 0) {
+				element.prop("checked", true);
+				element.parent().addClass("active");
+			} else if (element.parent()) {
+				element.parent().removeClass("active");
+			}
+		}
+	}
+	clearTag('tag1');
+	clearTag('tag2');
+	if (level.bonus) {
+		for (var i in level.bonus) {
+			bonusToTag(parseInt(i) + 1, level.bonus[i]);
+		}
+	}
 }
