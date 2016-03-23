@@ -91,9 +91,7 @@ Clothes = function(csv) {
             isf = 0.1;
           }
         }else if($.inArray(this.type.type, Flist[filters.levelName]["type"])>-1){
-          if (!Flist[filters.levelName][this.name]){
             isf = 0.1;
-          }
         }
       }
       var s = 0;
@@ -124,7 +122,7 @@ Clothes = function(csv) {
         }
       }
 
-	  this.isF = (isf==1? 0:1);
+      this.isF = (isf==1? 0:1);
       this.tmpScore = Math.round(s);
       this.bonusScore = 0;
 	  this.sumScore = 0;
