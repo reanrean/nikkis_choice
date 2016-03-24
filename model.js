@@ -283,7 +283,13 @@ var shoppingCart = {
     this.cart = {};
   },
   contains: function(c) {
-    return this.cart[c.type.type] == c;
+    //return this.cart[c.type.type] == c;
+    var cnt=0;
+    for (var cc in category) {
+      if(this.cart[category[cc]]) cnt++;
+      if(this.cart[category[cc]] == c) break;
+    }
+    return cnt;
   },
   remove: function(c) {
     delete this.cart[c];
