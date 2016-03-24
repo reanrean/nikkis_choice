@@ -1,6 +1,7 @@
 
 function thead(isShoppingCart) {
 	var $thead = $("<div>").addClass("table-head");
+	if (isShoppingCart) $thead.append(td("", "cnt"));
 	$thead.append(td("分数", "score"));
 	$thead.append(td("名称", "name"));
 	$thead.append(td("类别", "category"));
@@ -39,6 +40,7 @@ function row(piece, isShoppingCart) {
 	var $row = $("<div>").addClass("table-row");
 	var $lineTop = $row;
 	//var $lineTop = $("<div>").addClass("table-line");
+	if (isShoppingCart) $lineTop.append(td(piece.id?shoppingCart.contains(piece):'', 'cnt'));
 	$lineTop.append(td(piece.sumScore, 'score'));
 	if (isShoppingCart) {
 		$lineTop.append(td(piece.name, ''));
