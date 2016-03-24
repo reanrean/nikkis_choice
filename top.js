@@ -25,7 +25,6 @@ var limitMode=0;
 
 function searchById(){
 	var searchById=clear_top_id();
-	var searchById_match=0;
 	currentList=[];
 	currentSetList=[];
 	if(searchById){
@@ -35,7 +34,6 @@ function searchById(){
 			if (setList[i].indexOf(searchById)>-1){
 				out+=tr(td(ahref(setList[i],"searchSet('"+setList[i]+"')"))+td('套装')+td('-')+td('-')+td(''));
 				currentSetList.push(setList[i]);
-				searchById_match=1;
 			}
 		}
 		for (var i in clothes){
@@ -60,7 +58,7 @@ function searchById(){
 		out+=appendCurrent();
 		out+='</table>';
 		var out1='查找：'+searchById;
-		if(currentList.length>0||searchById_match) {
+		if(currentList.length>0||currentSetList.length>0) {
 			$('#topsearch_info').html(out);
 			if (searchById!='*') {out1+='　'+ahref('查找所有染色及进化',"searchSub(0,"+"'"+searchById+"')");}
 		}
