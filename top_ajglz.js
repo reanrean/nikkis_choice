@@ -5,6 +5,7 @@ function init_top(){
 	$("#maxHide").val(5);
 	addCartNum();
 	init_passcode();
+	searchMode();
 }
 
 function init_passcode(){
@@ -59,6 +60,91 @@ function delCartNum(){
 function chooseCurCart(n){
 	currentCart=n-1;
 	$('#currentCart').html($('#cartName'+(currentCart+1)).val() ? $('#cartName'+(currentCart+1)).val() : $('#cartName'+(currentCart+1)).attr('placeholder'));
+}
+
+function searchMode(){
+	if($('#searchMode').html()=='来源'){
+		$('#searchMode').html('名称');
+		$('#searchMode').removeClass('btn-info');
+		$('#searchMode').addClass('btn-success');
+		$('#textBox').attr('placeholder','套装/名称/类别');
+	}else{
+		$('#searchMode').html('来源');
+		$('#searchMode').removeClass('btn-success');
+		$('#searchMode').addClass('btn-info');
+		$('#textBox').attr('placeholder','来源/类别');
+	}
+}
+
+function searchById(){
+	var searchById=$.trim($("#textBox").val());
+	currentList=[];
+	currentSetList=[];
+	if(searchById){
+		var out='<table border="1">';
+		out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
+		
+		if($('#searchMode').html()=='来源'){
+			for (var i in clothes){
+				if (searchById=='*'){
+					currentList.push(i);
+				}else if(searchById.indexOf('*')>-1){
+					var searchArr=searchById.split('*');
+					for (m=0;m<searchArr.length;m++){
+						if (searchArr[m]=='套装'){
+							if(!clothes[i].set) {break;}
+						}else if (searchArr[m]=='非套装'){
+							if(clothes[i].set) {break;}
+						}else if(searchArr[m].indexOf('?')>-1){//currently only check once, match head&tail for each source
+							var srcArr=clothes[i].source.split('/');
+							srcArr.push(clothes[i].type.type);
+							var searchArr_mhead=searchArr[m].substr(0,searchArr[m].indexOf('?'));
+							var searchArr_mtail=searchArr[m].substr(searchArr[m].indexOf('?')+1);
+							var searchArr_match=0;
+							for(var arr in srcArr){
+								if(srcArr[arr].indexOf(searchArr_mhead)==0&&srcArr[arr].indexOf(searchArr_mtail)==srcArr[arr].length-searchArr_mtail.length){searchArr_match=1;break;}
+							}
+							if(!searchArr_match) break;
+						}else if (searchArr[m]!=''){
+							if(clothes[i].source.indexOf(searchArr[m])<0&&clothes[i].type.type.indexOf(searchArr[m])<0){break;}
+						}
+						if (m==searchArr.length-1) {currentList.push(i);}
+					}
+				}else if(clothes[i].type.type.indexOf(searchById)>-1||clothes[i].source.indexOf(searchById)>-1){
+					currentList.push(i);
+				}
+			}
+		}else{
+			for (var i in setList){
+				if (setList[i].indexOf(searchById)>-1){
+					out+=tr(td(ahref(setList[i],"searchSet('"+setList[i]+"')"))+td('套装')+td('-')+td('-')+td(''));
+					currentSetList.push(setList[i]);
+				}
+			}
+			for (var i in clothes){
+				if (searchById=='*'){
+					currentList.push(i);
+				}else if(searchById.indexOf('*')>-1){
+					var searchArr=searchById.split('*');
+					for (m=0;m<searchArr.length;m++){
+						if(searchArr[m]!=''&&clothes[i].name.indexOf(searchArr[m])<0&&clothes[i].type.type.indexOf(searchArr[m])<0){break;}
+						if (m==searchArr.length-1) {currentList.push(i);}
+					}
+				}else if(clothes[i].name.indexOf(searchById)>-1||clothes[i].type.type.indexOf(searchById)>-1){
+					currentList.push(i);
+				}
+			}
+		}
+		out+=appendCurrent();
+		out+='</table>';
+		var out1='查找：'+searchById;
+		if(currentList.length>0||currentSetList.length>0) {
+			$('#topsearch_info').html(out);
+			if (searchById!='*') {out1+='　'+ahref('查找所有染色及进化',"searchSub(0,"+"'"+searchById+"')");}
+		}
+		else {$("#topsearch_info").html('没有找到相关资料');}
+		$("#topsearch_note").html(out1);
+	}
 }
 
 function calctop(){
