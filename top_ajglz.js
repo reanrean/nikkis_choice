@@ -44,6 +44,13 @@ function addCartNum(){
 	$('#currentCart').html($('#cartName'+(currentCart+1)).val() ? $('#cartName'+(currentCart+1)).val() : $('#cartName'+(currentCart+1)).attr('placeholder'));
 	cartList[cartNum-1]=[];
 	$('#cartNum').html(cartNum);
+	
+	$('#cartName'+cartNum).keydown(function(e) {
+		if (e.keyCode==13) {
+			$(this).blur();
+			searchById($('#cartName'+cartNum).val());
+		}
+	});
 }
 
 function delCartNum(){
@@ -76,8 +83,9 @@ function searchMode(){
 	}
 }
 
-function searchById(){
-	var searchById=$.trim($("#textBox").val());
+function searchById(txt){
+	if(!txt) {var searchById=$.trim($("#textBox").val());}
+	else {var searchById=txt;}
 	currentList=[];
 	currentSetList=[];
 	if(searchById){
