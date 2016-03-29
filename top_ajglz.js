@@ -48,7 +48,7 @@ function addCartNum(){
 	$('#cartName'+cartNum).keydown(function(e) {
 		if (e.keyCode==13) {
 			$(this).blur();
-			searchById($('#cartName'+cartNum).val());
+			searchById($(this).val());
 		}
 	});
 }
@@ -84,8 +84,8 @@ function searchMode(){
 }
 
 function searchById(txt){
-	if(!txt) {var searchById=$.trim($("#textBox").val());}
-	else {var searchById=txt;}
+	if(txt) {var searchById=txt;}
+	else {var searchById=$.trim($("#textBox").val());}
 	currentList=[];
 	currentSetList=[];
 	if(searchById){
