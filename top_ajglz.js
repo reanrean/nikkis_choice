@@ -174,14 +174,15 @@ function calctop(){
 					limitMode=0;
 					storeTopByCate_all(l);
 					topsearch_info+=('<a id="'+(l+1)+'"></a>');
-					topsearch_info+=('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l)+'</span>');
+					topsearch_info+=('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l).replace(/\n/g,'&NewLine;')+'</span>');
 					limitMode=1;
 					storeTopByCate_all(l);
-					topsearch_info+=('<span class="limit">'+calctop_byall(l)+'</span>');
+					topsearch_info+=('<span class="limit">'+calctop_byall(l).replace(/\n/g,'&NewLine;')+'</span>');
 					
 					indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
 				}
-				$('#ajglz_out').val(header()+indexes+middle()+topsearch_info.replace(/\n/g,'&NewLine;')+footer());
+				if ($('#hideNores').is(":checked")){indexes+='<br>注：本页只显示顶配/高配部件。'}
+				$('#ajglz_out').val(header()+indexes+middle()+topsearch_info+footer());
 				var date2=new Date();
 				$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 			}
@@ -211,8 +212,8 @@ function calctop_byall(cartList_num){
 			var rowspan=1;
 			if(inTop.length>0 && inSec.length>0) {rowspan++;}
 			
-			var cell=td(clothes[id].name,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
-			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
+			var cell=td(clothes[id].name,'rowspan="'+rowspan+'"');
+			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'"');
 			if(showSource||showMerc){
 				var cell_3rd='';
 				if(showSource){
@@ -224,30 +225,34 @@ function calctop_byall(cartList_num){
 					var price=getMerc(id);
 					cell_3rd=(price?price:cell_3rd);
 				}
-				cell+=td(cell_3rd,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
+				cell+=td(cell_3rd,'rowspan="'+rowspan+'"');
 			}
 			if(inTop.length>0){
-				cell+=td('顶配','class="inTop"');
-				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id,cartList_num),'class="inTop"'):'');
-				cell+=(showAlly?td(retTopTd(inTop,'联盟',id,cartList_num),'class="inTop"'):'');
-				cell+=(showNormal?td(retTopTd(inTop,'关卡',id,cartList_num),'class="inTop"'):'');
-				out+=tr(cell);
+				cell+=td('顶配');
+				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id,cartList_num)):'');
+				cell+=(showAlly?td(retTopTd(inTop,'联盟',id,cartList_num)):'');
+				cell+=(showNormal?td(retTopTd(inTop,'关卡',id,cartList_num)):'');
+				out+=tr(cell,'class="top"');
 			}
 			if(inSec.length>0){
 				if(inTop.length>0){cell='';}
-				cell+=td('高配','class="inSec"');
-				cell+=(showJJC?td(retTopTd(inSec,'竞技场',id,cartList_num),'class="inSec"'):'');
-				cell+=(showAlly?td(retTopTd(inSec,'联盟',id,cartList_num),'class="inSec"'):'');
-				cell+=(showNormal?td(retTopTd(inSec,'关卡',id,cartList_num),'class="inSec"'):'');
+				cell+=td('高配');
+				cell+=(showJJC?td(retTopTd(inSec,'竞技场',id,cartList_num)):'');
+				cell+=(showAlly?td(retTopTd(inSec,'联盟',id,cartList_num)):'');
+				cell+=(showNormal?td(retTopTd(inSec,'关卡',id,cartList_num)):'');
 				out+=tr(cell);
 			}
 			if(inTop.length==0 && inSec.length==0 && !($('#hideNores').is(":checked"))){
-				out+=tr(cell+td('-','class="inNone"')+(showJJC?td('','class="inNone"'):'')+(showAlly?td('','class="inNone"'):'')+(showNormal?td('','class="inNone"'):''));
+				out+=tr(cell+td('-')+(showJJC?td(''):'')+(showAlly?td(''):'')+(showNormal?td(''):''));
 			}
 		}
 	}
 	out+='</table>';
 	return out;
+}
+
+function clear_textarea(){
+	$('#ajglz_out').val('');
 }
 
 function storeTopByCate_all(l){
@@ -331,4 +336,8 @@ function middle(){
 
 function footer(){
 	return '</div></body></html>';
+}
+
+function addTooltip(text,tooltip){
+	return '<a href="" tooltip="'+tooltip+'" class="aTooltip">'+text+'</a>';
 }
