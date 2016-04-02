@@ -233,7 +233,7 @@ function calctop_byall(cartList_num){
 			if(clothes[id].cool[1]) {cell_tag+='|暖'+clothes[id].cool[1];}
 			if(clothes[id].tags[0]) {cell_tag+='\n'+clothes[id].tags.join(',');}
 			
-			var cell=td(addTooltip(clothes[id].name,cell_tag),'rowspan="'+rowspan+'"');
+			var cell=td(addTooltip(clothes[id].name,cell_tag),'rowspan="'+rowspan+'" class="normTip"');
 			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'"');
 			if(showSource||showMerc){
 				var cell_3rd='';
