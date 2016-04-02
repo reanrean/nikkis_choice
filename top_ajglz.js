@@ -220,7 +220,20 @@ function calctop_byall(cartList_num){
 			var rowspan=1;
 			if(inTop.length>0 && inSec.length>0) {rowspan++;}
 			
-			var cell=td(clothes[id].name,'rowspan="'+rowspan+'"');
+			var cell_tag='';
+			if(clothes[id].simple[0]) {cell_tag+='简'+clothes[id].simple[0];}
+			if(clothes[id].simple[1]) {cell_tag+='华'+clothes[id].simple[1];}
+			if(clothes[id].active[0]) {cell_tag+='|活'+clothes[id].active[0];}
+			if(clothes[id].active[1]) {cell_tag+='|雅'+clothes[id].active[1];}
+			if(clothes[id].cute[0]) {cell_tag+='|可'+clothes[id].cute[0];}
+			if(clothes[id].cute[1]) {cell_tag+='|成'+clothes[id].cute[1];}
+			if(clothes[id].pure[0]) {cell_tag+='|纯'+clothes[id].pure[0];}
+			if(clothes[id].pure[1]) {cell_tag+='|性'+clothes[id].pure[1];}
+			if(clothes[id].cool[0]) {cell_tag+='|凉'+clothes[id].cool[0];}
+			if(clothes[id].cool[1]) {cell_tag+='|暖'+clothes[id].cool[1];}
+			if(clothes[id].tags[0]) {cell_tag+='\n'+clothes[id].tags.join(',');}
+			
+			var cell=td(addTooltip(clothes[id].name,cell_tag),'rowspan="'+rowspan+'"');
 			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'"');
 			if(showSource||showMerc){
 				var cell_3rd='';
