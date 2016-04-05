@@ -6,6 +6,7 @@ function init_top(){
 	addCartNum();
 	init_passcode();
 	searchMode();
+	init_searchModule();
 }
 
 function init_passcode(){
@@ -83,16 +84,18 @@ function searchMode(){
 	}
 }
 
-function searchById(txt){
+function searchById(txt,mode){
 	if(txt) {var searchById=txt;}
 	else {var searchById=$.trim($("#textBox").val());}
+	if(mode) {var searchMode=mode;}
+	else {var searchMode=$('#searchMode').html();}
 	currentList=[];
 	currentSetList=[];
 	if(searchById){
 		var out='<table border="1">';
 		out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
 		
-		if($('#searchMode').html()=='来源'){
+		if(searchMode=='来源'){
 			for (var i in clothes){
 				if (searchById=='*'){
 					currentList.push(i);
@@ -103,6 +106,7 @@ function searchById(txt){
 							if(!clothes[i].set) {break;}
 						}else if (searchArr[m]=='非套装'){
 							if(clothes[i].set) {break;}
+							if(isBasicSet(i)) {break;}
 						}else if(searchArr[m].indexOf('?')>-1){//currently only check once, match head&tail for each source
 							var srcArr=clothes[i].source.split('/');
 							srcArr.push(clothes[i].type.type);
@@ -176,26 +180,28 @@ function calctop(){
 				$('#topsearch_info').html('');
 				$('#topsearch_note').html('');
 				var indexes='本页内容：';
-				var topsearch_info='';
+				var topsearch_info_all='';
+				limitMode=0;
+				storeTopByCate_all();
+				var topsearch_info_n=[];
 				for(var l=0;l<cartNum;l++){
 					var listname=($('#cartName'+(l+1)).val() ? $('#cartName'+(l+1)).val() : $('#cartName'+(l+1)).attr('placeholder'));
-					limitMode=0;
-					storeTopByCate_all(l);
-					topsearch_info+=('<a id="'+(l+1)+'"></a>');
+					var topsearch_info='<a id="'+(l+1)+'"></a>';
 					topsearch_info+=('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l).replace(/\n/g,'&NewLine;')+'</span>');
-					limitMode=1;
-					storeTopByCate_all(l);
-					topsearch_info+=('<span class="limit">'+calctop_byall(l).replace(/\n/g,'&NewLine;')+'</span>');
-					
+					topsearch_info_n.push(topsearch_info);
 					indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
 				}
+				limitMode=1;
+				storeTopByCate_all();
+				for(var l=0;l<cartNum;l++){
+					topsearch_info_all+=topsearch_info_n[l]+('<span class="limit">'+calctop_byall(l).replace(/\n/g,'&NewLine;')+'</span>');
+				}
 				if ($('#hideNores').is(":checked")){indexes+='<br>注：本页只显示顶配/高配部件。'}
-				$('#ajglz_out').val(header()+indexes+middle()+topsearch_info+footer());
+				$('#ajglz_out').val(header()+indexes+middle()+topsearch_info_all+footer());
 				var date2=new Date();
 				$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 			}
 		}
-	//$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+50)+"px");
 }
 
 function calctop_byall(cartList_num){
@@ -272,12 +278,35 @@ function calctop_byall(cartList_num){
 	return out;
 }
 
+function isBasicSet(id){
+	var targ=[];
+	targ.push(id);
+	do{
+		var total=0;
+		for (var i in clothes){
+			for (var t in targ){
+				if (clothes[i].source.indexOf(clothes[targ[t]].id)>0 
+				&& clothes[targ[t]].type.mainType==clothes[i].type.mainType 
+				&& $.inArray(i,targ)<0){
+					targ.push(i);
+					total+=1;
+				}
+			}
+		}
+	}while(total>0);
+	for (var i in targ){
+		if(clothes[targ[i]].set){return 1;}
+	}
+	return 0;
+}
+
 function clear_textarea(){
 	$('#ajglz_out').val('');
 }
 
-function storeTopByCate_all(l){
+function storeTopByCate_all(){
 	var cartCates=[];
+	for (var l in cartList){
 	for (var i in cartList[l]){
 		cartCates.push(clothes[cartList[l][i]].type.type);
 		if($.inArray(clothes[cartList[l][i]].type.type, ['连衣裙','上装','下装'])>-1){
@@ -285,6 +314,7 @@ function storeTopByCate_all(l){
 			cartCates.push('上装');
 			cartCates.push('下装');
 		}
+	}
 	}
 	cartCates=getDistinct(cartCates);
 	storeTopByCate(cartCates);
@@ -361,4 +391,59 @@ function footer(){
 
 function addTooltip(text,tooltip){
 	return '<a href="" tooltip="'+tooltip+'" class="aTooltip">'+text+'</a>';
+}
+
+//*******************************************search module*******************************************//
+
+function init_searchModule(){
+	var box=['不使用'];
+	for (var m in modules_top){
+		box.push(modules_top[m][0]);
+	}
+	box=getDistinct(box);
+	$('#searchModule').html(selectBox('modes','genModule()',box));
+}
+
+function selectBox(id,onchange,valArr,textArr){
+	var ret='<select id="'+id+'" onchange='+onchange+'>';
+	if(!textArr){textArr=valArr;}
+	for (var i in valArr){
+		ret+='<option value="'+valArr[i]+'">'+textArr[i]+'</option>';
+	}
+	ret+='</select>';;
+	return ret;
+}
+
+function genModule(){
+	//clear all carts
+	var cnt=cartNum;
+	for (var c=0;c<cnt;c++){
+		delCartNum();
+	}
+	clearCart(1);
+	$('#cartName1').val('');
+	$('#ajglz_title').val('');
+	//start
+	var modes=$('#modes').val();
+	var title=[];
+	for (var m in modules_top){
+		if (modules_top[m][0]==modes) {title.push(modules_top[m][1]);}
+	}
+	title=getDistinct(title);
+	if(title.length>0){$('#ajglz_title').val(modes);}
+	for (var t in title){
+		if(t>0) {addCartNum();}
+		for (var m in modules_top){
+			if (modules_top[m][0]==modes&&modules_top[m][1]==title[t]) {
+				$('#cartName'+(t*1+1)).val(title[t]);
+				if(modules_top[m][2]){
+					searchSet(modules_top[m][3]);
+				}else{
+					searchById(modules_top[m][3],modules_top[m][4]);
+				}
+				searchSub(0,modules_top[m][3]);
+				addCart_All(t*1+1);
+			}
+		}
+	}
 }
