@@ -139,7 +139,8 @@ function searchById(txt,mode){
 				}else if(searchById.indexOf('*')>-1){
 					var searchArr=searchById.split('*');
 					for (m=0;m<searchArr.length;m++){
-						if(searchArr[m]!=''&&clothes[i].name.indexOf(searchArr[m])<0&&clothes[i].type.type.indexOf(searchArr[m])<0){break;}
+						if(searchArr[m].indexOf('!')==0){if(clothes[i].name!=searchArr[m].substr(1)){break;}}
+						else if(searchArr[m]!=''&&clothes[i].name.indexOf(searchArr[m])<0&&clothes[i].type.type.indexOf(searchArr[m])<0){break;}
 						if (m==searchArr.length-1) {currentList.push(i);}
 					}
 				}else if(clothes[i].name.indexOf(searchById)>-1||clothes[i].type.type.indexOf(searchById)>-1){
@@ -218,6 +219,7 @@ function calctop_byall(cartList_num){
 	else{var showMerc=0;}
 	var out='<table border="1" class="calcByAll'+((showMerc||showSource)?' calcSrc':'')+'">';
 	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('顶配')+(showJJC?td('竞技场'):'')+(showAlly?td('联盟'+(limitMode?'(极限)':'')):'')+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
+	var out_cont='';
 	for (var c in category){//sort by category
 		for (var i in cartList[cartList_num]){
 			id=cartList[cartList_num][i];
@@ -259,7 +261,7 @@ function calctop_byall(cartList_num){
 				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id,cartList_num)):'');
 				cell+=(showAlly?td(retTopTd(inTop,'联盟',id,cartList_num)):'');
 				cell+=(showNormal?td(retTopTd(inTop,'关卡',id,cartList_num)):'');
-				out+=tr(cell,'class="top"');
+				out_cont+=tr(cell,'class="top"');
 			}
 			if(inSec.length>0){
 				if(inTop.length>0){cell='';}
@@ -267,15 +269,15 @@ function calctop_byall(cartList_num){
 				cell+=(showJJC?td(retTopTd(inSec,'竞技场',id,cartList_num)):'');
 				cell+=(showAlly?td(retTopTd(inSec,'联盟',id,cartList_num)):'');
 				cell+=(showNormal?td(retTopTd(inSec,'关卡',id,cartList_num)):'');
-				out+=tr(cell);
+				out_cont+=tr(cell);
 			}
 			if(inTop.length==0 && inSec.length==0 && !($('#hideNores').is(":checked"))){
-				out+=tr(cell+td('-')+(showJJC?td(''):'')+(showAlly?td(''):'')+(showNormal?td(''):''));
+				out_cont+=tr(cell+td('-')+(showJJC?td(''):'')+(showAlly?td(''):'')+(showNormal?td(''):''));
 			}
 		}
 	}
-	out+='</table>';
-	return out;
+	if(out_cont) {return out+out_cont+'</table>';}
+	else {return '<p class="normal" align="center">无顶配/高配信息</p>';}
 }
 
 function isBasicSet(id){
