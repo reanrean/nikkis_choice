@@ -6,10 +6,50 @@
     <script type='text/javascript' charset="UTF-8" src='http://ivangift.github.io/nikkiup2u3/jquery.floatThead.min.js'></script>
     <script type='text/javascript' charset="UTF-8" src='http://ivangift.github.io/nikkiup2u3/jquery.collapse.js'></script>
     <script type='text/javascript' charset="UTF-8" src='http://ivangift.github.io/nikkiup2u3/jquery.auto-complete.min.js'></script>
-    <script type='text/javascript' charset="UTF-8" src='../wardrobe.js'></script>
-    <script type='text/javascript' charset="UTF-8" src='hs-wardrobe.js'></script>
+    <script type='text/javascript' charset="UTF-8" src='../data/wardrobe.js'></script>
+	<script type='text/javascript' charset="UTF-8">
+	var wardrobe_orig=wardrobe;
+	var wardrobe=function() {
+		var ret = [];
+		for (var i in wardrobe_orig) {
+			var tmp=wardrobe[i];
+			if (tmp[1]=='上装'){tmp[1]='上衣';}
+			ret.push(tmp);
+		}
+		return ret;
+	}();
+
+	var category_orig=category;
+	var category=function() {
+		var ret = [];
+		for (var i in category_orig) {
+			if (category_orig[i]=='上装'){ret.push('上衣');}
+			else{ret.push(category_orig[i])};
+		}
+		return ret;
+	}();
+	</script>
     <script type='text/javascript' charset="UTF-8" src='http://ivangift.github.io/nikkistats/scoring.js'></script>
-    <script type='text/javascript' charset="UTF-8" src='hs-blacklist.js'></script>
+    <script type='text/javascript' charset="UTF-8" src='http://seal100x.github.io/nikkiup2u3_data/flist.js'></script>
+	<script type='text/javascript' charset="UTF-8" >
+	var blacklist=function() {
+		var ret = [];
+		for (var i in Flist) {
+			var ind=i.indexOf(':')+1;
+			var name=(ind==3?'':'g')+$.trim(i.substr(ind));
+			for (var k in wardrobe){
+				var mainTp_ind=wardrobe[k][1].indexOf('-');
+				var mainTp=(mainTp_ind<0?wardrobe[k][1].replace('上装','上衣'):wardrobe[k][1].substr(0,mainTp_ind));
+				if(Flist[i][wardrobe[k][0]]){
+					if ($.inArray(wardrobe[k][1], Flist[i]["type"])<0) ret.push([name,mainTp,wardrobe[k][2]]);
+				}else{
+					if ($.inArray(wardrobe[k][1], Flist[i]["type"])>-1) ret.push([name,mainTp,wardrobe[k][2]]);
+				}
+			}
+		}
+		return ret;
+	}();
+	</script>
     <script type='text/javascript' charset="UTF-8" src='http://ivangift.github.io/nikkiup2u3/levels.js'></script>
     <script type='text/javascript' charset="UTF-8" src='hs-levels.js'></script>
     <script type='text/javascript' charset="UTF-8" src='http://ivangift.github.io/nikkistats/model.js'></script>
@@ -17,7 +57,42 @@
     <script type='text/javascript' charset="UTF-8" src='http://ivangift.github.io/nikkistats/skills.js'></script>
     <script type='text/javascript' charset="UTF-8" src='http://ivangift.github.io/nikkistats/npc.js'></script>
     <script type='text/javascript' charset="UTF-8" src='http://ivangift.github.io/nikkiup2u3/nikki.js'></script>
-    <script type='text/javascript' charset="UTF-8" src='hs-nikki.js'></script>
+	<script type='text/javascript' charset="UTF-8">
+	function setBoost(criteria, boostType) {
+	  global.boostType = boostType;
+	  $(".boost").text("");
+	  switch(global.boostType) {
+		case 2: // global
+		  criteria.boost1 = global.extreme.boost1;
+		  criteria.boost2 = global.extreme.boost2;
+		  $("#" + criteria.boost1 + "Boost").text("<-暖暖的微笑");
+		  $("#" + criteria.boost2 + "Boost").text("<-迷人飞吻+暖暖的微笑");
+		  $('#output_row').append("['"+$("#theme").val().replace('g','')+"','"+criteria.boost1+"','"+criteria.boost2+"'],"+"<br>");
+		  shoppingCart.clear();
+		  if (global.extreme.shoppingCart) {
+			for (var i in global.extreme.shoppingCart.cart) {
+			  shoppingCart.put(global.extreme.shoppingCart.cart[i][2]);
+			}
+		  }
+		  break;
+		case 3: // own
+		  criteria.boost1 = global.extremeOwn.boost1;
+		  criteria.boost2 = global.extremeOwn.boost2;
+		  $("#" + criteria.boost1 + "Boost").text("<-暖暖的微笑");
+		  $("#" + criteria.boost2 + "Boost").text("<-迷人飞吻+暖暖的微笑");
+		  shoppingCart.clear();
+		  if (global.extremeOwn.shoppingCart) {
+			for (var i in global.extremeOwn.shoppingCart.cart) {
+			  shoppingCart.put(global.extremeOwn.shoppingCart.cart[i][2]);
+			}
+		  }
+		  break;
+		default:
+		  criteria.boost1 = null;
+		  criteria.boost2 = null;
+	  }
+	}
+	</script>
     <link rel="stylesheet" href="http://ivangift.github.io/nikkiup2u3/jquery.auto-complete.css">
     <style>
       table
@@ -486,7 +561,7 @@
     <div id = 'log'></div>
 </span>
 <p id="reancomment">
-<b>Before run</b>: please copy levelsRaw & levelBonus(normal levels only) to <b>hs-levels.js</b> & update <b>hs-blacklist.js</b>
+<b>Before run</b>: please copy levelsRaw & levelBonus(normal levels only) to <b>hs-levels.js</b>
 </p>
   </body>
 </html>
