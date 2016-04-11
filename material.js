@@ -3,6 +3,7 @@ $(document).ready(function () {
 	get_convertlist();
 	get_maxc();
 	show_scope();
+	show_inv();
 });
 
 var highlight=['星之海','韶颜倾城','格莱斯'];
@@ -683,4 +684,50 @@ function enterKey() {
 			searchById();
 		}
 	});
+}
+
+//below are modified from nikki.js, for custom inventory
+
+function show_inv(){
+	$('button').addClass('btn btn-default');
+	$('button').css('line-height','100%');
+	$('#showInv').html('&emsp;'+ahref('自定义衣柜',' ','showInv'));
+	$('.showInv').click(function(){
+		if($('#custInv').css('display')=='none'){
+			$('#custInv').show();
+			$('.showInv').html('↑收起衣柜↑');
+		}else{
+			$('#custInv').hide();
+			$('.showInv').html('自定义衣柜');
+		}
+	});
+}
+
+function clearCustomInventory(){
+	$("#myClothes").val('');
+	loadCustomInventory();
+}
+
+$(document).ready(function () {
+	var mine = loadFromStorage();
+	updateSize(mine);
+});
+
+function updateSize(mine) {
+	$("#myClothes").val(mine.serialize());
+}
+
+function loadCustomInventory() {
+	var myClothes = $("#myClothes").val();
+	if (myClothes.indexOf('|') > 0) {
+		loadNew(myClothes);
+	} else {
+		load(myClothes);
+	}
+	saveAndUpdate();
+}
+
+function saveAndUpdate() {
+	var mine = save();
+	updateSize(mine);
 }
