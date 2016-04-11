@@ -18,6 +18,10 @@
 			.xzh {color:blue;}
 			.syqc {color:#FF88FF;}
 			.gls {color:red;}
+			#myClothes {width:60%}
+			@media only screen and (max-width:650px){
+				#myClothes {width:100%}
+			}
 		</style>
 		<script type='text/javascript' charset="UTF-8" src='jquery.js'></script>
 		<script type='text/javascript' charset="UTF-8" src='data/wardrobe.js'></script>
@@ -35,7 +39,8 @@
 			　部分计算引用自<a href="http://seal100x.github.io/nikkiup2u3/">配装器 by 黑的升华</a><br/>
 			　数据提供 by amy_翡翠<br/>
 		</p>
-		<p class="large"><span id="chooseScope"></span><span id="chooseLevel"></span><span id="chooseSub"></span><span id="chooseSub2"></span></p>
+		<p class="large"><span id="chooseScope"></span><span id="chooseLevel"></span><span id="chooseSub"></span><span id="chooseSub2"></span><span id="showInv"></span></p>
+		<p id="custInv" style="display:none;"><button onclick="loadCustomInventory()">更新</button><button onclick="clearCustomInventory()">清空</button><br><textarea id="myClothes" rows="5"></textarea></p>
 		<p id="levelDropInfo"></p>
 		<p id="levelDropNote"></p>
 	</body>
