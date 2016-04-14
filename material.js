@@ -344,7 +344,14 @@ function genFactor(id,showConstructInd,showConsumeInd){
 	output+=tr(tab(cell,'colspan="3"'));
 	
 	cell='来源:'+clothes[id].source;
-	if(parentInd[id]) { //if parent show formula
+	if(parentInd[id]) { //if parent show price & formula
+		for (var pc in patternPrice){
+			if (clothes[id].type.mainType==patternPrice[pc][0]&&clothes[id].name==patternPrice[pc][1]){
+				cell+='('+patternPrice[pc][2]+')';
+				break;
+			}
+		}
+	
 		cell+=' = ';
 		for (var p in pattern) {
 			if (clothesSet[pattern[p][0]][pattern[p][1]]==clothes[id]){
