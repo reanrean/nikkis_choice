@@ -22,6 +22,7 @@ var currentSetList=[];
 var setList=[];
 var storeTop=[];
 var limitMode=0;
+var replaceSrc=['店·钻石'];
 
 function searchById(){
 	var searchById=clear_top_id();
@@ -250,7 +251,13 @@ function calctop_byall(){
 				}
 				if(showMerc){
 					var price=getMerc(id);
-					cell_3rd=(price?price:cell_3rd);
+					if(price) {
+						var hasStr=0;
+						for (var r in replaceSrc){
+							if(cell_3rd.indexOf(replaceSrc[r])>-1) {cell_3rd=cell_3rd.replace(replaceSrc[r],price); hasStr=1; break;}
+						}
+						if (!hasStr) {cell_3rd=price};
+					}
 				}
 				cell+=td(cell_3rd,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
 			}
