@@ -305,8 +305,8 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 				case '联盟': var pos=2; break;
 				case '关卡': var pos=3; break;
 			}
-			a='<span id="cell'+id+'_t'+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_t"+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+"')")+'</span>';
-			a+='<span id="cell'+id+'_t'+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_t"+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+"')"))+'</span>';
+			a='<span id="cell'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
+			a+='<span id="cell'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
 			return a;
 		}
 		return ret;
@@ -325,8 +325,8 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 				case '关卡': var pos=3; break;
 				default: var pos=0;
 			}
-			a='<span id="cell'+id+'_s'+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"_s"+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+"')")+'</span>';
-			a+='<span id="cell'+id+'_s'+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+'_f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"_s"+(limitMode?"l":"n")+pos+'c'+cartNumIfMult+"')"))+'</span>';
+			a='<span id="cell'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
+			a+='<span id="cell'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
 			return a;
 		}
 		return ret;
@@ -334,12 +334,12 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 }
 
 function showTop(id){
-	$('#cell'+id+'_f').show();
+	$('#cell'+id+'f').show();
 	$('#cell'+id).hide();
 }
 
 function hideTop(id){
-	$('#cell'+id+'_f').hide();
+	$('#cell'+id+'f').hide();
 	$('#cell'+id).show();
 }
 
