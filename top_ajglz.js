@@ -217,7 +217,7 @@ function calctop_byall(cartList_num){
 	else{var showSource=0;}
 	if($('#showMerc').is(":checked")){var showMerc=1;}
 	else{var showMerc=0;}
-	var out='<table border="1" class="calcByAll'+((showMerc||showSource)?' calcSrc':'')+'">';
+	var out='<table class="calcByAll'+((showMerc||showSource)?' calcSrc':'')+'">';
 	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('顶配')+(showJJC?td('竞技场'):'')+(showAlly?td('联盟'+(limitMode?'(极限)':'')):'')+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
 	var out_cont='';
 	for (var c in category){//sort by category
@@ -241,7 +241,7 @@ function calctop_byall(cartList_num){
 			if(clothes[id].cool[1]) {cell_tag+='|暖'+clothes[id].cool[1];}
 			if(clothes[id].tags[0]) {cell_tag+='\n'+clothes[id].tags.join(',');}
 			
-			var cell=td(addTooltip(clothes[id].name,cell_tag),'rowspan="'+rowspan+'" class="normTip"');
+			var cell=td(addTooltip(clothes[id].name,cell_tag),'rowspan="'+rowspan+'"');
 			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'"');
 			if(showSource||showMerc){
 				var cell_3rd='';
@@ -398,7 +398,11 @@ function footer(){
 }
 
 function addTooltip(text,tooltip){
-	return '<a href="" tooltip="'+tooltip+'" class="aTooltip">'+text+'</a>';
+	return '<a tooltip="'+tooltip+'">'+text+'</a>';
+}
+
+function nobr(text){
+	return '<em>'+text+'</em>';
 }
 
 //*******************************************search module*******************************************//
