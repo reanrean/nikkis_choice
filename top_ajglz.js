@@ -188,14 +188,14 @@ function calctop(){
 				for(var l=0;l<cartNum;l++){
 					var listname=($('#cartName'+(l+1)).val() ? $('#cartName'+(l+1)).val() : $('#cartName'+(l+1)).attr('placeholder'));
 					var topsearch_info='<a id="'+(l+1)+'"></a>';
-					topsearch_info+=('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l).replace(/\n/g,'&NewLine;')+'</span>');
+					topsearch_info+=('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>');
 					topsearch_info_n.push(topsearch_info);
 					indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
 				}
 				limitMode=1;
 				storeTopByCate_all();
 				for(var l=0;l<cartNum;l++){
-					topsearch_info_all+=topsearch_info_n[l]+('<span class="limit">'+calctop_byall(l).replace(/\n/g,'&NewLine;')+'</span>');
+					topsearch_info_all+=topsearch_info_n[l]+('<span class="limit">'+calctop_byall(l).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>');
 				}
 				if ($('#hideNores').is(":checked")){indexes+='<br>注：本页只显示顶配/高配部件。'}
 				$('#ajglz_out').val(header()+indexes+middle()+topsearch_info_all+footer());
