@@ -225,8 +225,7 @@ function calctop_byall(cartList_num){
 			id=cartList[cartList_num][i];
 			if(clothes[id].type.type!=category[c]){continue;}
 			calctop_byid(id);
-			var rowspan=1;
-			if(inTop.length>0 && inSec.length>0) {rowspan++;}
+			var rowspan=(inTop.length>0&&inSec.length>0)? 2:1;
 			
 			var cell_tag='';
 			if(clothes[id].simple[0]) {cell_tag+='简'+clothes[id].simple[0];}
@@ -241,8 +240,8 @@ function calctop_byall(cartList_num){
 			if(clothes[id].cool[1]) {cell_tag+='|暖'+clothes[id].cool[1];}
 			if(clothes[id].tags[0]) {cell_tag+='\n'+clothes[id].tags.join(',');}
 			
-			var cell=td(addTooltip(clothes[id].name,cell_tag),'rowspan="'+rowspan+'"');
-			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'"');
+			var cell=td(addTooltip(clothes[id].name,cell_tag),(rowspan>1?'rowspan="'+rowspan+'"':''));
+			cell+=td(clothes[id].type.type,(rowspan>1?'rowspan="'+rowspan+'"':''));
 			if(showSource||showMerc){
 				var cell_3rd='';
 				if(showSource){
@@ -260,7 +259,7 @@ function calctop_byall(cartList_num){
 						if (!hasStr) {cell_3rd=price};
 					}
 				}
-				cell+=td(cell_3rd,'rowspan="'+rowspan+'"');
+				cell+=td(cell_3rd,(rowspan>1?'rowspan="'+rowspan+'"':''));
 			}
 			if(inTop.length>0){
 				cell+=td('顶配');
