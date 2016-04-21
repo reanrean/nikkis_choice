@@ -367,7 +367,7 @@ function genFactor(id,showConstructInd,showConsumeInd){
 		}
 		output+=tr(tab(cell,'colspan="3"'));
 		output+=genBasicMaterial(0,id,showConstructInd,showConsumeInd);
-	}else if(clothes[id].source.indexOf('重构')>-1){ //if construct show formula *hardcoded name
+	}else if(clothes[id].source.indexOf('重构')>-1){ //if construct show formula
 		cell+=' = ';
 		for (var con in construct) {
 			if (construct[con][0]==clothes[id].type.mainType && construct[con][1]==clothes[id].name){
@@ -531,9 +531,14 @@ function genBasicMaterial(setInd,id,showConstructInd,showConsumeInd){
 					}}
 				}
 			}
-		}else if (src[s]=='重构'&&showConstructInd){ //for construct *hardcoded name
-			var constructMaterial=[0,0,0];//rarity 3,4,5
-			var constructMaterialName=['希望之环','重生耳环','永恒之链'];
+		}else if (src[s]=='重构'&&showConstructInd){ //for construct
+			var constructMaterial=function() {
+				var ret = [];
+				for (var i in constructMaterialName) {
+					ret.push(0);
+				}
+				return ret;
+			}();
 			for (var i in clothes){ if((!shownFactor[i])&&reqCnt[i]&&(!parentInd[i])&&clothes[i].source.indexOf(src[s])>-1){
 				for (var con in construct) {
 					if (construct[con][0]==clothes[i].type.mainType && construct[con][1]==clothes[i].name){
