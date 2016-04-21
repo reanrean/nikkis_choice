@@ -741,9 +741,21 @@ function show_opt(){
 function getMerc(id){
 	for (var m in merchant){
 		if(clothes[id].type.mainType==merchant[m][0]&&clothes[id].name==merchant[m][1]){
-			//var res=merchant[m][2];
-			//if(merchant[m][3].indexOf('金')>-1||merchant[m][3].indexOf('钻')>-1) {res+=merchant[m][3].substr(0,1);}
 			return merchant[m][2]+merchant[m][3];
+		}
+	}
+	for (var m in construct){
+		if(clothes[id].type.mainType==construct[m][0]&&clothes[id].name==construct[m][1]){
+			var constructMaterial=[];
+			for (var i in constructMaterialName) {
+				for (var mm in construct){
+					if(clothes[id].type.mainType==construct[mm][0]&&clothes[id].name==construct[mm][1]&&constructMaterialName[i]==construct[mm][2]) {
+						constructMaterial.push(construct[mm][3]);
+					}
+				}
+				if(constructMaterial.length<=i) {constructMaterial.push(0);}
+			}
+			return '重构'+constructMaterial.join('/');
 		}
 	}
 	return;
