@@ -22,6 +22,7 @@ function show(){
 function go(){
 	var menu='<table width=60% style="table-layout: fixed">';
 	var line=td(ahref('<b>Compare</b>','go_comp()'));
+		line+=td(ahref('<b>Pattern</b>','go_comp_pattern()'));
 		line+=td(ahref('<b>Add</b>','go_add()'));
 		line+=td(ahref('<b>CheckSource</b>','go_src()'));
 		line+=td('<a href="maint_top/hs-ip.html" target="_blank"><b>LevelWeight</b></a>');
@@ -78,6 +79,27 @@ function go_comp(){
 			out+=tr(td('<hr>'));
 		}
 	}
+	out+='</table>';
+	
+	$("#info").html(out);
+	$("#extra").html('');
+}
+
+function go_comp_pattern(){
+	var p1=[];
+	var p2=[];
+	for (var i in pattern){
+		p1.push(pattern[i].join('/'));
+	}
+	for (var i in pattern_s){
+		p2.push(pattern_s[i].join('/'));
+	}
+	var out='<table>';
+	out+=tr(td("Extra records in rean's wardrobe VS seal100x's:"));
+	out+=tr(td(compare(p1,p2,'<br/>')));
+	out+=tr(td('<hr>'));
+	out+=tr(td("Extra records in seal100x's wardrobe VS rean's:"));
+	out+=tr(td(compare(p2,p1,'<br/>')));
 	out+='</table>';
 	
 	$("#info").html(out);
