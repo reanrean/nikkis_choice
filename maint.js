@@ -1,5 +1,5 @@
-var wname=[wardrobe,wardrobe_i,wardrobe_s];
-var wowner=['rean','ivangift','seal100x'];
+var wname=[wardrobe,wardrobe_s,wardrobe_i];
+var wowner=['rean','seal100x','ivangift'];
 
 var rows=0;
 var field_desc=['名字','分类','编号','心级',
@@ -20,7 +20,7 @@ function show(){
 }
 
 function go(){
-	var menu='<table width=60% style="table-layout: fixed">';
+	var menu='<table width=100% style="table-layout: fixed">';
 	var line=td(ahref('<b>Compare</b>','go_comp()'));
 		line+=td(ahref('<b>Pattern</b>','go_comp_pattern()'));
 		line+=td(ahref('<b>Add</b>','go_add()'));
@@ -55,10 +55,11 @@ function go_comp(){
 	for(var i=0;i<max;i++){//assign values into str[] from wardrobe
 		for (var j in wname){
 			if(wname[j][i]){
-				str[j][i]=wname[j][i][0]+'/'+wname[j][i][1].substr(0,1);
-				for (var p=2;p<field_desc.length;p++){
+				str[j][i]=wname[j][i][0];
+				for (var p=1;p<field_desc.length;p++){
 					if(p==skip_pos){continue;}
-					str[j][i]+='/'+wname[j][i][p];
+					if(p==1&&wname[j][i][p]=='上衣') {str[j][i]+='/上装';}
+					else {str[j][i]+='/'+wname[j][i][p];}
 				}
 			}else{
 				str[j][i]='';
