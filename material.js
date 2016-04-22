@@ -346,6 +346,9 @@ function genFactor(id,showConstructInd,showConsumeInd){
 	output+=tr(tab(cell,'colspan="3"'));
 	
 	cell='来源:'+clothes[id].source;
+	var thisPrice=getMerc(id);
+	if(thisPrice) {cell+='('+thisPrice[1]+thisPrice[2]+')';}
+	
 	if(parentInd[id]) { //if parent show price & formula
 		var thisPatternPrice=getPatternPrice(id);
 		if(thisPatternPrice) {cell+='('+thisPatternPrice+')';}
