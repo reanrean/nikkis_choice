@@ -869,6 +869,7 @@ function addCartList(val){
 function refreshCart(){
 	$('#cartCont').html('');
 	cartCont=getDistinct(cartCont);
+	if(cartCont.length>0) {$('#cartCont').append('<br>');}
 	for (var i in cartCont){
 		$('#cartCont').append('<button class="btn btn-xs btn-default">'+ahref(clothes[cartCont[i]].name,"genFactor("+cartCont[i]+")","search")+ahref('[×]','delCart('+cartCont[i]+')')+'</button>&ensp;');
 	}
