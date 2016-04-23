@@ -29,6 +29,7 @@ Clothes = function(csv) {
     tags: csv[14].split(','),
     source: csv[15],
     set: csv[16],
+    version: csv[17],
     deps: [],
     toCsv: function() {
       name = this.name;
@@ -43,9 +44,10 @@ Clothes = function(csv) {
       extra = this.tags.join(',');
       source = this.source;
       set = this.set;
+      version = this.version;
       return [type.type, id, stars, simple[0], simple[1], cute[0], cute[1],
           active[0], active[1], pure[0], pure[1], cool[0],
-          cool[1], extra, source, set];
+          cool[1], extra, source, set, version];
     },
     addDep: function(sourceType, depNum, c) {
 		var depinfo = {};
