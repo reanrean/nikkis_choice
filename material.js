@@ -177,7 +177,7 @@ function chgScopeSub(){
 	}
 }
 
-function chgScopeSub2(j,k){
+function chgScopeSub2(j,k,l){
 	if(!j) {j=$("#degree_level").val();}
 	if(!k) {k=$("#chooseCate").val();}
 
@@ -200,6 +200,25 @@ function chgScopeSub2(j,k){
 				valArr.push(i);
 			}
 		}
+		if(l){//count for dye
+			var dyeArr=[];
+			for(var a in valArr){
+				for(var p in pattern){
+					if(pattern[p][5]=='染'&&clothesSet[pattern[p][0]][pattern[p][1]]==clothes[valArr[a]]) {dyeArr.push(pattern[p][2]+','+pattern[p][3]);}
+					if(pattern[p][5]=='染'&&clothesSet[pattern[p][2]][pattern[p][3]]==clothes[valArr[a]]) {dyeArr.push(pattern[p][0]+','+pattern[p][1]);}
+				}
+			}
+			for(var d in dyeArr){
+				var dd=dyeArr[d].split(',');
+				for(var i in clothes){
+					if(clothes[i].type.mainType==dd[0]&&clothes[i].id==dd[1]){
+						valArr.push(i);
+						break;
+					}
+				}
+			}
+			valArr=getDistinct(valArr);
+		}
 	}else if(j==4){
 		for(var i in clothes){
 			if(clothes[i].tags[0]){
@@ -214,8 +233,9 @@ function chgScopeSub2(j,k){
 	
 	if (valArr.length>0){
 		var j_txt=(j<=2) ? $("#degree_level option[value='"+j+"']").text()+'&ensp;-&ensp;' : '';//given now j<=2 only invoked by selectbox
-		var set_link=(j==3)? '　'+ahref('套装材料总览',"searchSet('"+k+"')")+' '+cartButton("addCartSet('"+k+"')") : '';
-		var levelDropInfo='查找：'+j_txt+k+set_link;
+		var set_link=(j==3&&!l)? (hvConvert(k)?ahref('[染色]',"chgScopeSub2(3,'"+k+"',1)"):'')+'　'+ahref('套装材料总览',"searchSet('"+k+"')") : '';
+		var cart_button='&ensp;'+cartButton("addCartList('"+valArr.join('/')+"')");
+		var levelDropInfo='查找：'+j_txt+k+set_link+cart_button;
 		var levelDropNote=table()+tr(tab('名称')+tab('分类')+tab('编号')+tab('来源')+tab(''),'style="font-weight:bold;"');
 		for (var c in category){//sort by category
 			if(j<=2&&category[c]!=k) {continue;}//if j<=2 skip other categories
@@ -489,7 +509,8 @@ function searchSet(setName,showConstructInd,showConsumeInd){//showConsumeInd is 
 		if(clothes[i].set==setName){
 			extraInd[i]=1;
 			setCnt+=1;
-			var thisPatternPrice_i=getPatternPrice(i); if(thisPatternPrice_i) {thisPatternPrice+=getPatternPrice(i);}
+			var thisPatternPrice_i=getPatternPrice(i); 
+			if(thisPatternPrice_i) {thisPatternPrice+=thisPatternPrice_i;}
 		}
 	}
 	genFactor_main();
@@ -647,6 +668,19 @@ function retFactor(i,srci){
 	return tr(ret);
 }
 
+function hvConvert(setName){
+	for(var i in clothes){
+		if(clothes[i].set==setName){
+			for (var p in pattern){
+				if (pattern[p][5]=='染'&&(clothesSet[pattern[p][0]][pattern[p][1]]==clothes[i]||clothesSet[pattern[p][2]][pattern[p][3]]==clothes[i])){
+					return 1;
+				}
+			}
+		}
+	}
+	return 0;
+}
+
 function conv_source(src,subs,mainType){
 	if(src.indexOf(subs)>-1){
 		var pos1=src.indexOf(subs)+1;
@@ -791,14 +825,17 @@ function clearCustomInventory(){
 function calcCart(showConstructInd,showConsumeInd){
 	if(!showConstructInd){showConstructInd=0;}
 	clearCnt();
+	var thisPatternPrice=0;
 	for (var i in cartCont){
 		extraInd[cartCont[i]]=1;
+		var thisPatternPrice_i=getPatternPrice(cartCont[i]); 
+		if(thisPatternPrice_i) {thisPatternPrice+=thisPatternPrice_i;}
 	}
 	genFactor_main();
 	
 	var output=table();
-	var cell='<b>购物车：</b>共'+cartCont.length+'个部件材料统计';
-	output+=tr(tab(cell,'colspan="3"'));
+	output+=tr(tab('<b>购物车：</b>共'+cartCont.length+'个部件材料统计','colspan="3"'));
+	if(thisPatternPrice>0) {output+=tr(tab('设计图总价：'+thisPatternPrice,'colspan="3"'));}
 	output+=tr(tab('','colspan="3"'));
 	output+=genBasicMaterial(2,'',showConstructInd,0);
 	output+=table(1);
@@ -821,11 +858,10 @@ function delCart(id){
 	refreshCart();
 }
 
-function addCartSet(name){
-	for (var i in clothes){
-		if(clothes[i].set==name){
-			cartCont.push(i);
-		}
+function addCartList(val){
+	var valArr=val.split('/');
+	for(var i in valArr){
+		cartCont.push(parseInt(valArr[i]));
 	}
 	refreshCart();
 }
