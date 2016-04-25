@@ -524,10 +524,20 @@ function searchSet(setName,showConstructInd,showConsumeInd){//showConsumeInd is 
 		}
 	}
 	
+	var thisPatternPrice_2=0;
+	for (var i in clothes){
+		if(parentInd[i]>0||reqCnt[i]>0){
+			var thisPatternPrice_in=getPatternPrice(i); 
+			if(thisPatternPrice_in) {thisPatternPrice_2+=thisPatternPrice_in;}
+		}
+	}
+	
 	var output=table();
 	var cell='<b>套装：</b>'+ahref(setName,"chgScopeSub2(3,'"+setName+"')")+'　全'+setCnt+'个部件材料总览';
 	output+=tr(tab(cell,'colspan="3"'));
-	if(thisPatternPrice>0) {output+=tr(tab('设计图总价：'+thisPatternPrice,'colspan="3"'));}
+	if(thisPatternPrice>0||thisPatternPrice_2>0){
+		output+=tr(tab((thisPatternPrice>0? '设计图总价：'+thisPatternPrice+'&emsp;':'')+(thisPatternPrice_2>thisPatternPrice? '设计图总价(含材料)：'+thisPatternPrice_2:''),'colspan="3"'));
+	}
 	output+=tr(tab('','colspan="3"'));
 	output+=genBasicMaterial(1,setName,showConstructInd,showConsumeInd);
 	output+=table(1);
@@ -833,9 +843,19 @@ function calcCart(showConstructInd,showConsumeInd){
 	}
 	genFactor_main();
 	
+	var thisPatternPrice_2=0;
+	for (var i in clothes){
+		if(parentInd[i]>0||reqCnt[i]>0){
+			var thisPatternPrice_in=getPatternPrice(i); 
+			if(thisPatternPrice_in) {thisPatternPrice_2+=thisPatternPrice_in;}
+		}
+	}
+	
 	var output=table();
 	output+=tr(tab('<b>购物车：</b>共'+cartCont.length+'个部件材料统计','colspan="3"'));
-	if(thisPatternPrice>0) {output+=tr(tab('设计图总价：'+thisPatternPrice,'colspan="3"'));}
+	if(thisPatternPrice>0||thisPatternPrice_2>0){
+		output+=tr(tab((thisPatternPrice>0? '设计图总价：'+thisPatternPrice+'&emsp;':'')+(thisPatternPrice_2>thisPatternPrice? '设计图总价(含材料)：'+thisPatternPrice_2:''),'colspan="3"'));
+	}
 	output+=tr(tab('','colspan="3"'));
 	output+=genBasicMaterial(2,'',showConstructInd,0);
 	output+=table(1);
