@@ -8,14 +8,12 @@ function init_top_update(){
 		tmp+=lastVersion[v];
 	}
 	$('#textBox').val(tmp);
-	//alert(wardrobe.length+' '+wardrobe_old.length+' '+lastVersion_id.length);
 }
 
 var theme_name; //no need global?
 var storeTop=[];
 var storeTop_old=[];
-var compTop=[];
-var limitMode=0;
+var dp=10;
 
 var lastVersion_id=function() {
 	var ret = [];
@@ -42,10 +40,7 @@ var lastVersion_cate=function() {
 
 function calctopupd(){
 	storeTopByCate();
-	//compByTheme();
-	//alert('end');
-	//compByThemeName('竞技场: 奇幻童话园');
-	alert(compByThemeName('关卡: 10-6'));
+	compByTheme();
 }
 
 function storeTopByCate(){
@@ -57,8 +52,8 @@ function storeTopByCate(){
 					setFilters(allThemes[theme_name]);
 					onChangeCriteria();
 					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
-					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,lastVersion_cate[cate],0)]);
-					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,lastVersion_cate[cate],1)]);
+					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,3,lastVersion_cate[cate],0)]);
+					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
 				}
 			}
 		}
@@ -67,10 +62,11 @@ function storeTopByCate(){
 				theme_name=c;
 				if (allThemes[theme_name]) {
 					setFilters(allThemes[theme_name]);
-					onChangeCriteria();
 					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
-					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,lastVersion_cate[cate],0)]);
-					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,lastVersion_cate[cate],1)]);
+					onChangeCriteria(1);
+					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,3,lastVersion_cate[cate],0)]);
+					onChangeCriteria(2);
+					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
 				}
 			}
 		}
@@ -79,17 +75,18 @@ function storeTopByCate(){
 				theme_name='关卡: '+d;
 				if (allThemes[theme_name]) {
 					setFilters(allThemes[theme_name]);
-					onChangeCriteria();
 					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
-					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,lastVersion_cate[cate],0)]);
-					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,lastVersion_cate[cate],1)]);
+					onChangeCriteria(1);
+					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,3,lastVersion_cate[cate],0)]);
+					onChangeCriteria(2);
+					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
 				}
 			}
 		}
 	}
 }
-
-function getTopCloByCate(filters,type,old){
+/*
+function getTopCloByCate(filters,rescnt,type,old){
 	var result = [];
 	for (var i in clothes) {
 		if (clothes[i].type.type!=type){continue;}//skip other categories
@@ -110,34 +107,199 @@ function getTopCloByCate(filters,type,old){
 	return result;
 	//bonusScore - tag score
 }
+*/
+
+function getTopCloByCate(filters,rescnt,type,old){
+	var result = [];
+	for (var i in clothes) {
+		if (clothes[i].type.type!=type){continue;}//skip other categories
+		if (old>0&&$.inArray(i,lastVersion_id)>-1) {continue;}
+		clothes[i].calc(filters);
+		if (clothes[i].isF) {continue;}
+		if (!result[0]) {
+			result[0] = [clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
+		}else {
+			if(result[rescnt-1] && clothes[i].sumScore < result[rescnt-1][0].sumScore){
+				//do nothing
+			}else if(result[rescnt-1] && clothes[i].sumScore == result[rescnt-1][0].sumScore){
+				result.push([clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore]);//push to end
+			}else{
+				for (j=0;j<rescnt;j++){//compare with [j]
+					if(!result[j] || clothes[i].sumScore > result[j][0].sumScore){
+						if (result[rescnt-1]&&result[rescnt-2]){
+							if (result[rescnt-1][0].sumScore == result[rescnt-2][0].sumScore){//insert into list
+								for (k=result.length;k>j;k--){//lower others ranking
+									result[k] = result[k-1];
+								}
+								//put current clothes to [j]
+								result[j] = [clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
+								break;
+							}else{//create new list
+								var result_orig=result;
+								result=[];
+								for(r=0;r<j;r++){
+									result[r]=result_orig[r];
+								}
+								for (k=rescnt-1;k>j;k--){//lower others ranking
+									result[k] = result_orig[k-1];
+								}
+								result[j]=[clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
+								break;
+							}
+						}else if(rescnt==1){//create new list with only 1 element
+							result=[];
+							result[j] = [clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
+						}else{
+							for (k=rescnt-1;k>j;k--){//lower others ranking
+								if(result[k-1]) {result[k] = result[k-1];}
+							}
+							//put current clothes to [j]
+							result[j] = [clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
+							break;
+						}
+					}
+				}
+			}
+		}
+	}
+	return result;
+}
 
 function compByTheme(){
+	$('#topsearch_note').html('');
 	if ($('#showJJC').is(":checked")){
+		var JJC_output=[];
 		for (var b in competitionsRaw){
 			theme_name='竞技场: '+b;
-			compByThemeName(theme_name);
+			JJC_output.push(compByThemeName(theme_name));
 		}
+		var tmp_a=outputByCate(JJC_output);
+		$('#topsearch_note').append(tmp_a);
+	}
+	if ($('#showAlly').is(":checked")){
+		var LM_output=[];
+		for (var c in tasksRaw){
+			theme_name=c;
+			LM_output.push(compByThemeName(theme_name));
+		}
+		var tmp_b=outputByCate(LM_output);
+		$('#topsearch_note').append(tmp_b);
+	}
+	if ($('#showNormal').is(":checked")){
+		var NM_output=[];
+		for (var d in levelsRaw){
+			theme_name='关卡: '+d;
+			NM_output.push(compByThemeName(theme_name));
+		}
+		var tmp_c=outputByCate(NM_output);
+		$('#topsearch_note').append(tmp_c);
 	}
 }
 
 function compByThemeName(name){
 	var sum_score=0;
+	var sum_array=[];
+	//cate, diff, [new],[old]
+	var new_tmp_array=[];
+	var old_tmp_array=[];
 	for (var c in storeTop[name]){
-		//alert(storeTop[name][c]);
 		//cate, [[clo,sumScore,tmpScore,bonusScore],[clo,sumScore,tmpScore,bonusScore]]
+		if($.inArray(storeTop[name][c][0],['连衣裙','上装','下装'])>=0){ //handle them at last
+			new_tmp_array[storeTop[name][c][0]]=(storeTop[name][c][1].length==0? [0,[]] : [storeTop[name][c][1][0][1],storeTop[name][c][1]]); //score, [result]
+			old_tmp_array[storeTop[name][c][0]]=(storeTop_old[name][c][1].length==0? [0,[]] : [storeTop_old[name][c][1][0][1],storeTop_old[name][c][1]]);
+			continue;
+		}
 		if(storeTop[name][c][1].length==0){continue;}
-		if(storeTop[name][c][1][0][0]!=storeTop_old[name][c][1][0][0]){
+		if(storeTop_old[name][c][1].length==0){//dun have old score
+			var diff=storeTop[name][c][1][0][1];
+			sum_score+=diff; 
+			sum_array.push([storeTop[name][c][0],diff,storeTop[name][c][1],[]]);
+		}
+		else if(storeTop[name][c][1][0][0]!=storeTop_old[name][c][1][0][0]){
 			if(storeTop[name][c][0].indexOf('饰品')==0) {//tmpScore*0.4
-				sum_score+=(storeTop[name][c][1][0][2]-storeTop_old[name][c][1][0][2])*0.4+(storeTop[name][c][1][0][3]-storeTop_old[name][c][1][0][3]);
+				var diff=(storeTop[name][c][1][0][2]-storeTop_old[name][c][1][0][2])*0.4+(storeTop[name][c][1][0][3]-storeTop_old[name][c][1][0][3]);
+				diff=Math.round(diff*dp)/dp;
+				sum_score+=diff;
 			}else{
-				sum_score+=(storeTop[name][c][1][0][1]-storeTop_old[name][c][1][0][1]);
+				var diff=(storeTop[name][c][1][0][1]-storeTop_old[name][c][1][0][1]);
+				sum_score+=diff;
+			}
+			sum_array.push([storeTop[name][c][0],diff,storeTop[name][c][1],storeTop_old[name][c][1]]);
+		}
+	}
+	
+	//handle dress vs top/bottom
+	if(new_tmp_array['连衣裙'][0]>=new_tmp_array['上装'][0]+new_tmp_array['下装'][0]){
+		var new_dress_score=new_tmp_array['连衣裙'][0];
+		var new_dress_array=new_tmp_array['连衣裙'][1];
+		var new_cate='连衣裙';
+	}else{
+		var new_dress_score=new_tmp_array['上装'][0]+new_tmp_array['下装'][0];
+		var new_dress_array=new_tmp_array['上装'][1].concat(new_tmp_array['下装'][1]);
+		var new_cate='上下装';
+	}
+	if(old_tmp_array['连衣裙'][0]>=old_tmp_array['上装'][0]+old_tmp_array['下装'][0]){
+		var old_dress_score=old_tmp_array['连衣裙'][0];
+		var old_dress_array=old_tmp_array['连衣裙'][1];
+	}else{
+		var old_dress_score=old_tmp_array['上装'][0]+old_tmp_array['下装'][0];
+		var old_dress_array=old_tmp_array['上装'][1].concat(old_tmp_array['下装'][1]);
+	}
+	var diff=new_dress_score-old_dress_score;
+	diff=Math.round(diff*dp)/dp;
+	if(diff>0) {sum_array.push([new_cate,diff,new_dress_array,old_dress_array]);}
+	
+	sum_score=Math.round(sum_score*dp)/dp;
+	return [name,sum_score,sum_array];
+}
+
+function outputByCate(total){
+	var output='<table border="1">';
+	output+=tr(td('关卡')+td('分差')+td('部位')+td('分差')+td('顶配'));
+	total.sort(function(a,b){return b[1] - a[1]});
+	for(var i in total){
+		var name=total[i][0];
+		var sum_score=total[i][1];
+		var rowspan=total[i][2].length;
+		if(rowspan){
+			var outLine=td(name,'rowspan="'+rowspan+'"')+td(sum_score,'rowspan="'+rowspan+'"');
+			for(var j in total[i][2]){
+				var cate=total[i][2][j][0];
+				var diff_score=total[i][2][j][1]; 
+				var new_res=total[i][2][j][2][0][0].name;
+				var tooltip='';
+				for (var k in total[i][2][j][2]){
+					tooltip+=total[i][2][j][2][k][1]+total[i][2][j][2][k][0].name+'\n';
+				}
+				if(total[i][2][j][3]){ 
+					tooltip+='==上一版本==\n'
+					for (var k in total[i][2][j][3]){//old result
+						tooltip+=total[i][2][j][3][k][1]+total[i][2][j][3][k][0].name+'\n';
+					}
+				}
+				outLine+=td(cate)+td(diff_score)+td(addTooltip(new_res,tooltip));
+				output+=tr(outLine);
+				outLine='';
 			}
 		}
 	}
-	return sum_score;
+	output+='</table>';
+	return output;
 }
 
 //below from top.js
+
+function td(text,attr){
+	return '<td'+(attr? ' '+attr : '')+'>'+text+'</td>';
+}
+
+function tr(text,attr){
+	return '<tr'+(attr? ' '+attr : '')+'>'+text+'</tr>';
+}
+
+function addTooltip(text,tooltip){
+	return '<a href="" onclick="return false;" tooltip="'+tooltip+'" class="aTooltip">'+text+'</a>';
+}
 
 function getDistinct(arr){//don't know why the concise method doesn't work...
 	var newArr=[];
@@ -153,7 +315,7 @@ function getDistinct(arr){//don't know why the concise method doesn't work...
 
 //below modified from nikki.js
 
-function onChangeCriteria() {
+function onChangeCriteria(limitMode) {
 	criteria = {};
 	for (var i in FEATURES) {
 		var f = FEATURES[i];
@@ -162,7 +324,7 @@ function onChangeCriteria() {
 			weight = 1;
 		}
 		//rean mod
-		if(limitMode==1){
+		if(limitMode&&limitMode==1){
 			for (var level in tasksAdd){
 				if (theme_name==tasksAdd[level][0]){
 					if (f==tasksAdd[level][1]) {weight=weight*1.27;}
@@ -170,7 +332,7 @@ function onChangeCriteria() {
 				}
 			}
 		}
-		if(limitMode==2){
+		if(limitMode&&limitMode==2){
 			for (var level in tasksAdd_old){
 				if (theme_name==tasksAdd_old[level][0]){
 					if (f==tasksAdd_old[level][1]) {weight=weight*1.27;}
