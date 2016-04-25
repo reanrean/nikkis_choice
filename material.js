@@ -340,7 +340,7 @@ function genFactor(id,showConstructInd,showConsumeInd){
 	if(!showConsumeInd){showConsumeInd=0;}
 	clearCnt();
 	
-	if(showConsumeInd){genFactor2(clothes[id],1);}
+	if(showConsumeInd>0){genFactor2(clothes[id],1);}
 	else {extraInd[id]=1; genFactor_main();}
 	
 	var cell='';
@@ -513,7 +513,6 @@ function searchSet(setName,showConstructInd,showConsumeInd){//showConsumeInd is 
 			if(thisPatternPrice_i) {thisPatternPrice+=thisPatternPrice_i;}
 		}
 	}
-	genFactor_main();
 	
 	if(showConsumeInd>0){
 		clearCnt();
@@ -523,6 +522,7 @@ function searchSet(setName,showConstructInd,showConsumeInd){//showConsumeInd is 
 			}
 		}
 	}
+	else {genFactor_main();}
 	
 	var thisPatternPrice_2=0;
 	for (var i in clothes){
@@ -556,7 +556,7 @@ function genBasicMaterial(setInd,id,showConstructInd,showConsumeInd){
 	var construct_href_1='genFactor('+id+',';
 	if(setInd==1) {construct_href_1="searchSet('"+id+"',";}
 	if(setInd==2) {construct_href_1="calcCart(";}
-	var output=tr(tab('基础材料')+tab('来源')+tab((setInd==2?reqtxt:ahref(reqtxt,construct_href_1+showConstructInd+','+oppoConsumeInd+')'))),'style="font-weight:bold;"');
+	var output=tr(tab('基础材料')+tab('来源')+tab(ahref(reqtxt,construct_href_1+showConstructInd+','+oppoConsumeInd+')')),'style="font-weight:bold;"');
 	
 	for (var s in src){//sort by source
 		header[s]='<u>'+src_desc[s]+'</u>'+((src[s]=='重构')?'　'+ahref(constxt,construct_href_1+oppoConstructInd+','+showConsumeInd+')'):'');
@@ -841,7 +841,14 @@ function calcCart(showConstructInd,showConsumeInd){
 		var thisPatternPrice_i=getPatternPrice(cartCont[i]); 
 		if(thisPatternPrice_i) {thisPatternPrice+=thisPatternPrice_i;}
 	}
-	genFactor_main();
+	
+	if(showConsumeInd>0){
+		clearCnt();
+		for (var i in cartCont){
+			genFactor2(clothes[cartCont[i]],1);
+		}
+	}
+	else {genFactor_main();}
 	
 	var thisPatternPrice_2=0;
 	for (var i in clothes){
@@ -857,7 +864,7 @@ function calcCart(showConstructInd,showConsumeInd){
 		output+=tr(tab((thisPatternPrice>0? '设计图总价：'+thisPatternPrice+'&emsp;':'')+(thisPatternPrice_2>thisPatternPrice? '设计图总价(含材料)：'+thisPatternPrice_2:''),'colspan="3"'));
 	}
 	output+=tr(tab('','colspan="3"'));
-	output+=genBasicMaterial(2,'',showConstructInd,0);
+	output+=genBasicMaterial(2,'',showConstructInd,showConsumeInd);
 	output+=table(1);
 	
 	$("#levelDropInfo").html(output);
