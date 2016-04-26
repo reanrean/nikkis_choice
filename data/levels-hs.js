@@ -10,7 +10,7 @@ var tasksAdd=[
 ['联盟委托: 2-2','pure','cool'],
 ['联盟委托: 2-3','active','simple'],
 ['联盟委托: 2-4','simple','active'],
-['联盟委托: 2-5','cute','simple'],
+['联盟委托: 2-5','simple','cute'],
 ['联盟委托: 2-6','pure','cute'],
 ['联盟委托: 2-7','simple','active'],
 ['联盟委托: 3-1','pure','cute'],
