@@ -356,7 +356,7 @@ function header(){
 	h+='<br>\n';
 	h+='<span class="title3">更新人员：</span>Rean翎<br>\n';
 	h+='<span class="title3">包含版本：</span>'+$('#textBox').html()+'<br>\n';
-	h+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（使用小黑配装器，饰品分数已按带满衰减），方便查看哪些关卡分数更新最多，采用的是配装器的分数评估，仅作为参考用。<br>\n';
+	h+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（使用小黑配装器，饰品分数已按带满衰减），方便查看哪些关卡分数更新最多，仅作为参考用。<br>\n';
 	h+='</p>\n';
 	h+='<hr class="mhr"/>\n';
 	h+='<p class="normal">本页内容：';
