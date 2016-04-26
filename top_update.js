@@ -3,14 +3,18 @@
 });
 
 function init_top_update(){
-	var tmp='';
+	var ver='';
 	for(var v in lastVersion){
-		tmp+=lastVersion[v];
+		ver+=lastVersion[v];
 	}
-	$('#textBox').val(tmp);
+	$('#textBox').html(ver);
+	$('#staffModeOn').hide();
+	init_passcode();
+	$('#showCnt').val(3);
+	$('#limitNote').html('<a href="" onclick="return false;" tooltip="联盟委托和主线关卡使用极限权重，具体请见顶配查询器的说明。">说明</a>');
 }
 
-var theme_name; //no need global?
+var theme_name;
 var storeTop=[];
 var storeTop_old=[];
 var dp=10;
@@ -39,11 +43,34 @@ var lastVersion_cate=function() {
 }();
 
 function calctopupd(){
-	storeTopByCate();
-	compByTheme();
+	if (isNaN(parseInt($("#showCnt").val())) || $("#showCnt").val()<1) {$("#showCnt").val(1);}
+	if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
+		$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
+	}else{
+		var date1=new Date();
+		storeTopByCate();
+		compByTheme();
+		addStyles();
+		var date2=new Date();
+		$('#alert_msg').html('用时'+((date2-date1)/1000).toFixed(2)+'秒_(:з」∠)_');
+	}
+}
+
+function addStyles(){
+	var elts = document.getElementsByTagName('a');
+	for (var i = elts.length - 1; i >= 0; --i) {
+		if(!elts[i].href) {
+			elts[i].href="";
+			if(!elts[i].onclick) {elts[i].onclick = function() {return false;};}
+		}
+		if(elts[i].getAttribute('tooltip')){
+			elts[i].setAttribute('tooltip',elts[i].getAttribute('tooltip').replace(/\\n/g,'\n'));
+		}
+	}
 }
 
 function storeTopByCate(){
+	var showCnt=parseInt($("#showCnt").val());
 	for (var cate in lastVersion_cate){
 		if ($('#showJJC').is(":checked")){
 			for (var b in competitionsRaw){
@@ -52,7 +79,7 @@ function storeTopByCate(){
 					setFilters(allThemes[theme_name]);
 					onChangeCriteria();
 					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
-					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,3,lastVersion_cate[cate],0)]);
+					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,showCnt,lastVersion_cate[cate],0)]);
 					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
 				}
 			}
@@ -64,7 +91,7 @@ function storeTopByCate(){
 					setFilters(allThemes[theme_name]);
 					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
 					onChangeCriteria(1);
-					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,3,lastVersion_cate[cate],0)]);
+					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,showCnt,lastVersion_cate[cate],0)]);
 					onChangeCriteria(2);
 					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
 				}
@@ -77,7 +104,7 @@ function storeTopByCate(){
 					setFilters(allThemes[theme_name]);
 					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
 					onChangeCriteria(1);
-					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,3,lastVersion_cate[cate],0)]);
+					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,showCnt,lastVersion_cate[cate],0)]);
 					onChangeCriteria(2);
 					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
 				}
@@ -85,29 +112,6 @@ function storeTopByCate(){
 		}
 	}
 }
-/*
-function getTopCloByCate(filters,rescnt,type,old){
-	var result = [];
-	for (var i in clothes) {
-		if (clothes[i].type.type!=type){continue;}//skip other categories
-		if (old>0&&$.inArray(i,lastVersion_id)>-1) {continue;}
-		clothes[i].calc(filters);
-		if (clothes[i].isF) {continue;}
-		if (!result[0]) {
-			result[0] = [clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
-		}else {
-			if(clothes[i].sumScore==result[0][1]){
-				result.push([clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore]);//push to end
-			}else if(clothes[i].sumScore > result[0][0].sumScore){
-				result=[];//create a new list
-				result[0]= [clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
-			}
-		}
-	}
-	return result;
-	//bonusScore - tag score
-}
-*/
 
 function getTopCloByCate(filters,rescnt,type,old){
 	var result = [];
@@ -116,23 +120,25 @@ function getTopCloByCate(filters,rescnt,type,old){
 		if (old>0&&$.inArray(i,lastVersion_id)>-1) {continue;}
 		clothes[i].calc(filters);
 		if (clothes[i].isF) {continue;}
+		if (clothes[i].type.type.indexOf('饰品')==0) {var sum_score=clothes[i].tmpScore*0.4+clothes[i].bonusScore; sum_score=Math.round(sum_score*dp)/dp;}
+		else {var sum_score=clothes[i].sumScore;}
 		if (!result[0]) {
-			result[0] = [clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
+			result[0] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
 		}else {
-			if(result[rescnt-1] && clothes[i].sumScore < result[rescnt-1][0].sumScore){
+			if(result[rescnt-1] && sum_score < result[rescnt-1][1]){
 				//do nothing
-			}else if(result[rescnt-1] && clothes[i].sumScore == result[rescnt-1][0].sumScore){
-				result.push([clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore]);//push to end
+			}else if(result[rescnt-1] && sum_score == result[rescnt-1][1]){
+				result.push([clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore]);//push to end
 			}else{
 				for (j=0;j<rescnt;j++){//compare with [j]
-					if(!result[j] || clothes[i].sumScore > result[j][0].sumScore){
+					if(!result[j] || sum_score > result[j][1]){
 						if (result[rescnt-1]&&result[rescnt-2]){
-							if (result[rescnt-1][0].sumScore == result[rescnt-2][0].sumScore){//insert into list
+							if (result[rescnt-1][1] == result[rescnt-2][1]){//insert into list
 								for (k=result.length;k>j;k--){//lower others ranking
 									result[k] = result[k-1];
 								}
 								//put current clothes to [j]
-								result[j] = [clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
+								result[j] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
 								break;
 							}else{//create new list
 								var result_orig=result;
@@ -143,18 +149,18 @@ function getTopCloByCate(filters,rescnt,type,old){
 								for (k=rescnt-1;k>j;k--){//lower others ranking
 									result[k] = result_orig[k-1];
 								}
-								result[j]=[clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
+								result[j]=[clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
 								break;
 							}
 						}else if(rescnt==1){//create new list with only 1 element
 							result=[];
-							result[j] = [clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
+							result[j] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
 						}else{
 							for (k=rescnt-1;k>j;k--){//lower others ranking
 								if(result[k-1]) {result[k] = result[k-1];}
 							}
 							//put current clothes to [j]
-							result[j] = [clothes[i],clothes[i].sumScore,clothes[i].tmpScore,clothes[i].bonusScore];
+							result[j] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
 							break;
 						}
 					}
@@ -167,14 +173,17 @@ function getTopCloByCate(filters,rescnt,type,old){
 
 function compByTheme(){
 	$('#topsearch_note').html('');
-	if ($('#showJJC').is(":checked")){
-		var JJC_output=[];
-		for (var b in competitionsRaw){
-			theme_name='竞技场: '+b;
-			JJC_output.push(compByThemeName(theme_name));
+	var ajglz_out='';
+	if ($('#showNormal').is(":checked")){
+		var NM_output=[];
+		for (var d in levelsRaw){
+			theme_name='关卡: '+d;
+			NM_output.push(compByThemeName(theme_name));
 		}
-		var tmp_a=outputByCate(JJC_output);
-		$('#topsearch_note').append(tmp_a);
+		var tmp_c=outputByCate(NM_output);
+		$('#topsearch_note').append('<p><b>主线关卡</b></p>');
+		$('#topsearch_note').append(tmp_c+'<hr>');
+		ajglz_out+='<a id="1"></a><p class="title2">主线关卡</p>\n'+tmp_c+'\n';
 	}
 	if ($('#showAlly').is(":checked")){
 		var LM_output=[];
@@ -183,17 +192,23 @@ function compByTheme(){
 			LM_output.push(compByThemeName(theme_name));
 		}
 		var tmp_b=outputByCate(LM_output);
-		$('#topsearch_note').append(tmp_b);
+		$('#topsearch_note').append('<p><b>联盟委托</b></p>');
+		$('#topsearch_note').append(tmp_b+'<hr>');
+		ajglz_out+='<a id="2"></a><p class="title2">联盟委托</p>\n'+tmp_b+'\n';
 	}
-	if ($('#showNormal').is(":checked")){
-		var NM_output=[];
-		for (var d in levelsRaw){
-			theme_name='关卡: '+d;
-			NM_output.push(compByThemeName(theme_name));
+	if ($('#showJJC').is(":checked")){
+		var JJC_output=[];
+		for (var b in competitionsRaw){
+			theme_name='竞技场: '+b;
+			JJC_output.push(compByThemeName(theme_name));
 		}
-		var tmp_c=outputByCate(NM_output);
-		$('#topsearch_note').append(tmp_c);
+		var tmp_a=outputByCate(JJC_output);
+		$('#topsearch_note').append('<p><b>竞技场</b></p>');
+		$('#topsearch_note').append(tmp_a+'<hr>');
+		ajglz_out+='<a id="3"></a><p class="title2">竞技场</p>\n'+tmp_a+'\n';
 	}
+	$('body').css("margin-bottom",(parseInt($("#showCnt").val())+5)+"em");
+	$('#ajglz_out').val(header()+ajglz_out+footer());
 }
 
 function compByThemeName(name){
@@ -216,14 +231,9 @@ function compByThemeName(name){
 			sum_array.push([storeTop[name][c][0],diff,storeTop[name][c][1],[]]);
 		}
 		else if(storeTop[name][c][1][0][0]!=storeTop_old[name][c][1][0][0]){
-			if(storeTop[name][c][0].indexOf('饰品')==0) {//tmpScore*0.4
-				var diff=(storeTop[name][c][1][0][2]-storeTop_old[name][c][1][0][2])*0.4+(storeTop[name][c][1][0][3]-storeTop_old[name][c][1][0][3]);
+				var diff=(storeTop[name][c][1][0][1]-storeTop_old[name][c][1][0][1]);
 				diff=Math.round(diff*dp)/dp;
 				sum_score+=diff;
-			}else{
-				var diff=(storeTop[name][c][1][0][1]-storeTop_old[name][c][1][0][1]);
-				sum_score+=diff;
-			}
 			sum_array.push([storeTop[name][c][0],diff,storeTop[name][c][1],storeTop_old[name][c][1]]);
 		}
 	}
@@ -266,25 +276,99 @@ function outputByCate(total){
 			for(var j in total[i][2]){
 				var cate=total[i][2][j][0];
 				var diff_score=total[i][2][j][1]; 
-				var new_res=total[i][2][j][2][0][0].name;
+				if(cate=='上下装') {
+					var new_res='';
+					for(var k in total[i][2][j][2]){
+						if(total[i][2][j][2][k][0].type.type=='上装') {new_res+=total[i][2][j][2][k][0].name;break;}
+					}
+					new_res+='<br>';
+					for(var k in total[i][2][j][2]){
+						if(total[i][2][j][2][k][0].type.type=='下装') {new_res+=total[i][2][j][2][k][0].name;break;}
+					}
+				}else {var new_res=total[i][2][j][2][0][0].name;}
 				var tooltip='';
 				for (var k in total[i][2][j][2]){
-					tooltip+=total[i][2][j][2][k][1]+total[i][2][j][2][k][0].name+'\n';
+					tooltip+=total[i][2][j][2][k][1]+total[i][2][j][2][k][0].name+'\\n';
 				}
 				if(total[i][2][j][3]){ 
-					tooltip+='==上一版本==\n'
+					tooltip+='==上一版本==\\n'
 					for (var k in total[i][2][j][3]){//old result
-						tooltip+=total[i][2][j][3][k][1]+total[i][2][j][3][k][0].name+'\n';
+						tooltip+=total[i][2][j][3][k][1]+total[i][2][j][3][k][0].name+'\\n';
 					}
 				}
 				outLine+=td(cate)+td(diff_score)+td(addTooltip(new_res,tooltip));
-				output+=tr(outLine);
+				output+=tr(outLine, sum_score>0? '' : 'style="display:none;"');
 				outLine='';
 			}
 		}
 	}
 	output+='</table>';
 	return output;
+}
+
+function chgStaffMode(){
+	if ($('#staffMode').is(":checked")){
+		$('#staffModeOn').show();
+		$('#topsearch_note').hide();
+	}else{
+		$('#staffModeOn').hide();
+		$('#topsearch_note').show();
+	}
+}
+
+function verify(){
+	var pass='6394210ce21ac27fb5de7645824dff9be9ba0690';
+	var userInput=$.sha1($("#passcode").val());
+	$("#passcode").val('');
+	if (userInput==pass){
+		$("#p_passcode").hide();
+		$("#p_content").show();
+	}
+}
+
+function init_passcode(){
+	$('#passcode').keydown(function(e) {
+		if (e.keyCode==13) {
+			$(this).blur();
+			verify();
+		}
+	});
+}
+
+function header(){
+ var h='<!DOCTYPE html>\n';
+	h+='<head>\n';
+	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>\n';
+	h+='<meta http-equiv="Content-Type" content="text/html"; charset=utf-8" />\n';
+	h+='<link rel="stylesheet" type="text/css" href="../../css/style.css" />\n';
+	h+='<link rel="stylesheet" type="text/css" href="dp-style.css" />\n';
+	h+='<script type="text/javascript" src="dp.js"></script>\n';
+	h+='<style> td{padding-left:0.5em;padding-right:0.5em;} table{width:100%} </style>\n';
+	h+='</head>\n';
+	h+='<body>\n';
+	h+='<div class="myframe">\n';
+	h+='<p class="title1">顶配分析-关卡极限分数更新</p>\n';
+	h+='<hr class="mhr"/>\n';
+	h+='<p class="normal">\n';
+	h+='<span class="title3">更新时间：</span>';
+	var d=new Date();
+	h+=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+	h+='<br>\n';
+	h+='<span class="title3">更新人员：</span>Rean翎<br>\n';
+	h+='<span class="title3">包含版本：</span>'+$('#textBox').html()+'<br>\n';
+	h+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（使用小黑配装器，饰品分数已按带满衰减），方便查看哪些关卡分数更新最多，采用的是配装器的分数评估，仅作为参考用。<br>\n';
+	h+='</p>\n';
+	h+='<hr class="mhr"/>\n';
+	h+='<p class="normal">本页内容：';
+	if($('#showNormal').is(":checked")) {h+='&emsp;<a href="#1">主线关卡</a>'};
+	if($('#showAlly').is(":checked")) {h+='&emsp;<a href="#2">联盟委托</a>'};
+	if($('#showJJC').is(":checked")) {h+='&emsp;<a href="#3">竞技场</a>'};
+	h+='</p>\n';
+	return h;
+}
+
+function footer(){
+	return '</div></body></html>';
 }
 
 //below from top.js
@@ -298,10 +382,10 @@ function tr(text,attr){
 }
 
 function addTooltip(text,tooltip){
-	return '<a href="" onclick="return false;" tooltip="'+tooltip+'" class="aTooltip">'+text+'</a>';
+	return '<a class="cTip" tooltip="'+tooltip+'">'+text+'</a>';
 }
 
-function getDistinct(arr){//don't know why the concise method doesn't work...
+function getDistinct(arr){
 	var newArr=[];
 	for (var i in arr){
 		var ind=0;
