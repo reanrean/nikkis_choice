@@ -11,8 +11,10 @@
 	var wardrobe_orig=wardrobe;
 	var wardrobe=function() {
 		var ret = [];
+		var skip_new=(window.location.href.toUpperCase().indexOf('?OLD')>0) ? 1 : 0 ;
 		for (var i in wardrobe_orig) {
 			var tmp=wardrobe[i];
+			if(skip_new) {if($.inArray(tmp[17],lastVersion)>=0) {continue;};}
 			if (tmp[1]=='上装'){tmp[1]='上衣';}
 			ret.push(tmp);
 		}
@@ -39,11 +41,11 @@
 			var name=(ind==3?'':'g')+$.trim(i.substr(ind));
 			for (var k in wardrobe){
 				var mainTp_ind=wardrobe[k][1].indexOf('-');
-				var mainTp=(mainTp_ind<0?wardrobe[k][1].replace('上装','上衣'):wardrobe[k][1].substr(0,mainTp_ind));
+				var mainTp=(mainTp_ind<0?wardrobe[k][1]:wardrobe[k][1].substr(0,mainTp_ind));
 				if(Flist[i][wardrobe[k][0]]){
-					if ($.inArray(wardrobe[k][1], Flist[i]["type"])<0) ret.push([name,mainTp,wardrobe[k][2]]);
+					if ($.inArray(wardrobe[k][1].replace('上衣','上装'), Flist[i]["type"])<0) ret.push([name,mainTp,wardrobe[k][2]]);
 				}else{
-					if ($.inArray(wardrobe[k][1], Flist[i]["type"])>-1) ret.push([name,mainTp,wardrobe[k][2]]);
+					if ($.inArray(wardrobe[k][1].replace('上衣','上装'), Flist[i]["type"])>-1) ret.push([name,mainTp,wardrobe[k][2]]);
 				}
 			}
 		}
@@ -92,6 +94,10 @@
 		  criteria.boost2 = null;
 	  }
 	}
+	
+	$(document).ready(function () {
+		$('#wardrobe_cnt').html(wardrobe.length);
+	});
 	</script>
     <link rel="stylesheet" href="http://ivangift.github.io/nikkiup2u3/jquery.auto-complete.css">
     <style>
@@ -561,7 +567,10 @@
     <div id = 'log'></div>
 </span>
 <p id="reancomment">
-<b>Before run</b>: please copy levelsRaw & levelBonus(normal levels only) to <b>hs-levels.js</b>, and update <b>flist.js</b>.
+<b>Before run</b>: please copy levelsRaw & levelBonus(normal levels only) to <b>hs-levels.js</b>, and update <b>flist.js</b>.<br>
+&emsp;- Adding '?old' after url will exclude wardrobe in lastVersion.<br>
+<br>
+Wardrobe cnt: <span id="wardrobe_cnt"></span>
 </p>
   </body>
 </html>
