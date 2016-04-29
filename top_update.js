@@ -257,7 +257,7 @@ function compByThemeName(name){
 	}
 	var diff=new_dress_score-old_dress_score;
 	diff=Math.round(diff*dp)/dp;
-	if(diff>0) {sum_array.push([new_cate,diff,new_dress_array,old_dress_array]);}
+	if(diff>0) {sum_score+=diff; sum_array.push([new_cate,diff,new_dress_array,old_dress_array]);}
 	
 	sum_score=Math.round(sum_score*dp)/dp;
 	return [name,sum_score,sum_array];
