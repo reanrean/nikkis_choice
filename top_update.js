@@ -112,12 +112,12 @@ function getTopCloByCate(filters,rescnt,type,old){
 		if (clothes[i].type.type.indexOf('饰品')==0) {var sum_score=clothes[i].tmpScore*0.4+clothes[i].bonusScore; sum_score=Math.round(sum_score*dp)/dp;}
 		else {var sum_score=clothes[i].sumScore;}
 		if (!result[0]) {
-			result[0] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
+			result[0] = [clothes[i],sum_score];
 		}else {
 			if(result[rescnt-1] && sum_score < result[rescnt-1][1]){
 				//do nothing
 			}else if(result[rescnt-1] && sum_score == result[rescnt-1][1]){
-				result.push([clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore]);//push to end
+				result.push([clothes[i],sum_score]);//push to end
 			}else{
 				for (j=0;j<rescnt;j++){//compare with [j]
 					if(!result[j] || sum_score > result[j][1]){
@@ -127,7 +127,7 @@ function getTopCloByCate(filters,rescnt,type,old){
 									result[k] = result[k-1];
 								}
 								//put current clothes to [j]
-								result[j] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
+								result[j] = [clothes[i],sum_score];
 								break;
 							}else{//create new list
 								var result_orig=result;
@@ -138,18 +138,18 @@ function getTopCloByCate(filters,rescnt,type,old){
 								for (k=rescnt-1;k>j;k--){//lower others ranking
 									result[k] = result_orig[k-1];
 								}
-								result[j]=[clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
+								result[j]=[clothes[i],sum_score];
 								break;
 							}
 						}else if(rescnt==1){//create new list with only 1 element
 							result=[];
-							result[j] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
+							result[j] = [clothes[i],sum_score];
 						}else{
 							for (k=rescnt-1;k>j;k--){//lower others ranking
 								if(result[k-1]) {result[k] = result[k-1];}
 							}
 							//put current clothes to [j]
-							result[j] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
+							result[j] = [clothes[i],sum_score];
 							break;
 						}
 					}
@@ -207,7 +207,7 @@ function compByThemeName(name){
 	var new_tmp_array=[];
 	var old_tmp_array=[];
 	for (var c in storeTop[name]){
-		//cate, [[clo,sumScore,tmpScore,bonusScore],[clo,sumScore,tmpScore,bonusScore]]
+		//cate, [[clo,sumScore],[clo,sumScore]]
 		if($.inArray(storeTop[name][c][0],['连衣裙','上装','下装'])>=0){ //handle them at last
 			new_tmp_array[storeTop[name][c][0]]=(storeTop[name][c][1].length==0? [0,[]] : [storeTop[name][c][1][0][1],storeTop[name][c][1]]); //score, [result]
 			old_tmp_array[storeTop[name][c][0]]=(storeTop_old[name][c][1].length==0? [0,[]] : [storeTop_old[name][c][1][0][1],storeTop_old[name][c][1]]);
@@ -219,13 +219,13 @@ function compByThemeName(name){
 			sum_score+=diff; 
 			sum_array.push([storeTop[name][c][0],diff,storeTop[name][c][1],[]]);
 		}
-		else if(storeTop[name][c][1][0][0]!=storeTop_old[name][c][1][0][0]){
+		else if(storeTop[name][c][1][0][0]!=storeTop_old[name][c][1][0][0]){//new clothes not old one
 			var diff=(storeTop[name][c][1][0][1]-storeTop_old[name][c][1][0][1]);
 			diff=Math.round(diff*dp)/dp;
 			sum_score+=diff;
 			sum_array.push([storeTop[name][c][0],diff,storeTop[name][c][1],storeTop_old[name][c][1]]);
 		}
-		else if(storeTop[name][c][1][1]!=storeTop_old[name][c][1][1]){//score diff but same clothes
+		else{
 			var diff=(storeTop[name][c][1][0][1]-storeTop_old[name][c][1][0][1]);
 			diff=Math.round(diff*dp)/dp;
 			sum_score+=diff;
@@ -254,6 +254,7 @@ function compByThemeName(name){
 	diff=Math.round(diff*dp)/dp;
 	sum_score+=diff;
 	if(new_dress_array[0][0]!=old_dress_array[0][0]) {sum_array.unshift([new_cate,diff,new_dress_array,old_dress_array]);}
+	else{rest+=diff;}
 	
 	sum_score=Math.round(sum_score*dp)/dp;
 	rest=Math.round(rest*dp)/dp;
