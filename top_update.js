@@ -31,17 +31,6 @@ var lastVersion_id=function() {
 	return ret;
 }();
 
-var lastVersion_cate=function() {
-	var ret = [];
-	for (var i in clothes) {
-		if ($.inArray(i,lastVersion_id)>-1){
-			ret.push(clothes[i].type.type);
-		}
-	}
-	ret=getDistinct(ret);
-	return ret;
-}();
-
 function calctopupd(){
 	if (isNaN(parseInt($("#showCnt").val())) || $("#showCnt").val()<1) {$("#showCnt").val(1);}
 	if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
@@ -71,7 +60,7 @@ function addStyles(){
 
 function storeTopByCate(){
 	var showCnt=parseInt($("#showCnt").val());
-	for (var cate in lastVersion_cate){
+	for (var cate in category){
 		if ($('#showJJC').is(":checked")){
 			for (var b in competitionsRaw){
 				theme_name='竞技场: '+b;
@@ -79,8 +68,8 @@ function storeTopByCate(){
 					setFilters(allThemes[theme_name]);
 					onChangeCriteria();
 					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
-					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,showCnt,lastVersion_cate[cate],0)]);
-					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
+					storeTop[theme_name].push([category[cate],getTopCloByCate(criteria,showCnt,category[cate],0)]);
+					storeTop_old[theme_name].push([category[cate],getTopCloByCate(criteria,1,category[cate],1)]);
 				}
 			}
 		}
@@ -91,9 +80,9 @@ function storeTopByCate(){
 					setFilters(allThemes[theme_name]);
 					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
 					onChangeCriteria(1);
-					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,showCnt,lastVersion_cate[cate],0)]);
+					storeTop[theme_name].push([category[cate],getTopCloByCate(criteria,showCnt,category[cate],0)]);
 					onChangeCriteria(2);
-					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
+					storeTop_old[theme_name].push([category[cate],getTopCloByCate(criteria,1,category[cate],1)]);
 				}
 			}
 		}
@@ -104,9 +93,9 @@ function storeTopByCate(){
 					setFilters(allThemes[theme_name]);
 					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
 					onChangeCriteria(1);
-					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,showCnt,lastVersion_cate[cate],0)]);
+					storeTop[theme_name].push([category[cate],getTopCloByCate(criteria,showCnt,category[cate],0)]);
 					onChangeCriteria(2);
-					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
+					storeTop_old[theme_name].push([category[cate],getTopCloByCate(criteria,1,category[cate],1)]);
 				}
 			}
 		}
@@ -207,14 +196,14 @@ function compByTheme(){
 		$('#topsearch_note').append(tmp_a+'<hr>');
 		ajglz_out+='<a id="3"></a><p class="title2">竞技场</p>\n'+tmp_a+'\n';
 	}
-	$('body').css("margin-bottom",(parseInt($("#showCnt").val())+5)+"em");
+	$('#topsearch_note').css("margin-bottom",(parseInt($("#showCnt").val())+5)+"em");
 	$('#ajglz_out').val(header()+ajglz_out+footer());
 }
 
 function compByThemeName(name){
 	var sum_score=0;
-	var sum_array=[];
-	//cate, diff, [new],[old]
+	var sum_array=[]; //cate, diff, [new],[old]
+	var rest=0;
 	var new_tmp_array=[];
 	var old_tmp_array=[];
 	for (var c in storeTop[name]){
@@ -231,10 +220,16 @@ function compByThemeName(name){
 			sum_array.push([storeTop[name][c][0],diff,storeTop[name][c][1],[]]);
 		}
 		else if(storeTop[name][c][1][0][0]!=storeTop_old[name][c][1][0][0]){
-				var diff=(storeTop[name][c][1][0][1]-storeTop_old[name][c][1][0][1]);
-				diff=Math.round(diff*dp)/dp;
-				sum_score+=diff;
+			var diff=(storeTop[name][c][1][0][1]-storeTop_old[name][c][1][0][1]);
+			diff=Math.round(diff*dp)/dp;
+			sum_score+=diff;
 			sum_array.push([storeTop[name][c][0],diff,storeTop[name][c][1],storeTop_old[name][c][1]]);
+		}
+		else if(storeTop[name][c][1][1]!=storeTop_old[name][c][1][1]){//score diff but same clothes
+			var diff=(storeTop[name][c][1][0][1]-storeTop_old[name][c][1][0][1]);
+			diff=Math.round(diff*dp)/dp;
+			sum_score+=diff;
+			rest+=diff;
 		}
 	}
 	
@@ -257,22 +252,26 @@ function compByThemeName(name){
 	}
 	var diff=new_dress_score-old_dress_score;
 	diff=Math.round(diff*dp)/dp;
-	if(diff>0) {sum_score+=diff; sum_array.push([new_cate,diff,new_dress_array,old_dress_array]);}
+	sum_score+=diff;
+	if(new_dress_array[0][0]!=old_dress_array[0][0]) {sum_array.unshift([new_cate,diff,new_dress_array,old_dress_array]);}
 	
 	sum_score=Math.round(sum_score*dp)/dp;
-	return [name,sum_score,sum_array];
+	rest=Math.round(rest*dp)/dp;
+	return [name,sum_score,sum_array,rest];
 }
 
 function outputByCate(total){
 	var output='<table border="1">';
-	output+=tr(td('关卡')+td('分差')+td('部位')+td('分差')+td('顶配'));
+	output+=tr(td('关卡')+td('理论分差')+td('部位')+td('理论分差')+td('顶配'));
 	total.sort(function(a,b){return b[1] - a[1]});
 	for(var i in total){
 		var name=total[i][0];
 		var sum_score=total[i][1];
 		var rowspan=total[i][2].length;
+		var rest=total[i][3];
+		if (rest!=0) {rowspan++;}
 		if(rowspan){
-			var outLine=td(name,'rowspan="'+rowspan+'"')+td(sum_score,'rowspan="'+rowspan+'"');
+			var outLine=td(name+'<br>'+tasksAddFt(name),'rowspan="'+rowspan+'"')+td(sum_score,'rowspan="'+rowspan+'"');
 			for(var j in total[i][2]){
 				var cate=total[i][2][j][0];
 				var diff_score=total[i][2][j][1]; 
@@ -300,10 +299,53 @@ function outputByCate(total){
 				output+=tr(outLine, sum_score>0? '' : 'style="display:none;"');
 				outLine='';
 			}
+			if (rest!=0) {output+=tr(td('极限权重变化')+td(rest)+td(''));}
 		}
 	}
 	output+='</table>';
 	return output;
+}
+
+function tasksAddFt(theme){
+	if(tasksAdd[theme]) {return '(笑:'+mapFt(tasksAdd[theme][0],theme)+'/吻:'+mapFt(tasksAdd[theme][1],theme)+')';}
+	return '';
+}
+
+function mapFt(ft,theme){
+	switch(ft){
+		case 'simple':
+			if(theme.indexOf('联盟委托')==0) {var ftNm=tasksRaw[theme][0];}
+			else if(theme.indexOf('关卡')==0) {var ftNm=levelsRaw[theme.replace('关卡: ','')][0];}
+			else {return '-';}
+			if(ftNm>0){return '简';}
+			else{return '华';}
+		case 'cute':
+			if(theme.indexOf('联盟委托')==0) {var ftNm=tasksRaw[theme][1];}
+			else if(theme.indexOf('关卡')==0) {var ftNm=levelsRaw[theme.replace('关卡: ','')][1];}
+			else {return '-';}
+			if(ftNm>0){return '可';}
+			else{return '成';}
+		case 'active':
+			if(theme.indexOf('联盟委托')==0) {var ftNm=tasksRaw[theme][2];}
+			else if(theme.indexOf('关卡')==0) {var ftNm=levelsRaw[theme.replace('关卡: ','')][2];}
+			else {return '-';}
+			if(ftNm>0){return '活';}
+			else{return '雅';}
+		case 'pure':
+			if(theme.indexOf('联盟委托')==0) {var ftNm=tasksRaw[theme][3];}
+			else if(theme.indexOf('关卡')==0) {var ftNm=levelsRaw[theme.replace('关卡: ','')][3];}
+			else {return '-';}
+			if(ftNm>0){return '纯';}
+			else{return '性';}
+		case 'cool':
+			if(theme.indexOf('联盟委托')==0) {var ftNm=tasksRaw[theme][4];}
+			else if(theme.indexOf('关卡')==0) {var ftNm=levelsRaw[theme.replace('关卡: ','')][4];}
+			else {return '-';}
+			if(ftNm>0){return '凉';}
+			else{return '暖';}
+		default:
+			return '-';
+	}
 }
 
 function chgStaffMode(){
@@ -409,19 +451,15 @@ function onChangeCriteria(limitMode) {
 		}
 		//rean mod
 		if(limitMode&&limitMode==1){
-			for (var level in tasksAdd){
-				if (theme_name==tasksAdd[level][0]){
-					if (f==tasksAdd[level][1]) {weight=weight*1.27;}
-					if (f==tasksAdd[level][2]) {weight=weight*1.778;}
-				}
+			if(tasksAdd[theme_name]){
+				if (f==tasksAdd[theme_name][0]) {weight=weight*1.27;}
+				if (f==tasksAdd[theme_name][1]) {weight=weight*1.778;}
 			}
 		}
 		if(limitMode&&limitMode==2){
-			for (var level in tasksAdd_old){
-				if (theme_name==tasksAdd_old[level][0]){
-					if (f==tasksAdd_old[level][1]) {weight=weight*1.27;}
-					if (f==tasksAdd_old[level][2]) {weight=weight*1.778;}
-				}
+			if(tasksAdd_old[theme_name]){
+				if (f==tasksAdd_old[theme_name][0]) {weight=weight*1.27;}
+				if (f==tasksAdd_old[theme_name][1]) {weight=weight*1.778;}
 			}
 		}
 		/*if (uiFilter["highscore"]) {
