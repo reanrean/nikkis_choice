@@ -69,7 +69,7 @@
 		  criteria.boost2 = global.extreme.boost2;
 		  $("#" + criteria.boost1 + "Boost").text("<-暖暖的微笑");
 		  $("#" + criteria.boost2 + "Boost").text("<-迷人飞吻+暖暖的微笑");
-		  $('#output_row').append("['"+$("#theme").val().replace('g','')+"','"+criteria.boost1+"','"+criteria.boost2+"'],"+"<br>");
+		  $('#output_row').append("'"+$("#theme").val().replace('g','')+"':['"+criteria.boost1+"','"+criteria.boost2+"'],"+"<br>");
 		  shoppingCart.clear();
 		  if (global.extreme.shoppingCart) {
 			for (var i in global.extreme.shoppingCart.cart) {
