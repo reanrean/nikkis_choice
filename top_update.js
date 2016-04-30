@@ -253,7 +253,10 @@ function compByThemeName(name){
 	var diff=new_dress_score-old_dress_score;
 	diff=Math.round(diff*dp)/dp;
 	sum_score+=diff;
-	if(new_dress_array[0][0]!=old_dress_array[0][0]) {sum_array.unshift([new_cate,diff,new_dress_array,old_dress_array]);}
+	if(old_dress_score==0||new_dress_array[0][0]!=old_dress_array[0][0]||
+		(new_cate=='上下装'&&(old_tmp_array['下装'][0]==0||new_tmp_array['下装'][1][0][0]!=old_tmp_array['下装'][1][0][0]))) {
+		sum_array.unshift([new_cate,diff,new_dress_array,old_dress_array]);
+	}
 	else{rest+=diff;}
 	
 	sum_score=Math.round(sum_score*dp)/dp;
