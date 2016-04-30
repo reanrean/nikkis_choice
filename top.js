@@ -814,11 +814,9 @@ function onChangeCriteria() {
 		}
 		//rean mod
 		if(limitMode){
-			for (var level in tasksAdd){
-				if (theme_name==tasksAdd[level][0]){
-					if (f==tasksAdd[level][1]) {weight=weight*1.27;}
-					if (f==tasksAdd[level][2]) {weight=weight*1.778;}
-				}
+			if(tasksAdd[theme_name]){
+				if (f==tasksAdd[theme_name][0]) {weight=weight*1.27;}
+				if (f==tasksAdd[theme_name][1]) {weight=weight*1.778;}
 			}
 		}
 		/*if (uiFilter["highscore"]) {
