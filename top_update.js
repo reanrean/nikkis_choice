@@ -299,7 +299,7 @@ function outputByCate(total){
 				output+=tr(outLine, sum_score>0? '' : 'style="display:none;"');
 				outLine='';
 			}
-			if (rest!=0) {output+=tr(td('极限权重变化')+td(rest)+td(''));}
+			if (rest!=0) {output+=tr(td('[极限权重变化]')+td(rest)+td(''));}
 		}
 	}
 	output+='</table>';
@@ -312,36 +312,25 @@ function tasksAddFt(theme){
 }
 
 function mapFt(ft,theme){
+	if(theme.indexOf('联盟委托')==0) {var ftList=tasksRaw[theme];}
+	else if(theme.indexOf('关卡')==0) {var ftList=levelsRaw[theme.replace('关卡: ','')];}
+	else {return '-';}
+	
 	switch(ft){
 		case 'simple':
-			if(theme.indexOf('联盟委托')==0) {var ftNm=tasksRaw[theme][0];}
-			else if(theme.indexOf('关卡')==0) {var ftNm=levelsRaw[theme.replace('关卡: ','')][0];}
-			else {return '-';}
-			if(ftNm>0){return '简';}
+			if(ftList[0]>0){return '简';}
 			else{return '华';}
 		case 'cute':
-			if(theme.indexOf('联盟委托')==0) {var ftNm=tasksRaw[theme][1];}
-			else if(theme.indexOf('关卡')==0) {var ftNm=levelsRaw[theme.replace('关卡: ','')][1];}
-			else {return '-';}
-			if(ftNm>0){return '可';}
+			if(ftList[1]>0){return '可';}
 			else{return '成';}
 		case 'active':
-			if(theme.indexOf('联盟委托')==0) {var ftNm=tasksRaw[theme][2];}
-			else if(theme.indexOf('关卡')==0) {var ftNm=levelsRaw[theme.replace('关卡: ','')][2];}
-			else {return '-';}
-			if(ftNm>0){return '活';}
+			if(ftList[2]>0){return '活';}
 			else{return '雅';}
 		case 'pure':
-			if(theme.indexOf('联盟委托')==0) {var ftNm=tasksRaw[theme][3];}
-			else if(theme.indexOf('关卡')==0) {var ftNm=levelsRaw[theme.replace('关卡: ','')][3];}
-			else {return '-';}
-			if(ftNm>0){return '纯';}
+			if(ftList[3]>0){return '纯';}
 			else{return '性';}
 		case 'cool':
-			if(theme.indexOf('联盟委托')==0) {var ftNm=tasksRaw[theme][4];}
-			else if(theme.indexOf('关卡')==0) {var ftNm=levelsRaw[theme.replace('关卡: ','')][4];}
-			else {return '-';}
-			if(ftNm>0){return '凉';}
+			if(ftList[4]>0){return '凉';}
 			else{return '暖';}
 		default:
 			return '-';
@@ -398,7 +387,7 @@ function header(){
 	h+='<br>\n';
 	h+='<span class="title3">更新人员：</span>Rean翎<br>\n';
 	h+='<span class="title3">包含版本：</span>'+$('#textBox').html()+'<br>\n';
-	h+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（使用小黑配装器，饰品分数已按带满衰减），方便查看哪些关卡分数更新最多，仅作为参考用。<br>\n';
+	h+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（小黑配装器分数，饰品分数已按带满衰减），方便查看哪些关卡的理论分数更新最多，仅作为参考用。<br>\n';
 	h+='</p>\n';
 	h+='<hr class="mhr"/>\n';
 	h+='<p class="normal">本页内容：';
