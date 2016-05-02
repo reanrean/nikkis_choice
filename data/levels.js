@@ -494,6 +494,8 @@ function addBonusInfo(base, weight, tag) {
  *  - Special rules
  */
  var levelBonus = {
+  '清秀佳人': [addBonusInfo('A', 1, "中式现代")],
+  '绝色无双': [addBonusInfo('A', 1, "中式现代")],
   "1-1": [],
   "1-2": [],
   "1-3": [addBonusInfo('B', 0.25, "中式古典")],
