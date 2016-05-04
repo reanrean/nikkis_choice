@@ -1,4 +1,3 @@
-
 function thead(isShoppingCart) {
 	var $thead = $("<div>").addClass("table-head");
 	if (isShoppingCart) $thead.append(td("", "cnt"));
@@ -122,7 +121,7 @@ function clothesNameTd(piece) {
 	var tooltip = '';
 	if (deps && deps.length > 0) {
 		tooltip = deps;
-		if (deps.indexOf('需') > 0) {
+		if (deps.indexOf('总计需 1 件') < -1) {
 			cls += ' deps';
 		}
 	}
