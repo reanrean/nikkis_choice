@@ -121,7 +121,7 @@ function clothesNameTd(piece) {
 	var tooltip = '';
 	if (deps && deps.length > 0) {
 		tooltip = deps;
-		if (deps.indexOf('总计需 1 件') < -1) {
+		if (deps.indexOf('总计需 1 件') < 0) {
 			cls += ' deps';
 		}
 	}
