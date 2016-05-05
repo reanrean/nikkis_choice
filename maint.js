@@ -1,5 +1,7 @@
-var wname=[wardrobe,wardrobe_s,wardrobe_i];
-var wowner=['rean','seal100x','ivangift'];
+//var wname=[wardrobe,wardrobe_s,wardrobe_i];
+//var wowner=['rean','seal100x','ivangift'];
+var wname=[wardrobe,wardrobe_s];
+var wowner=['rean','seal100x'];
 
 var rows=0;
 var field_desc=['名字','分类','编号','心级',
