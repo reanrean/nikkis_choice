@@ -1,383 +1,86 @@
-$(document).ready(function () {
-	init_top();
+ $(document).ready(function () {
+	init_top_update();
 });
 
-function init_top(){
-	$('.cartContent').hide();
-	$('#show_opt').hide();
-	show_limitNote();
-	enterKey();
-	gen_setList();
-	$("#showCnt").val(5);
-	$("#maxHide").val(5);
+function init_top_update(){
+	var ver='';
+	for(var v in lastVersion){
+		ver+=lastVersion[v];
+	}
+	$('#textBox').html(ver);
+	$('#staffModeOn').hide();
+	init_passcode();
+	$('#showCnt').val(3);
+	$('#limitNote').html('<a href="" onclick="return false;" tooltip="联盟委托和主线关卡使用极限权重，具体请见顶配查询器的说明。">说明</a>');
 }
 
-var top_id='';
 var theme_name;
-var inTop=[];
-var inSec=[];
-var cartList=[];
-var currentList=[];
-var currentSetList=[];
-var setList=[];
 var storeTop=[];
-var limitMode=0;
-var replaceSrc=['店·钻石'];
+var storeTop_old=[];
+var dp=10;
 
-function searchById(){
-	var searchById=clear_top_id();
-	currentList=[];
-	currentSetList=[];
-	if(searchById){
-		var out='<table border="1">';
-		out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
-		for (var i in setList){
-			if (setList[i].indexOf(searchById)>-1){
-				out+=tr(td(ahref(setList[i],"searchSet('"+setList[i]+"')"))+td('套装')+td('-')+td('-')+td(''));
-				currentSetList.push(setList[i]);
-			}
-		}
-		for (var i in clothes){
-			if (searchById=='*'){
-				currentList.push(i);
-			}else if(searchById.indexOf('*')>-1){
-				var searchArr=searchById.split('*');
-				for (m=0;m<searchArr.length;m++){
-					if (searchArr[m]=='套装'){
-						if(!clothes[i].set) {break;}
-					}else if (searchArr[m]=='非套装'){
-						if(clothes[i].set) {break;}
-					}else if (searchArr[m]!=''){
-						if(clothes[i].name.indexOf(searchArr[m])<0&&clothes[i].source.indexOf(searchArr[m])<0&&clothes[i].type.type.indexOf(searchArr[m])<0){break;}
-					}
-					if (m==searchArr.length-1) {currentList.push(i);}
-				}
-			}else if(clothes[i].name.indexOf(searchById)>-1||clothes[i].source.indexOf(searchById)>-1){
-				currentList.push(i);
-			}
-		}
-		out+=appendCurrent();
-		out+='</table>';
-		var out1='查找：'+searchById;
-		if(currentList.length>0||currentSetList.length>0) {
-			$('#topsearch_info').html(out);
-			if (searchById!='*') {out1+='　'+ahref('查找所有染色及进化',"searchSub(0,"+"'"+searchById+"')");}
-		}
-		else {$("#topsearch_info").html('没有找到相关资料');}
-		$("#topsearch_note").html(out1);
-	}
-}
-
-function searchSet(setName){
-	currentList=[];
-	var out='<table border="1">';
-	out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
-	for (var i in clothes){
-		if(clothes[i].set==setName){
-			currentList.push(i);
-		}
-	}
-	out+=appendCurrent();
-	out+='</table>';
-	var out1='套装：'+setName+'　'+ahref('查找所有染色及进化',"searchSub(1,"+"'"+setName+"')");
-	$('#topsearch_info').html(out);
-	$("#topsearch_note").html(out1);
-}
-
-function searchSub(isSet,qString){
-	var idList=currentList;
-	currentList=[];
-	var out1=(isSet?'套装：':'查找：')+qString+'　所有染色及进化';
-	var out='<table border="1">';
-	out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
-	for (var i in idList){
-		var orig=idList[i];
-		do{
-			currentList.push(orig);
-			orig=searchOrig(orig);
-		}while(orig!=-1);
-	}
-	do{
-		currentList=searchDeriv(currentList);
-	}while(currentList.length!=searchDeriv(currentList).length);
-	out+=appendCurrent();
-	out+='</table>';
-	$('#topsearch_info').html(out);
-	$("#topsearch_note").html(out1);
-}
-
-function searchOrig(id){
-	var srcs=clothes[id].source.split('/');
-	for (var s in srcs){
-		if (srcs[s].indexOf('定')==0||srcs[s].indexOf('进')==0){
-			var orig_num=srcs[s].substr(1);
-			for (var i in clothes){
-				if(clothes[i].type.mainType==clothes[id].type.mainType&&clothes[i].id==orig_num){return i;}
+var lastVersion_id=function() {
+	var ret = [];
+	for (var i in clothes) {
+		for (var v in lastVersion){
+			if(clothes[i].version==lastVersion[v]){
+				ret.push(i);
 			}
 		}
 	}
-	return -1;
-}
+	return ret;
+}();
 
-function searchDeriv(idList){
-	var retList=[];
-	for (var id in idList){
-		retList.push(idList[id]);
-		var orig_num=clothes[idList[id]].id;
-		for (var i in clothes){
-			if (clothes[i].source.indexOf(orig_num)>0&&clothes[i].type.mainType==clothes[idList[id]].type.mainType){
-				var srcs=clothes[i].source.split('/');
-				for (var s in srcs){
-					if (srcs[s]=='定'+orig_num||srcs[s]=='进'+orig_num){
-						retList.push(i);
-						break;
-					}
-				}
-			}
+var lastVersion_cate=function() {
+	var ret = [];
+	for (var i in clothes) {
+		if ($.inArray(i,lastVersion_id)>-1){
+			ret.push(clothes[i].type.type);
 		}
 	}
-	retList=getDistinct(retList);
-	return retList;
-}
+	ret=getDistinct(ret);
+	return ret;
+}();
 
-function appendCurrent(){
-	var out='';
-	currentList=getDistinct(currentList);
-	for (var c in category){//sort by category
-		for (var i in currentList){
-			if(clothes[currentList[i]].type.type!=category[c]) {continue;}
-			var line=td(ahref(clothes[currentList[i]].name,'choose_topid('+currentList[i]+')'));
-				line+=td(clothes[currentList[i]].type.type);
-				line+=td(clothes[currentList[i]].set);
-				var srcs=conv_source(clothes[currentList[i]].source,'进',clothes[currentList[i]].type.mainType);
-					srcs=conv_source(srcs,'定',clothes[currentList[i]].type.mainType);
-				line+=td(srcs);
-				line+=td(ahref('[×]','delCurrent('+currentList[i]+')'));
-			out+=tr(line);
-		}
-	}
-	return out;
-}
-
-function choose_topid(id){
-	if ($('#cartMode').is(":checked")){
-		addCart(id);
-	}else{
-		top_id=id;
-		$('#textBox').css({'background':'#DDECFF'});
-		$('#textBox').val(clothes[id].type.mainType+': '+clothes[id].name);
-	}
-}
-
-function calctop(){
+function calctopupd(){
 	if (isNaN(parseInt($("#showCnt").val())) || $("#showCnt").val()<1) {$("#showCnt").val(1);}
-	$("#showCnt").val(parseInt($("#showCnt").val()));
-	if (isNaN(parseInt($("#maxHide").val())) || $("#maxHide").val()<1) {$("#maxHide").val(1);}
-	$("#maxHide").val(parseInt($("#maxHide").val()));
-	
-	limitMode=($('#limitMode').is(":checked") ? 1 : 0 );
-	
 	if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
 		$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
 	}else{
-		if ($('#cartMode').is(":checked")){
-			if (cartList.length==0){
-				$('#alert_msg').html('选取列表为空_(:з」∠)_');
-			}else{
-				$('#alert_msg').html('');
-				$('#topsearch_info').html('');
-				$('#topsearch_note').html('');
-				storeTopByCate_all();
-				calctop_byall();
-			}
-		}else{
-			if (!top_id) {
-				$('#alert_msg').html('请选择一件衣服_(:з」∠)_');
-			}else{
-				$('#alert_msg').html('');
-				$('#topsearch_info').html('');
-				$('#topsearch_note').html('');
-				storeTopByCate_single(top_id);
-				calctop_byid(top_id);
-				output_byid(top_id);
-			}
-		}
-	}
-	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+50)+"px");
-}
-
-function calctop_byall(){
-	if ($('#showJJC').is(":checked")){var showJJC=1;}
-	else{var showJJC=0;}
-	if ($('#showAlly').is(":checked")){var showAlly=1;}
-	else{var showAlly=0;}
-	if ($('#showNormal').is(":checked")){var showNormal=1;}
-	else{var showNormal=0;}
-	if($('#showSource').is(":checked")){var showSource=1;}
-	else{var showSource=0;}
-	if($('#showMerc').is(":checked")){var showMerc=1;}
-	else{var showMerc=0;}
-	var out='<table border="1" class="calcByAll'+((showMerc||showSource)?' calcSrc':'')+'">';
-	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('顶配')+(showJJC?td('竞技场'):'')+(showAlly?td('联盟'+(limitMode?'(极限)':'')):'')+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
-	for (var c in category){//sort by category
-		for (var i in cartList){
-			id=cartList[i];
-			if(clothes[id].type.type!=category[c]){continue;}
-			calctop_byid(id);
-			var rowspan=1;
-			if(inTop.length>0 && inSec.length>0) {rowspan++;}
-			
-			var cell_tag='';
-			if(clothes[id].simple[0]) {cell_tag+='简'+clothes[id].simple[0];}
-			if(clothes[id].simple[1]) {cell_tag+='华'+clothes[id].simple[1];}
-			if(clothes[id].active[0]) {cell_tag+='|活'+clothes[id].active[0];}
-			if(clothes[id].active[1]) {cell_tag+='|雅'+clothes[id].active[1];}
-			if(clothes[id].cute[0]) {cell_tag+='|可'+clothes[id].cute[0];}
-			if(clothes[id].cute[1]) {cell_tag+='|成'+clothes[id].cute[1];}
-			if(clothes[id].pure[0]) {cell_tag+='|纯'+clothes[id].pure[0];}
-			if(clothes[id].pure[1]) {cell_tag+='|性'+clothes[id].pure[1];}
-			if(clothes[id].cool[0]) {cell_tag+='|凉'+clothes[id].cool[0];}
-			if(clothes[id].cool[1]) {cell_tag+='|暖'+clothes[id].cool[1];}
-			if(clothes[id].tags[0]) {cell_tag+='\n'+clothes[id].tags.join(',');}
-			
-			var cell=td(addTooltip(clothes[id].name,cell_tag),'rowspan="'+rowspan+'" class="inName normTip'+(inTop.length>0?' haveTop':'')+'"');
-			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
-			if(showSource||showMerc){
-				var cell_3rd='';
-				if(showSource){
-					var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
-					srcs=conv_source(srcs,'定',clothes[id].type.mainType);
-					cell_3rd=srcs;
-				}
-				if(showMerc){
-					var price=getMerc(id);
-					if(price) {
-						var hasStr=0;
-						for (var r in replaceSrc){
-							if(cell_3rd.indexOf(replaceSrc[r])>-1) {cell_3rd=cell_3rd.replace(replaceSrc[r],price); hasStr=1; break;}
-						}
-						if (!hasStr) {cell_3rd=price};
-					}
-				}
-				cell+=td(cell_3rd,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
-			}
-			if(inTop.length>0){
-				cell+=td('顶配','class="inTop"');
-				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id),'class="inTop"'):'');
-				cell+=(showAlly?td(retTopTd(inTop,'联盟',id),'class="inTop"'):'');
-				cell+=(showNormal?td(retTopTd(inTop,'关卡',id),'class="inTop"'):'');
-				out+=tr(cell);
-			}
-			if(inSec.length>0){
-				if(inTop.length>0){cell='';}
-				cell+=td('高配','class="inSec"');
-				cell+=(showJJC?td(retTopTd(inSec,'竞技场',id),'class="inSec"'):'');
-				cell+=(showAlly?td(retTopTd(inSec,'联盟',id),'class="inSec"'):'');
-				cell+=(showNormal?td(retTopTd(inSec,'关卡',id),'class="inSec"'):'');
-				out+=tr(cell);
-			}
-			if(inTop.length==0 && inSec.length==0 && !($('#hideNores').is(":checked"))){
-				out+=tr(cell+td('-','class="inNone"')+(showJJC?td('','class="inNone"'):'')+(showAlly?td('','class="inNone"'):'')+(showNormal?td('','class="inNone"'):''));
-				//out+=tr(cell+td('-','class="inNone" colspan="'+(showJJC+showAlly+showNormal+1)+'"'));
-			}
-		}
-	}
-	out+='</table>';
-	$('#topsearch_info').html(out);
-}
-
-function retTopTd(arr,crit,id,cartNumIfMult){
-	var ret='';
-	var cnt=0;
-	if (!cartNumIfMult) {cartNumIfMult=0;}
-	
-	if(arr==inTop){
-		for (var s in inTop){
-			if(inTop[s][0].indexOf(crit)==0) {
-				if (crit=='竞技场') {ret+=(cnt>0?', ':'')+addTooltip(nobr(inTop[s][0].substr(inTop[s][0].indexOf(': ')+2,2)),inTop[s][2]);}
-				else {ret+=(cnt>0?', ':'')+addTooltip(nobr(inTop[s][0].substr(inTop[s][0].indexOf(': ')+2)),inTop[s][2]);}
-				cnt++;
-			}
-		}
-		if(cnt>$("#maxHide").val()){
-			switch(crit){
-				case '竞技场': var pos=1; break;
-				case '联盟': var pos=2; break;
-				case '关卡': var pos=3; break;
-			}
-			a='<span id="cell'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
-			a+='<span id="cell'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
-			return a;
-		}
-		return ret;
-	}else{
-		for (var s in inSec){
-			if(inSec[s][0].indexOf(crit)==0) {
-				if (crit=='竞技场') {ret+=(cnt>0?', ':'')+addTooltip(nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2)+'(第'+inSec[s][1]+')'),inSec[s][2]);}
-				else {ret+=(cnt>0?', ':'')+addTooltip(nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2)+'(第'+inSec[s][1]+')'),inSec[s][2]);}
-				cnt++;
-			}
-		}
-		if(cnt>$("#maxHide").val()){
-			switch(crit){
-				case '竞技场': var pos=1; break;
-				case '联盟': var pos=2; break;
-				case '关卡': var pos=3; break;
-				default: var pos=0;
-			}
-			a='<span id="cell'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
-			a+='<span id="cell'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
-			return a;
-		}
-		return ret;
+		var date1=new Date();
+		storeTopByCate();
+		compByTheme();
+		addStyles();
+		var date2=new Date();
+		$('#alert_msg').html('用时'+((date2-date1)/1000).toFixed(2)+'秒_(:з」∠)_');
 	}
 }
 
-function showTop(id){
-	$('#cell'+id+'f').show();
-	$('#cell'+id).hide();
-}
-
-function hideTop(id){
-	$('#cell'+id+'f').hide();
-	$('#cell'+id).show();
-}
-
-function storeTopByCate_single(id){
-	var cartCates=[];
-	if($.inArray(clothes[id].type.type, ['连衣裙','上装','下装'])>-1){
-		cartCates.push('连衣裙');
-		cartCates.push('上装');
-		cartCates.push('下装');
-	}else{
-		cartCates.push(clothes[id].type.type);
-	}
-	storeTopByCate(cartCates);
-}
-
-function storeTopByCate_all(){
-	var cartCates=[];
-	for (var i in cartList){
-		cartCates.push(clothes[cartList[i]].type.type);
-		if($.inArray(clothes[cartList[i]].type.type, ['连衣裙','上装','下装'])>-1){
-			cartCates.push('连衣裙');
-			cartCates.push('上装');
-			cartCates.push('下装');
+function addStyles(){
+	var elts = document.getElementsByTagName('a');
+	for (var i = elts.length - 1; i >= 0; --i) {
+		if(!elts[i].href) {
+			elts[i].href="";
+			if(!elts[i].onclick) {elts[i].onclick = function() {return false;};}
+		}
+		if(elts[i].getAttribute('tooltip')){
+			elts[i].setAttribute('tooltip',elts[i].getAttribute('tooltip').replace(/\\n/g,'\n'));
 		}
 	}
-	cartCates=getDistinct(cartCates);
-	storeTopByCate(cartCates);
 }
-function storeTopByCate(cartCates){
-	for (var cate in cartCates){
-			if ($('#showJJC').is(":checked")){
+
+function storeTopByCate(){
+	var showCnt=parseInt($("#showCnt").val());
+	for (var cate in lastVersion_cate){
+		if ($('#showJJC').is(":checked")){
 			for (var b in competitionsRaw){
 				theme_name='竞技场: '+b;
 				if (allThemes[theme_name]) {
 					setFilters(allThemes[theme_name]);
 					onChangeCriteria();
-					if (cate==0){storeTop[theme_name]=[];}//initialize as array
-					storeTop[theme_name].push([cartCates[cate],getTopCloByCate(criteria, $("#showCnt").val(), cartCates[cate])]);
+					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
+					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,showCnt,lastVersion_cate[cate],0)]);
+					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
 				}
 			}
 		}
@@ -386,9 +89,11 @@ function storeTopByCate(cartCates){
 				theme_name=c;
 				if (allThemes[theme_name]) {
 					setFilters(allThemes[theme_name]);
-					onChangeCriteria();
-					if (cate==0){storeTop[theme_name]=[];}//initialize as array
-					storeTop[theme_name].push([cartCates[cate],getTopCloByCate(criteria, $("#showCnt").val(), cartCates[cate])]);
+					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
+					onChangeCriteria(1);
+					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,showCnt,lastVersion_cate[cate],0)]);
+					onChangeCriteria(2);
+					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
 				}
 			}
 		}
@@ -397,191 +102,43 @@ function storeTopByCate(cartCates){
 				theme_name='关卡: '+d;
 				if (allThemes[theme_name]) {
 					setFilters(allThemes[theme_name]);
-					onChangeCriteria();
-					if (cate==0){storeTop[theme_name]=[];}//initialize as array
-				storeTop[theme_name].push([cartCates[cate],getTopCloByCate(criteria, $("#showCnt").val(), cartCates[cate])]);
+					if (cate==0){storeTop[theme_name]=[]; storeTop_old[theme_name]=[];}//initialize as array
+					onChangeCriteria(1);
+					storeTop[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,showCnt,lastVersion_cate[cate],0)]);
+					onChangeCriteria(2);
+					storeTop_old[theme_name].push([lastVersion_cate[cate],getTopCloByCate(criteria,1,lastVersion_cate[cate],1)]);
 				}
 			}
 		}
 	}
 }
 
-function calctop_byid(id){
-	inTop=[];inSec=[];
-	
-	if ($('#showJJC').is(":checked")){
-		for (var b in competitionsRaw){
-			theme_name='竞技场: '+b;
-			if (allThemes[theme_name]) {
-				calctop_bytheme(id,theme_name);
-			}
-		}
-	}
-	if ($('#showAlly').is(":checked")){
-		for (var c in tasksRaw){
-			theme_name=c;
-			if (allThemes[theme_name]) {
-				calctop_bytheme(id,theme_name);
-			}
-		}
-	}
-	if ($('#showNormal').is(":checked")){
-		for (var d in levelsRaw){
-			theme_name='关卡: '+d;
-			if (allThemes[theme_name]) {
-				calctop_bytheme(id,theme_name);
-			}
-		}
-	}
-}
-
-function output_byid(id){ //need inTop,inSec
-	var output='<b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id+'<br>';
-	var cell='';
-		if(clothes[id].simple[0]) {cell+='简约'+clothes[id].simple[0];}
-		if(clothes[id].simple[1]) {cell+='华丽'+clothes[id].simple[1];}
-		if(clothes[id].active[0]) {cell+='&ensp;活泼'+clothes[id].active[0];}
-		if(clothes[id].active[1]) {cell+='&ensp;优雅'+clothes[id].active[1];}
-		if(clothes[id].cute[0]) {cell+='&ensp;可爱'+clothes[id].cute[0];}
-		if(clothes[id].cute[1]) {cell+='&ensp;成熟'+clothes[id].cute[1];}
-		if(clothes[id].pure[0]) {cell+='&ensp;清纯'+clothes[id].pure[0];}
-		if(clothes[id].pure[1]) {cell+='&ensp;性感'+clothes[id].pure[1];}
-		if(clothes[id].cool[0]) {cell+='&ensp;清凉'+clothes[id].cool[0];}
-		if(clothes[id].cool[1]) {cell+='&ensp;保暖'+clothes[id].cool[1];}
-		if(clothes[id].tags[0]) {cell+='&ensp;'+clothes[id].tags.join(',');}
-	output+=cell+'<br>';
-	if(clothes[id].set) {output+='套装:'+clothes[id].set+'&ensp;'}
-	var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
-		srcs=conv_source(srcs,'定',clothes[id].type.mainType);
-	var price=getMerc(id);
-	output+='来源:'+srcs+(price?'('+price+')':'')+'<br><br>';
-	
-	output+='<span class="normTip">'
-	if(inTop.length>0){
-		output+='顶配：<br>';
-		for (var s in inTop){
-			output+='&emsp;'+addTooltip(inTop[s][0],inTop[s][2])+'<br>';
-		}
-	}
-	if(inSec.length>0){
-		output+='高配：<br>';
-		for (var u in inSec){
-			output+='&emsp;'+addTooltip(inSec[u][0]+'(第'+inSec[u][1]+')',inSec[u][2])+'<br>';
-		}
-	}
-	if(inTop.length==0 && inSec.length==0){
-		output+='沒有顶配/高配信息';
-	}
-	output+='</span>';
-	$('#topsearch_info').html(output);
-}
-
-function get_storeTop_Cate(them,cate){
-	for (var t in storeTop[them]){
-		if (storeTop[them][t][0]==cate) {return storeTop[them][t][1];}
-	}
-}
-
-function calctop_bytheme(id,them){
-	var resultList = get_storeTop_Cate(them,clothes[id].type.type);
-	//resultList[r][0]=clothes, resultList[r][1]=clothes.sumScore
-	var tmp='';
-	var resultListClo=[];
-	//sort resultList
-	for (var r in resultList){
-		if(clothes[id]==resultList[r][0]){
-			for (r2=0;r2<r;r2++){
-				if(resultList[r][1]==resultList[r2][1]){
-					var tmp_res=resultList[r];
-					for (k=r;k>r2;k--){//lower others ranking
-						resultList[k] = resultList[k-1];					
-					}
-					resultList[r2]=tmp_res;
-					break;
-				}
-			}
-			break;
-		}
-	}
-	
-	for (var r in resultList){
-		if (resultList[r]) {
-			if (r>0) {tmp+='\n';}
-			tmp+=resultList[r][1]+resultList[r][0].name;
-			resultListClo.push(resultList[r][0]);
-		}
-	}
-	
-	if($.inArray(clothes[id], resultListClo)>-1){
-		var moveTopToSec=0;
-		//compare dress vs top+bottom
-		if(clothes[id].type.type=='连衣裙'){
-			var result_top=get_storeTop_Cate(them, '上装');
-			var result_bot=get_storeTop_Cate(them, '下装');
-			if(result_top[0]&&result_bot[0]){
-				if(resultList[0][1]<result_top[0][1]+result_bot[0][1]){
-					moveTopToSec=1;
-					var othScore=result_top[0][1]+result_bot[0][1];
-					tmp='['+othScore+result_top[0][0].name+'+'+result_bot[0][0].name+']\n'+tmp;
-				}
-			}
-		}else if(clothes[id].type.type=='上装'){
-			var result_dress=get_storeTop_Cate(them, '连衣裙');
-			var result_bot=get_storeTop_Cate(them, '下装');
-			if(result_dress[0]){
-				if(resultList[0][1]+(result_bot[0]?result_bot[0][1]:0)<result_dress[0][1]){
-					moveTopToSec=1;
-					tmp='['+result_dress[0][1]+result_dress[0][0].name+']\n'+tmp;
-				}
-			}
-		}else if(clothes[id].type.type=='下装'){
-			var result_dress=get_storeTop_Cate(them, '连衣裙');
-			var result_top=get_storeTop_Cate(them, '上装');
-			if(result_dress[0]){
-				if(resultList[0][1]+(result_top[0]?result_top[0][1]:0)<result_dress[0][1]){
-					moveTopToSec=1;
-					tmp='['+result_dress[0][1]+result_dress[0][0].name+']\n'+tmp;
-				}
-			}
-		}
-	
-		if(clothes[id]==resultListClo[0]) {
-			if(moveTopToSec) {inSec.push([them,1,tmp]);}
-			else {inTop.push([them,1,tmp]);}
-		}else{
-			for (r=1;r<resultListClo.length;r++){
-				if(clothes[id]==resultListClo[r]){
-					inSec.push([them,r+1,tmp]);
-					break;
-				}
-			}
-		}
-	}
-}
-
-function getTopCloByCate(filters,rescnt,type){
+function getTopCloByCate(filters,rescnt,type,old){
 	var result = [];
 	for (var i in clothes) {
 		if (clothes[i].type.type!=type){continue;}//skip other categories
+		if (old>0&&$.inArray(i,lastVersion_id)>-1) {continue;}
 		clothes[i].calc(filters);
 		if (clothes[i].isF) {continue;}
+		if (clothes[i].type.type.indexOf('饰品')==0) {var sum_score=clothes[i].tmpScore*0.4+clothes[i].bonusScore; sum_score=Math.round(sum_score*dp)/dp;}
+		else {var sum_score=clothes[i].sumScore;}
 		if (!result[0]) {
-			result[0] = [clothes[i],clothes[i].sumScore];
+			result[0] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
 		}else {
-			if(result[rescnt-1] && clothes[i].sumScore < result[rescnt-1][0].sumScore){
+			if(result[rescnt-1] && sum_score < result[rescnt-1][1]){
 				//do nothing
-			}else if(result[rescnt-1] && clothes[i].sumScore == result[rescnt-1][0].sumScore){
-				result.push([clothes[i],clothes[i].sumScore]);//push to end
+			}else if(result[rescnt-1] && sum_score == result[rescnt-1][1]){
+				result.push([clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore]);//push to end
 			}else{
 				for (j=0;j<rescnt;j++){//compare with [j]
-					if(!result[j] || clothes[i].sumScore > result[j][0].sumScore){
+					if(!result[j] || sum_score > result[j][1]){
 						if (result[rescnt-1]&&result[rescnt-2]){
-							if (result[rescnt-1][0].sumScore == result[rescnt-2][0].sumScore){//insert into list
+							if (result[rescnt-1][1] == result[rescnt-2][1]){//insert into list
 								for (k=result.length;k>j;k--){//lower others ranking
 									result[k] = result[k-1];
 								}
 								//put current clothes to [j]
-								result[j] = [clothes[i],clothes[i].sumScore];
+								result[j] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
 								break;
 							}else{//create new list
 								var result_orig=result;
@@ -592,18 +149,18 @@ function getTopCloByCate(filters,rescnt,type){
 								for (k=rescnt-1;k>j;k--){//lower others ranking
 									result[k] = result_orig[k-1];
 								}
-								result[j]=[clothes[i],clothes[i].sumScore];
+								result[j]=[clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
 								break;
 							}
 						}else if(rescnt==1){//create new list with only 1 element
 							result=[];
-							result[j] = [clothes[i],clothes[i].sumScore];
+							result[j] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
 						}else{
 							for (k=rescnt-1;k>j;k--){//lower others ranking
 								if(result[k-1]) {result[k] = result[k-1];}
 							}
 							//put current clothes to [j]
-							result[j] = [clothes[i],clothes[i].sumScore];
+							result[j] = [clothes[i],sum_score,clothes[i].tmpScore,clothes[i].bonusScore];
 							break;
 						}
 					}
@@ -614,109 +171,221 @@ function getTopCloByCate(filters,rescnt,type){
 	return result;
 }
 
-function show_limitNote(){
-	var tooltip='即微笑+飞吻以及飞吻分別打在最高分的两个属性时的极限搭配权重(竞技场不计算)。此模式使用全衣柜下的极限权重，请注意收集度不同极限权重也可能会不同，并非一定适合所有玩家。';
-	var output='<a href="" onclick="return false;" tooltip="'+tooltip+'">说明</a>';
-	$('#limitNote').html(output);
+function compByTheme(){
+	$('#topsearch_note').html('');
+	var ajglz_out='';
+	if ($('#showNormal').is(":checked")){
+		var NM_output=[];
+		for (var d in levelsRaw){
+			theme_name='关卡: '+d;
+			NM_output.push(compByThemeName(theme_name));
+		}
+		var tmp_c=outputByCate(NM_output);
+		$('#topsearch_note').append('<p><b>主线关卡</b></p>');
+		$('#topsearch_note').append(tmp_c+'<hr>');
+		ajglz_out+='<a id="1"></a><p class="title2">主线关卡</p>\n'+tmp_c+'\n';
+	}
+	if ($('#showAlly').is(":checked")){
+		var LM_output=[];
+		for (var c in tasksRaw){
+			theme_name=c;
+			LM_output.push(compByThemeName(theme_name));
+		}
+		var tmp_b=outputByCate(LM_output);
+		$('#topsearch_note').append('<p><b>联盟委托</b></p>');
+		$('#topsearch_note').append(tmp_b+'<hr>');
+		ajglz_out+='<a id="2"></a><p class="title2">联盟委托</p>\n'+tmp_b+'\n';
+	}
+	if ($('#showJJC').is(":checked")){
+		var JJC_output=[];
+		for (var b in competitionsRaw){
+			theme_name='竞技场: '+b;
+			JJC_output.push(compByThemeName(theme_name));
+		}
+		var tmp_a=outputByCate(JJC_output);
+		$('#topsearch_note').append('<p><b>竞技场</b></p>');
+		$('#topsearch_note').append(tmp_a+'<hr>');
+		ajglz_out+='<a id="3"></a><p class="title2">竞技场</p>\n'+tmp_a+'\n';
+	}
+	$('body').css("margin-bottom",(parseInt($("#showCnt").val())+5)+"em");
+	$('#ajglz_out').val(header()+ajglz_out+footer());
 }
 
-function chgcartMode(){
-	if ($('#cartMode').is(":checked")){
-		$('.cartContent').show();
-		refreshCart();
-		clear_top_id();
+function compByThemeName(name){
+	var sum_score=0;
+	var sum_array=[];
+	//cate, diff, [new],[old]
+	var new_tmp_array=[];
+	var old_tmp_array=[];
+	for (var c in storeTop[name]){
+		//cate, [[clo,sumScore,tmpScore,bonusScore],[clo,sumScore,tmpScore,bonusScore]]
+		if($.inArray(storeTop[name][c][0],['连衣裙','上装','下装'])>=0){ //handle them at last
+			new_tmp_array[storeTop[name][c][0]]=(storeTop[name][c][1].length==0? [0,[]] : [storeTop[name][c][1][0][1],storeTop[name][c][1]]); //score, [result]
+			old_tmp_array[storeTop[name][c][0]]=(storeTop_old[name][c][1].length==0? [0,[]] : [storeTop_old[name][c][1][0][1],storeTop_old[name][c][1]]);
+			continue;
+		}
+		if(storeTop[name][c][1].length==0){continue;}
+		if(storeTop_old[name][c][1].length==0){//dun have old score
+			var diff=storeTop[name][c][1][0][1];
+			sum_score+=diff; 
+			sum_array.push([storeTop[name][c][0],diff,storeTop[name][c][1],[]]);
+		}
+		else if(storeTop[name][c][1][0][0]!=storeTop_old[name][c][1][0][0]){
+				var diff=(storeTop[name][c][1][0][1]-storeTop_old[name][c][1][0][1]);
+				diff=Math.round(diff*dp)/dp;
+				sum_score+=diff;
+			sum_array.push([storeTop[name][c][0],diff,storeTop[name][c][1],storeTop_old[name][c][1]]);
+		}
+	}
+	
+	//handle dress vs top/bottom
+	if(new_tmp_array['连衣裙'][0]>=new_tmp_array['上装'][0]+new_tmp_array['下装'][0]){
+		var new_dress_score=new_tmp_array['连衣裙'][0];
+		var new_dress_array=new_tmp_array['连衣裙'][1];
+		var new_cate='连衣裙';
 	}else{
-		$('.cartContent').hide();
+		var new_dress_score=new_tmp_array['上装'][0]+new_tmp_array['下装'][0];
+		var new_dress_array=new_tmp_array['上装'][1].concat(new_tmp_array['下装'][1]);
+		var new_cate='上下装';
 	}
+	if(old_tmp_array['连衣裙'][0]>=old_tmp_array['上装'][0]+old_tmp_array['下装'][0]){
+		var old_dress_score=old_tmp_array['连衣裙'][0];
+		var old_dress_array=old_tmp_array['连衣裙'][1];
+	}else{
+		var old_dress_score=old_tmp_array['上装'][0]+old_tmp_array['下装'][0];
+		var old_dress_array=old_tmp_array['上装'][1].concat(old_tmp_array['下装'][1]);
+	}
+	var diff=new_dress_score-old_dress_score;
+	diff=Math.round(diff*dp)/dp;
+	if(diff>0) {sum_score+=diff; sum_array.push([new_cate,diff,new_dress_array,old_dress_array]);}
+	
+	sum_score=Math.round(sum_score*dp)/dp;
+	return [name,sum_score,sum_array];
 }
 
-function clear_top_id(){
-	top_id='';
-	$('#textBox').css({'background':''});
-	var searchById=$.trim($("#textBox").val());
-	if(searchById.indexOf(': ')>-1) {
-		searchById=searchById.substr(searchById.indexOf(': ')+2);
-		$("#textBox").val(searchById);
-	}
-	return searchById;
-}
-
-
-function delCurrent(id){
-	var newArr=currentList;
-	currentList=[];
-	for (var i in newArr){
-		if(newArr[i]!=id) {currentList.push(newArr[i]);}
-	}
-	refreshCurrent();
-}
-
-function refreshCurrent(){
-	var out='<table border="1">';
-	out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
-	if($('#topsearch_info').html().indexOf(td('套装')+td('-')+td('-')+td(''))>0){
-		for (var i in currentSetList){
-			out+=tr(td(ahref(currentSetList[i],"searchSet('"+currentSetList[i]+"')"))+td('套装')+td('-')+td('-')+td(''));
+function outputByCate(total){
+	var output='<table border="1">';
+	output+=tr(td('关卡')+td('分差')+td('部位')+td('分差')+td('顶配'));
+	total.sort(function(a,b){return b[1] - a[1]});
+	for(var i in total){
+		var name=total[i][0];
+		var sum_score=total[i][1];
+		var rowspan=total[i][2].length;
+		if(rowspan){
+			var outLine=td(name,'rowspan="'+rowspan+'"')+td(sum_score,'rowspan="'+rowspan+'"');
+			for(var j in total[i][2]){
+				var cate=total[i][2][j][0];
+				var diff_score=total[i][2][j][1]; 
+				if(cate=='上下装') {
+					var new_res='';
+					for(var k in total[i][2][j][2]){
+						if(total[i][2][j][2][k][0].type.type=='上装') {new_res+=total[i][2][j][2][k][0].name;break;}
+					}
+					new_res+='<br>';
+					for(var k in total[i][2][j][2]){
+						if(total[i][2][j][2][k][0].type.type=='下装') {new_res+=total[i][2][j][2][k][0].name;break;}
+					}
+				}else {var new_res=total[i][2][j][2][0][0].name;}
+				var tooltip='';
+				for (var k in total[i][2][j][2]){
+					tooltip+=total[i][2][j][2][k][1]+total[i][2][j][2][k][0].name+'\\n';
+				}
+				if(total[i][2][j][3]){ 
+					tooltip+='==上一版本==\\n'
+					for (var k in total[i][2][j][3]){//old result
+						tooltip+=total[i][2][j][3][k][1]+total[i][2][j][3][k][0].name+'\\n';
+					}
+				}
+				outLine+=td(cate)+td(diff_score)+td(addTooltip(new_res,tooltip));
+				output+=tr(outLine, sum_score>0? '' : 'style="display:none;"');
+				outLine='';
+			}
 		}
 	}
-	out+=appendCurrent();
-	out+='</table>';
-	$('#topsearch_info').html(out);
+	output+='</table>';
+	return output;
 }
 
-function clearCart(){
-	cartList=[];
-	refreshCart();
-}
-
-function addCart_All(){
-	for (var i in currentList){
-		cartList.push(currentList[i]);
-	}
-	refreshCart();
-}
-
-function refreshCart(){
-	$('#cart').html('');
-	cartList=getDistinct(cartList);
-	for (var i in cartList){
-		$('#cart').append('<button class="btn btn-xs btn-default">'+clothes[cartList[i]].name+ahref('[×]','delCart('+cartList[i]+')')+'</button>&ensp;');
+function chgStaffMode(){
+	if ($('#staffMode').is(":checked")){
+		$('#staffModeOn').show();
+		$('#topsearch_note').hide();
+	}else{
+		$('#staffModeOn').hide();
+		$('#topsearch_note').show();
 	}
 }
 
-function addCart(id){
-	cartList.push(id);
-	refreshCart();
-}
-
-function delCart(id){
-	var newArr=cartList;
-	cartList=[];
-	for (var i in newArr){
-		if(newArr[i]!=id) {cartList.push(newArr[i]);}
+function verify(){
+	var pass='6394210ce21ac27fb5de7645824dff9be9ba0690';
+	var userInput=$.sha1($("#passcode").val());
+	$("#passcode").val('');
+	if (userInput==pass){
+		$("#p_passcode").hide();
+		$("#p_content").show();
 	}
-	refreshCart();
 }
 
-function gen_setList(){
-	setList=[];
-	for (var i in clothes){
-		if(clothes[i].set&&$.inArray(clothes[i].set,setList)<0){
-			setList.push(clothes[i].set);
+function init_passcode(){
+	$('#passcode').keydown(function(e) {
+		if (e.keyCode==13) {
+			$(this).blur();
+			verify();
 		}
-	}
-	setList=getDistinct(setList);
+	});
 }
 
-function nobr(text){
-	return '<span class="nobr">'+text+'</span>';
+function header(){
+ var h='<!DOCTYPE html>\n';
+	h+='<head>\n';
+	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>\n';
+	h+='<meta http-equiv="Content-Type" content="text/html"; charset=utf-8" />\n';
+	h+='<link rel="stylesheet" type="text/css" href="../../css/style.css" />\n';
+	h+='<link rel="stylesheet" type="text/css" href="dp-style.css" />\n';
+	h+='<script type="text/javascript" src="dp.js"></script>\n';
+	h+='<style> td{padding-left:0.5em;padding-right:0.5em;} table{width:100%} </style>\n';
+	h+='</head>\n';
+	h+='<body>\n';
+	h+='<div class="myframe">\n';
+	h+='<p class="title1">顶配分析-关卡极限分数更新</p>\n';
+	h+='<hr class="mhr"/>\n';
+	h+='<p class="normal">\n';
+	h+='<span class="title3">更新时间：</span>';
+	var d=new Date();
+	h+=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+	h+='<br>\n';
+	h+='<span class="title3">更新人员：</span>Rean翎<br>\n';
+	h+='<span class="title3">包含版本：</span>'+$('#textBox').html()+'<br>\n';
+	h+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（使用小黑配装器，饰品分数已按带满衰减），方便查看哪些关卡分数更新最多，仅作为参考用。<br>\n';
+	h+='</p>\n';
+	h+='<hr class="mhr"/>\n';
+	h+='<p class="normal">本页内容：';
+	if($('#showNormal').is(":checked")) {h+='&emsp;<a href="#1">主线关卡</a>'};
+	if($('#showAlly').is(":checked")) {h+='&emsp;<a href="#2">联盟委托</a>'};
+	if($('#showJJC').is(":checked")) {h+='&emsp;<a href="#3">竞技场</a>'};
+	h+='</p>\n';
+	return h;
+}
+
+function footer(){
+	return '</div></body></html>';
+}
+
+//below from top.js
+
+function td(text,attr){
+	return '<td'+(attr? ' '+attr : '')+'>'+text+'</td>';
+}
+
+function tr(text,attr){
+	return '<tr'+(attr? ' '+attr : '')+'>'+text+'</tr>';
 }
 
 function addTooltip(text,tooltip){
-	return '<a href="" onclick="return false;" tooltip="'+tooltip+'" class="aTooltip">'+text+'</a>';
+	return '<a class="cTip" tooltip="'+tooltip+'">'+text+'</a>';
 }
 
-function getDistinct(arr){//don't know why the concise method doesn't work...
+function getDistinct(arr){
 	var newArr=[];
 	for (var i in arr){
 		var ind=0;
@@ -728,83 +397,9 @@ function getDistinct(arr){//don't know why the concise method doesn't work...
 	return newArr;
 }
 
-function hide_opt(){
-	$('#show_opt').show();
-	$('#options').hide();
-}
+//below modified from nikki.js
 
-function show_opt(){
-	$('#options').show();
-	$('#show_opt').hide();
-}
-
-function getMerc(id){
-	for (var m in merchant){
-		if(clothes[id].type.mainType==merchant[m][0]&&clothes[id].name==merchant[m][1]){
-			return merchant[m][2]+merchant[m][3];
-		}
-	}
-	for (var m in construct){
-		if(clothes[id].type.mainType==construct[m][0]&&clothes[id].name==construct[m][1]){
-			var constructMaterial=[];
-			for (var i in constructMaterialName) {
-				for (var mm in construct){
-					if(clothes[id].type.mainType==construct[mm][0]&&clothes[id].name==construct[mm][1]&&constructMaterialName[i]==construct[mm][2]) {
-						constructMaterial.push(construct[mm][3]);
-					}
-				}
-				if(constructMaterial.length<=i) {constructMaterial.push(0);}
-			}
-			return '重构'+constructMaterial.join('/');
-		}
-	}
-	return;
-}
-
-//below is modified from material.js
-
-function conv_source(src,subs,mainType){
-	if(src.indexOf(subs)>-1){
-		var pos1=src.indexOf(subs)+1;
-		var pos2=src.indexOf('/',pos1); 
-		if(pos2<0) {pos2=src.length;}
-		var str1=src.substr(0,pos1);
-		var str2=src.substr(pos1,pos2-pos1);
-		var str3=src.substr(pos2);
-		for (var p in clothes){
-			if(clothes[p].type.mainType==mainType&&clothes[p].id==str2) 
-			{str2='-'+clothes[p].name;}
-		}
-		return str1+str2+str3;
-	}else{
-		return src;
-	}
-}
-
-function td(text,attr){
-	return '<td'+(attr? ' '+attr : '')+'>'+text+'</td>';
-}
-
-function tr(text,attr){
-	return '<tr'+(attr? ' '+attr : '')+'>'+text+'</tr>';
-}
-
-function ahref(text,onclick,cls){
-	return '<a href="" onclick="'+onclick+';return false;" '+(cls? 'class="'+cls+'" ' : '')+'>'+text+'</a>';
-}
-
-function enterKey() {
-	$('#textBox').keydown(function(e) {
-		if (e.keyCode==13) {
-			$(this).blur();
-			searchById();
-		}
-	});
-}
-
-//below is modified from nikki.js
-
-function onChangeCriteria() {
+function onChangeCriteria(limitMode) {
 	criteria = {};
 	for (var i in FEATURES) {
 		var f = FEATURES[i];
@@ -813,10 +408,20 @@ function onChangeCriteria() {
 			weight = 1;
 		}
 		//rean mod
-		if(limitMode){
-			if(tasksAdd[theme_name]){
-				if (f==tasksAdd[theme_name][0]) {weight=weight*1.27;}
-				if (f==tasksAdd[theme_name][1]) {weight=weight*1.778;}
+		if(limitMode&&limitMode==1){
+			for (var level in tasksAdd){
+				if (theme_name==tasksAdd[level][0]){
+					if (f==tasksAdd[level][1]) {weight=weight*1.27;}
+					if (f==tasksAdd[level][2]) {weight=weight*1.778;}
+				}
+			}
+		}
+		if(limitMode&&limitMode==2){
+			for (var level in tasksAdd_old){
+				if (theme_name==tasksAdd_old[level][0]){
+					if (f==tasksAdd_old[level][1]) {weight=weight*1.27;}
+					if (f==tasksAdd_old[level][2]) {weight=weight*1.778;}
+				}
 			}
 		}
 		/*if (uiFilter["highscore"]) {
@@ -837,7 +442,7 @@ function onChangeCriteria() {
 	criteria.levelName = theme_name;
 }
 
-//below is duplicated from nikki.js
+//below duplicated from nikki.js
 
 var criteria = {};
 
