@@ -564,8 +564,8 @@ function getTopCloByCate(filters,rescnt,type){
 	for (var i in clothes) {
 		if (clothes[i].type.type!=type){continue;}//skip other categories
 		clothes[i].calc(filters);
-		if (clothes[i].isF) {continue;}
-		if (clothes[i].type.type.indexOf('饰品')==0) {var sum_score=clothes[i].tmpScore*0.4+clothes[i].bonusScore; sum_score=Math.round(sum_score);}
+		if (clothes[i].isF || $.inArray(clothes[i].type.type, skipCategory) >= 0) continue;
+		if (clothes[i].type.type.indexOf('饰品')==0) {var sum_score=Math.round(accSumScore(clothes[i],20));}
 		else {var sum_score=clothes[i].sumScore;}
 		if (!result[0]) {
 			result[0] = [clothes[i],sum_score];
