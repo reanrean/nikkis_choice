@@ -327,6 +327,10 @@ function accScore(total, items) {
   return total * 0.4;
 }
 
+function accSumScore(a,items){
+	return accScore(a.tmpScore, items)+a.bonusScore;
+}
+
 function fakeClothes(cart) {
   var totalScore = 0;
   var totalAccessories = 0;
