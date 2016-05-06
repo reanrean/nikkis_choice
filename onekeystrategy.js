@@ -91,24 +91,21 @@ function showStrategy(){
 		}
 	}
 	typeList.sort(byCategory);
-	resultList.sort(byScore);
+	//resultList.sort(byScore);
 	
 	for (var c in category){
 		var name = category[c];
 		if(name.indexOf("饰品")>=0)
 			continue;
-		$strategy.append('<p>');
-		$strategy.append(pspan(name+" : ", "clothes_category"));
-		$strategy.append(getstrClothes_mod(result[name],rescnt));
-		$strategy.append('</p>');
-		//$strategy.append(p(getstrClothes(result[name]), "clothes", name, "clothes_category"));
+		if (result[name]) {
+			$strategy.append('<p>');
+			$strategy.append(pspan(name+" : ", "clothes_category"));
+			$strategy.append(getstrClothes_mod(result[name],rescnt));
+			$strategy.append('</p>');
+			//$strategy.append(p(getstrClothes(result[name]), "clothes", name, "clothes_category"));
+		}
 	}
 	
-	//var accCount = 20;
-	//if(filters.bonus && filters.bonus[0] && filters.bonus[0].param
-	//	&& filters.bonus[0].param.indexOf("S") >= 0 ){
-	//	accCount = 8;
-	//}
 	$strategy.append(p("————————————饰品(推荐佩戴" + typeList.length + "件)————————————", "divide"));
 		
 	for (var t in typeList){
@@ -228,8 +225,8 @@ function getstrClothes_mod(result,rescnt){
 	}else{
 		if(!stgy_showall){
 			for (j=0;j<rescnt&&result[j];j++){
-				if(j>0) {tmp2=(result[j-1].sumScore==result[j].sumScore ? " = " : " > ");}
-				tmp2+= result[j].name + "「" + result[j].sumScore + " " + removeNum(result[j].source) + "」";
+				if(j>0) {tmp2=(dtrtScore(result[j-1])==dtrtScore(result[j]) ? " = " : " > ");}
+				tmp2+= result[j].name + "「" + Math.round(dtrtScore(result[j])) + " " + removeNum(result[j].source) + "」";
 				if(result[j].own){
 					str=pspan(tmp2,"clothes",tmp1,"clothes_notown");
 					return str;
@@ -240,8 +237,8 @@ function getstrClothes_mod(result,rescnt){
 		}else{
 			var isown=false;
 			for (j=0;j<rescnt&&result[j];j++){
-				if(j>0) {tmp2=(result[j-1].sumScore==result[j].sumScore ? " = " : " > ");}
-				tmp2+= result[j].name + "「" + result[j].sumScore + " " + removeNum(result[j].source) + "」";
+				if(j>0) {tmp2=(dtrtScore(result[j-1])==dtrtScore(result[j]) ? " = " : " > ");}
+				tmp2+= result[j].name + "「" + Math.round(dtrtScore(result[j])) + " " + removeNum(result[j].source) + "」";
 				if(result[j].own){isown=true;}
 				if(isown){tmp3+=tmp2;}
 				else{tmp1+=tmp2;}
@@ -268,15 +265,16 @@ function strat_sortlist(clothes,filters,rescnt){
 	var result = {};
 	for (var i in clothes) {
 		if (matches(clothes[i], {}, filters)) {
-		clothes[i].calc(filters);
+			clothes[i].calc(filters);
+			if (clothes[i].isF || $.inArray(clothes[i].type.type, skipCategory) >= 0) continue;
 			if (!result[clothes[i].type.type]) {
 				result[clothes[i].type.type] = new Object()
 				result[clothes[i].type.type][0] = clothes[i];
 			} else {
 				for (j=0;j<rescnt;j++){
 					//compare with [j]
-					if(!result[clothes[i].type.type][j] || clothes[i].sumScore > result[clothes[i].type.type][j].sumScore
-						|| (clothes[i].sumScore >= result[clothes[i].type.type][j].sumScore && clothes[i].own)
+					if(!result[clothes[i].type.type][j] || dtrtScore(clothes[i]) > dtrtScore(result[clothes[i].type.type][j])
+						|| (dtrtScore(clothes[i]) >= dtrtScore(result[clothes[i].type.type][j]) && clothes[i].own)
 						){
 						//lower others ranking
 						for (k=rescnt-1;k>j;k--){
@@ -291,6 +289,12 @@ function strat_sortlist(clothes,filters,rescnt){
 		}
 	}
 	return result;
+}
+
+function dtrtScore(obj){
+	if (obj.type.type.indexOf('饰品')==0) {var sum_score=accScore(obj.tmpScore,20)+obj.bonusScore; sum_score=Math.round(sum_score*10)/10;}
+	else {var sum_score=obj.sumScore;}
+	return sum_score;
 }
 
 function initOnekey(){
