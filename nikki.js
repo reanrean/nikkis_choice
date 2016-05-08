@@ -319,7 +319,7 @@ function filterTopAccessories(filters) {
 		toSort16.push(result16[c]);
 		total16 += accSumScore(result16[c], 16);
 	}
-	if (total9 > total16) return toSort9;
+	if (total9 > total16 || uiFilter["acc9"] ) return toSort9;
 	else return toSort16;
 }
 
@@ -622,6 +622,9 @@ function initEvent() {
 		if (this.value == "highscore") {
 			$(".highscore-link").toggle();
 			$(".highscore-rank").toggle();
+			onChangeCriteria();
+		}
+		if (this.value == "acc9") {
 			onChangeCriteria();
 		}
 	});
