@@ -561,10 +561,11 @@ function calctop_bytheme(id,them){
 
 function getTopCloByCate(filters,rescnt,type){
 	var result = [];
+	if ($.inArray(type, skipCategory)>=0) {return result;}
 	for (var i in clothes) {
 		if (clothes[i].type.type!=type){continue;}//skip other categories
 		clothes[i].calc(filters);
-		if (clothes[i].isF || $.inArray(clothes[i].type.type, skipCategory) >= 0) continue;
+		if (clothes[i].isF) {continue;}
 		if (clothes[i].type.type.indexOf('饰品')==0) {var sum_score=Math.round(accSumScore(clothes[i],20));}
 		else {var sum_score=clothes[i].sumScore;}
 		if (!result[0]) {
