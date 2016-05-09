@@ -287,7 +287,7 @@ function byId(a, b) {
 function filterTopAccessories(filters) {
 	filters['own'] = true;
 	var accCate = CATEGORY_HIERARCHY['饰品'];
-	var accCNum = CATEGORY_HIERARCHY['饰品'].length;
+	var accCNum = accCateNum;//note: this variable is not in seal100x's version
 	var accSNum = 9;
 	for (var i in accCate) {
 		filters[accCate[i]] = true;
