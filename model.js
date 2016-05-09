@@ -331,6 +331,17 @@ function accSumScore(a,items){
 	return accScore(a.tmpScore, items)+a.bonusScore;
 }
 
+var accCateNum = function() {
+	var cnt = 0;
+	for (var i in category) {
+		if (category[i].split('-')[0] == "饰品") cnt++;
+	}
+	for (var i in skipCategory) {
+		if (skipCategory[i].split('-')[0] == "饰品") cnt--;
+	}
+	return cnt;
+}();
+
 function fakeClothes(cart) {
   var totalScore = 0;
   var totalAccessories = 0;
