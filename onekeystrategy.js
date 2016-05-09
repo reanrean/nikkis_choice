@@ -106,7 +106,7 @@ function showStrategy(){
 		}
 	}
 	
-	$strategy.append(p("————————————饰品(推荐佩戴" + typeList.length + "件)————————————", "divide"));
+	$strategy.append(p("————————饰品 (高收集戴满"+typeList.length+"件, 低收集戴9件)————————", "divide"));
 		
 	for (var t in typeList){
 		var accList = [];
@@ -115,13 +115,11 @@ function showStrategy(){
 				accList.push(resultList[i]);
 			}
 		}
-		//if(accList.length > 0){
-			$strategy.append('<p>');
-			$strategy.append(pspan(typeList[t]+" : ", "clothes_category"));
-			$strategy.append(getstrClothes_mod(accList,rescnt));
-			$strategy.append('</p>');
-			//$strategy.append(p(getstrClothes(accList), "clothes", typeList[t], "clothes_category"));
-		//}
+		$strategy.append('<p>');
+		$strategy.append(pspan(typeList[t]+" : ", "clothes_category"));
+		$strategy.append(getstrClothes_mod(accList,rescnt));
+		$strategy.append('</p>');
+		//$strategy.append(p(getstrClothes(accList), "clothes", typeList[t], "clothes_category"));
 	}
 
 	$author_sign = $("<div/>").addClass("stgy_author_sign_div");
@@ -294,7 +292,7 @@ function strat_sortlist(filters,rescnt){
 }
 
 function actScore(obj){
-	return (obj.type.mainType=='饰品') ? Math.round(accSumScore(obj,CATEGORY_HIERARCHY['饰品'].length)*10)/10 : obj.sumScore;
+	return (obj.type.mainType=='饰品') ? Math.round(accSumScore(obj,accCateNum)*10)/10 : obj.sumScore;
 }
 
 function initOnekey(){
