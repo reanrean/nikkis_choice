@@ -566,8 +566,7 @@ function getTopCloByCate(filters,rescnt,type){
 		if (clothes[i].type.type!=type){continue;}//skip other categories
 		clothes[i].calc(filters);
 		if (clothes[i].isF) {continue;}
-		if (clothes[i].type.type.indexOf('饰品')==0) {var sum_score=Math.round(accSumScore(clothes[i],20));}
-		else {var sum_score=clothes[i].sumScore;}
+		var sum_score= (obj.type.mainType=='饰品') ? Math.round(accSumScore(clothes[i],accCateNum)) : clothes[i].sumScore;
 		if (!result[0]) {
 			result[0] = [clothes[i],sum_score];
 		}else {
