@@ -223,7 +223,7 @@ function getstrClothes_mod(result,rescnt){
 		if(!stgy_showall){
 			for (j=0;j<rescnt&&result[j];j++){
 				if(j>0) {tmp2=(actScore(result[j-1])==actScore(result[j]) ? " = " : " > ");}
-				tmp2+= result[j].name + "「" + Math.round(actScore(result[j])) + " " + removeNum(result[j].source) + "」";
+				tmp2+= result[j].name + "「" + actScore(result[j]) + " " + removeNum(result[j].source) + "」";
 				if(result[j].own){
 					str=pspan(tmp2,"clothes",tmp1,"clothes_notown");
 					return str;
@@ -235,7 +235,7 @@ function getstrClothes_mod(result,rescnt){
 			var isown=false;
 			for (j=0;j<rescnt&&result[j];j++){
 				if(j>0) {tmp2=(actScore(result[j-1])==actScore(result[j]) ? " = " : " > ");}
-				tmp2+= result[j].name + "「" + Math.round(actScore(result[j])) + " " + removeNum(result[j].source) + "」";
+				tmp2+= result[j].name + "「" + actScore(result[j]) + " " + removeNum(result[j].source) + "」";
 				if(result[j].own){isown=true;}
 				if(isown){tmp3+=tmp2;}
 				else{tmp1+=tmp2;}
@@ -292,7 +292,7 @@ function strat_sortlist(filters,rescnt){
 }
 
 function actScore(obj){
-	return (obj.type.mainType=='饰品') ? Math.round(accSumScore(obj,accCateNum)*10)/10 : obj.sumScore;
+	return (obj.type.mainType=='饰品') ? Math.round(accSumScore(obj,accCateNum)) : obj.sumScore;
 }
 
 function initOnekey(){
