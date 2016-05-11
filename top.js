@@ -175,35 +175,175 @@ function calctop(){
 	if (isNaN(parseInt($("#maxHide").val())) || $("#maxHide").val()<1) {$("#maxHide").val(1);}
 	$("#maxHide").val(parseInt($("#maxHide").val()));
 	
-	limitMode=($('#limitMode').is(":checked") ? 1 : 0 );
+	limitMode=parseInt($("input[type='radio'][name='limit']:checked").val());
 	
-	if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
-		$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
-	}else{
-		if ($('#cartMode').is(":checked")){
-			if (cartList.length==0){
-				$('#alert_msg').html('选取列表为空_(:з」∠)_');
-			}else{
-				$('#alert_msg').html('');
-				$('#topsearch_info').html('');
-				$('#topsearch_note').html('');
-				storeTopByCate_all();
-				calctop_byall();
-			}
+	if ($('#cartMode').is(":checked")){
+		if (cartList.length==0){
+			$('#alert_msg').html('选取列表为空_(:з」∠)_');
 		}else{
-			if (!top_id) {
-				$('#alert_msg').html('请选择一件衣服_(:з」∠)_');
+			if(limitMode==2){
+				//clearOutput();
+				//prop anal
+				$('#alert_msg').html('暂不支持此功能_(:з」∠)_');
 			}else{
-				$('#alert_msg').html('');
-				$('#topsearch_info').html('');
-				$('#topsearch_note').html('');
-				storeTopByCate_single(top_id);
-				calctop_byid(top_id);
-				output_byid(top_id);
+				if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
+					$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
+				}else{
+					clearOutput();
+					storeTopByCate_all();
+					calctop_byall();
+				}
+			}
+		}
+	}else{
+		if (!top_id) {
+			$('#alert_msg').html('请选择一件衣服_(:з」∠)_');
+		}else{
+			if(limitMode==2){
+				clearOutput();
+				propanal_byid(top_id);
+			}else{
+				if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
+					$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
+				}else{
+					clearOutput();
+					storeTopByCate_single(top_id);
+					calctop_byid(top_id);
+					output_byid(top_id);
+				}
 			}
 		}
 	}
 	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+50)+"px");
+}
+
+function clearOutput(){
+	$('#alert_msg').html('');
+	$('#topsearch_info').html('');
+	$('#topsearch_note').html('');
+}
+
+function propanal_byid(id){
+	//1.同属性排名 2.同属性+tag 3.tag数 4.被吊打 5.被吊打+tag
+	var showCnt=$("#showCnt").val();
+	var withTag=clothes[id].tags[0] ? true : false;
+	var rank=[]; var rankEq=[];
+	var rankTag=[]; var rankTagEq=[];
+	var tagCnt=[];
+	var repl=[];
+	var replTag=[];
+	var thisScore=Math.round(balanceScore(id,id));
+	for (var i in clothes){
+		if (clothes[i].type.type!=clothes[id].type.type) {continue;}
+		var rankScore=Math.round(balanceScore(id,i));
+		var supped=supp_byid(id,i);
+		
+		if (rankScore>thisScore) {rank.push([rankScore,i]);}
+		if (rankScore==thisScore) { 
+			if(i==id) rankEq.unshift([rankScore,i]); 
+			else rankEq.push([rankScore,i]);
+		}
+		if (supped) {repl.push([rankScore,i]);}
+		
+		if (withTag && clothes[i].tags.join(',')==clothes[id].tags.join(',')){
+			if(i!=id) {tagCnt.push([rankScore,i]);}
+			if (rankScore>thisScore) {rankTag.push([rankScore,i]);}
+			if (rankScore==thisScore) { 
+				if(i==id) rankTagEq.unshift([rankScore,i]); 
+				else rankTagEq.push([rankScore,i]);
+			}
+			if (supped) {replTag.push([rankScore,i]);}
+		}
+	}
+	var output=info_byid(id);
+	output+='<span class="normTip">';
+	//同属性排名
+	var rankTxt='同属性排名：第'+(rank.length+1);
+	rank.sort(function(a,b){return a[0] - b[0]});
+	rank=rank.concat(rankEq);
+	var rankTip='';
+	for (var i in rank){
+		if (i>0) {rankTip+= (rank[i][0]==rank[i-1][0]) ? ' = ' : ' > ';}
+		rankTip+=clothes[rank[i][1]].name;
+	}
+	output+=(rank.length>1 ? addTooltip(rankTxt,rankTip) : rankTxt) +'<br>';
+	//同属性+tag排名
+	if (withTag){
+		var rankTagTxt='同属性同tag排名：第'+(rankTag.length+1);
+		rankTag.sort(function(a,b){return a[0] - b[0]});
+		rankTag=rankTag.concat(rankTagEq);
+		var rankTagTip='';
+		for (var i in rankTag){
+			if (i>0) {rankTagTip+= (rankTag[i][0]==rankTag[i-1][0]) ? ' = ' : ' > ';}
+			rankTagTip+=clothes[rankTag[i][1]].name;
+		}
+		output+=(rankTag.length>1 ? addTooltip(rankTagTxt,rankTagTip) : rankTagTxt) +'<br>';
+	}
+	//tag数
+	if (withTag){
+		var tagTxt='相同tag部件数：'+(tagCnt.length+1)+'个';
+		tagCnt.sort(function(a,b){return a[0] - b[0]});
+		var tagTip='';
+		for (var i=0; i<showCnt; i++){
+			if (tagCnt[i]) {tagTip+=clothes[tagCnt[i][1]].name+' ';}
+		}
+		if (tagCnt.length > showCnt) tagTip += '…';
+		output+=(tagCnt.length>0 ? addTooltip(tagTxt,tagTip) : tagTxt) +'<br>';
+	}
+	//被吊打
+	var replTxt='属性被覆盖：'+(repl.length)+'个';
+	repl.sort(function(a,b){return a[0] - b[0]});
+	var replTip='';
+	for (var i in repl){
+		var raw_tag=cell_tag(repl[i][1]);
+		if (raw_tag.indexOf('\n')>0) {raw_tag=raw_tag.substr(0,raw_tag.indexOf('\n'));}
+		replTip+=clothes[repl[i][1]].name+'\n'+raw_tag+'\n';
+	}
+	output+=(repl.length>0 ? addTooltip(replTxt,replTip) : replTxt) +'<br>';
+	//被吊打+tag
+	if (withTag){
+		var replTagTxt='属性+tag被覆盖：'+(replTag.length)+'个';
+		replTag.sort(function(a,b){return a[0] - b[0]});
+		var replTagTip='';
+		for (var i in replTag){
+			var raw_tag=cell_tag(replTag[i][1]);
+			if (raw_tag.indexOf('\n')>0) {raw_tag=raw_tag.substr(0,raw_tag.indexOf('\n'));}
+			replTagTip+=clothes[replTag[i][1]].name+'\n'+raw_tag+'\n';
+		}
+		output+=(replTag.length>0 ? addTooltip(replTagTxt,replTagTip) : replTagTxt) +'<br>';
+	}
+	output+='</span>';
+	$('#topsearch_info').html(output);
+}
+
+function balanceScore(id,comp){ //calc balance score in prop of id
+	var out=0;
+	if(clothes[id].simple[0]) { if(clothes[comp].simple[0]) out+=base[clothes[comp].simple[0]];}
+	if(clothes[id].simple[1]) { if(clothes[comp].simple[1]) out+=base[clothes[comp].simple[1]];}
+	if(clothes[id].active[0]) { if(clothes[comp].active[0]) out+=base[clothes[comp].active[0]];}
+	if(clothes[id].active[1]) { if(clothes[comp].active[1]) out+=base[clothes[comp].active[1]];}
+	if(clothes[id].cute[0]) { if(clothes[comp].cute[0]) out+=base[clothes[comp].cute[0]];}
+	if(clothes[id].cute[1]) { if(clothes[comp].cute[1]) out+=base[clothes[comp].cute[1]];}
+	if(clothes[id].pure[0]) { if(clothes[comp].pure[0]) out+=base[clothes[comp].pure[0]];}
+	if(clothes[id].pure[1]) { if(clothes[comp].pure[1]) out+=base[clothes[comp].pure[1]];}
+	if(clothes[id].cool[0]) { if(clothes[comp].cool[0]) out+=base[clothes[comp].cool[0]];}
+	if(clothes[id].cool[1]) { if(clothes[comp].cool[1]) out+=base[clothes[comp].cool[1]];}
+	return out;
+}
+
+function supp_byid(id,comp){ //true: comp suppresses/replaces id
+	if(id==comp) return false;
+	if(clothes[id].simple[0]) { if ( !clothes[comp].simple[0] || base[clothes[comp].simple[0]]<base[clothes[id].simple[0]] ) return false;}
+	if(clothes[id].simple[1]) { if ( !clothes[comp].simple[1] || base[clothes[comp].simple[1]]<base[clothes[id].simple[1]] ) return false;}
+	if(clothes[id].active[0]) { if ( !clothes[comp].active[0] || base[clothes[comp].active[0]]<base[clothes[id].active[0]] ) return false;}
+	if(clothes[id].active[1]) { if ( !clothes[comp].active[1] || base[clothes[comp].active[1]]<base[clothes[id].active[1]] ) return false;}
+	if(clothes[id].cute[0]) { if ( !clothes[comp].cute[0] || base[clothes[comp].cute[0]]<base[clothes[id].cute[0]] ) return false;}
+	if(clothes[id].cute[1]) { if ( !clothes[comp].cute[1] || base[clothes[comp].cute[1]]<base[clothes[id].cute[1]] ) return false;}
+	if(clothes[id].pure[0]) { if ( !clothes[comp].pure[0] || base[clothes[comp].pure[0]]<base[clothes[id].pure[0]] ) return false;}
+	if(clothes[id].pure[1]) { if ( !clothes[comp].pure[1] || base[clothes[comp].pure[1]]<base[clothes[id].pure[1]] ) return false;}
+	if(clothes[id].cool[0]) { if ( !clothes[comp].cool[0] || base[clothes[comp].cool[0]]<base[clothes[id].cool[0]] ) return false;}
+	if(clothes[id].cool[1]) { if ( !clothes[comp].cool[1] || base[clothes[comp].cool[1]]<base[clothes[id].cool[1]] ) return false;}
+	return true;
 }
 
 function calctop_byall(){
@@ -227,20 +367,7 @@ function calctop_byall(){
 			var rowspan=1;
 			if(inTop.length>0 && inSec.length>0) {rowspan++;}
 			
-			var cell_tag='';
-			if(clothes[id].simple[0]) {cell_tag+='简'+clothes[id].simple[0];}
-			if(clothes[id].simple[1]) {cell_tag+='华'+clothes[id].simple[1];}
-			if(clothes[id].active[0]) {cell_tag+='|活'+clothes[id].active[0];}
-			if(clothes[id].active[1]) {cell_tag+='|雅'+clothes[id].active[1];}
-			if(clothes[id].cute[0]) {cell_tag+='|可'+clothes[id].cute[0];}
-			if(clothes[id].cute[1]) {cell_tag+='|成'+clothes[id].cute[1];}
-			if(clothes[id].pure[0]) {cell_tag+='|纯'+clothes[id].pure[0];}
-			if(clothes[id].pure[1]) {cell_tag+='|性'+clothes[id].pure[1];}
-			if(clothes[id].cool[0]) {cell_tag+='|凉'+clothes[id].cool[0];}
-			if(clothes[id].cool[1]) {cell_tag+='|暖'+clothes[id].cool[1];}
-			if(clothes[id].tags[0]) {cell_tag+='\n'+clothes[id].tags.join(',');}
-			
-			var cell=td(addTooltip(clothes[id].name,cell_tag),'rowspan="'+rowspan+'" class="inName normTip'+(inTop.length>0?' haveTop':'')+'"');
+			var cell=td(addTooltip(clothes[id].name,cell_tag(id)),'rowspan="'+rowspan+'" class="inName normTip'+(inTop.length>0?' haveTop':'')+'"');
 			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
 			if(showSource||showMerc){
 				var cell_3rd='';
@@ -435,7 +562,7 @@ function calctop_byid(id){
 	}
 }
 
-function output_byid(id){ //need inTop,inSec
+function info_byid(id){
 	var output='<b>'+clothes[id].name+'</b>&ensp;'+clothes[id].type.type+'&ensp;'+clothes[id].id+'<br>';
 	var cell='';
 		if(clothes[id].simple[0]) {cell+='简约'+clothes[id].simple[0];}
@@ -456,6 +583,27 @@ function output_byid(id){ //need inTop,inSec
 	var price=getMerc(id);
 	output+='来源:'+srcs+(price?'('+price+')':'')+'<br><br>';
 	
+	return output;
+}
+
+function cell_tag(id){
+	var ret='';
+	if(clothes[id].simple[0]) {ret+='简'+clothes[id].simple[0];}
+	if(clothes[id].simple[1]) {ret+='华'+clothes[id].simple[1];}
+	if(clothes[id].active[0]) {ret+='|活'+clothes[id].active[0];}
+	if(clothes[id].active[1]) {ret+='|雅'+clothes[id].active[1];}
+	if(clothes[id].cute[0]) {ret+='|可'+clothes[id].cute[0];}
+	if(clothes[id].cute[1]) {ret+='|成'+clothes[id].cute[1];}
+	if(clothes[id].pure[0]) {ret+='|纯'+clothes[id].pure[0];}
+	if(clothes[id].pure[1]) {ret+='|性'+clothes[id].pure[1];}
+	if(clothes[id].cool[0]) {ret+='|凉'+clothes[id].cool[0];}
+	if(clothes[id].cool[1]) {ret+='|暖'+clothes[id].cool[1];}
+	if(clothes[id].tags[0]) {ret+='\n'+clothes[id].tags.join(',');}
+	return ret;
+}
+
+function output_byid(id){ //need inTop,inSec
+	var output=info_byid(id);
 	output+='<span class="normTip">'
 	if(inTop.length>0){
 		output+='顶配：<br>';
@@ -618,8 +766,13 @@ function getTopCloByCate(filters,rescnt,type){
 
 function show_limitNote(){
 	var tooltip='即微笑+飞吻以及飞吻分別打在最高分的两个属性时的极限搭配权重(竞技场不计算)。此模式使用全衣柜下的极限权重，请注意收集度不同极限权重也可能会不同，并非一定适合所有玩家。';
-	var output='<a href="" onclick="return false;" tooltip="'+tooltip+'">说明</a>';
+	var output='<a href="" onclick="return false;" tooltip="'+tooltip+'">[注]</a>';
 	$('#limitNote').html(output);
+}
+
+function chgLimitType(ind){
+	if (ind<2) {$('.levels').show();}
+	else {$('.levels').hide();}
 }
 
 function chgcartMode(){
@@ -815,12 +968,10 @@ function onChangeCriteria() {
 			weight = 1;
 		}
 		//rean mod
-		if(limitMode){
-			for (var level in tasksAdd){
-				if (theme_name==tasksAdd[level][0]){
-					if (f==tasksAdd[level][1]) {weight=weight*1.27;}
-					if (f==tasksAdd[level][2]) {weight=weight*1.778;}
-				}
+		if(limitMode==1){
+			if(tasksAdd[theme_name]){
+				if (f==tasksAdd[theme_name][0]) {weight=weight*1.27;}
+				if (f==tasksAdd[theme_name][1]) {weight=weight*1.778;}
 			}
 		}
 		/*if (uiFilter["highscore"]) {
