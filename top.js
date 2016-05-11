@@ -214,7 +214,7 @@ function calctop(){
 			}
 		}
 	}
-	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*20+50)+"px");
+	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*30+50)+"px");
 }
 
 function clearOutput(){
@@ -245,14 +245,30 @@ function propanal_byid(id){
 		}
 		if (supped) {repl.push([rankScore,i]);}
 		
-		if (withTag && clothes[i].tags.join(',')==clothes[id].tags.join(',')){
-			if(i!=id) {tagCnt.push([rankScore,i]);}
-			if (rankScore>thisScore) {rankTag.push([rankScore,i]);}
-			if (rankScore==thisScore) { 
-				if(i==id) rankTagEq.unshift([rankScore,i]); 
-				else rankTagEq.push([rankScore,i]);
+		if (withTag&&clothes[i].tags[0]){
+			for (var j=0;j<clothes[id].tags.length+1;j++){
+				if(clothes[id].tags.length<2&&j>0) {break;}
+				var tagj=j<clothes[id].tags.length?clothes[id].tags[j]:clothes[id].tags.join('+');
+				
+				if(!tagCnt[tagj]) {tagCnt[tagj]=[];}
+				if(!rankTag[tagj]) {rankTag[tagj]=[];}
+				if(!rankTagEq[tagj]) {rankTagEq[tagj]=[];}
+				if(!replTag[tagj]) {replTag[tagj]=[];}
+			
+				for (var k=0;k<clothes[i].tags.length+1;k++){
+					if(clothes[i].tags.length<2&&k>0) {break;}
+					var tagk=k<clothes[i].tags.length?clothes[i].tags[k]:clothes[i].tags.join('+');
+					if(tagk==tagj) {
+						if (i!=id) tagCnt[tagj].push([rankScore,i]);
+						if (rankScore>thisScore) {rankTag[tagj].push([rankScore,i]);}
+						if (rankScore==thisScore) {
+							if(i==id) rankTagEq[tagj].unshift([rankScore,i]); 
+							else rankTagEq[tagj].push([rankScore,i]);
+						}
+						if (supped) {replTag[tagj].push([rankScore,i]);}
+					}
+				}
 			}
-			if (supped) {replTag.push([rankScore,i]);}
 		}
 	}
 	var output=info_byid(id);
@@ -267,31 +283,42 @@ function propanal_byid(id){
 		if (i>0) {rankTip+= (rank[i][0]==rank[i-1][0]) ? ' = ' : ' > ';}
 		rankTip+=clothes[rank[i][1]].name;
 	}
-	output+=(rank.length>1 ? addTooltip(rankTxt,rankTip+(rankSlice? ' > …' : '')) : rankTxt) +'<br>';
+	output+=(rank.length>1 ? addTooltip(rankTxt,rankTip+(rankSlice? ' …' : '')) : rankTxt) +'<br>';
+	output+='<br>';
 	//同属性+tag排名
 	if (withTag){
-		var rankTagTxt='同属性同tag排名：第'+(rankTag.length+1);
-		rankTag.sort(function(a,b){return a[0] - b[0]});
-		rankTag=rankTag.concat(rankTagEq);
-		if (rankTag.length>showCnt*2) {rankTag=rankTag.slice(0,showCnt*2); var rankTagSlice=1;}
-		var rankTagTip='';
-		for (var i in rankTag){
-			if (i>0) {rankTagTip+= (rankTag[i][0]==rankTag[i-1][0]) ? ' = ' : ' > ';}
-			rankTagTip+=clothes[rankTag[i][1]].name;
+		for (var j=0; j<clothes[id].tags.length+1; j++){
+			if(clothes[id].tags.length<2&&j>0) {break;}
+			var tagj=j<clothes[id].tags.length?clothes[id].tags[j]:clothes[id].tags.join('+');
+			var rankTagTxt='同属性+'+tagj+'排名：第'+(rankTag[tagj].length+1);
+			rankTag[tagj].sort(function(a,b){return a[0] - b[0]});
+			rankTag[tagj]=rankTag[tagj].concat(rankTagEq[tagj]);
+			if (rankTag[tagj].length>showCnt*2) {rankTag[tagj]=rankTag[tagj].slice(0,showCnt*2); var rankTagSlice=1;}
+			var rankTagTip='';
+			for (var i in rankTag[tagj]){
+				if (i>0) {rankTagTip+= (rankTag[tagj][i][0]==rankTag[tagj][i-1][0]) ? ' = ' : ' > ';}
+				rankTagTip+=clothes[rankTag[tagj][i][1]].name;
+			}
+			output+=(rankTag[tagj].length>1 ? addTooltip(rankTagTxt,rankTagTip+(rankTagSlice? ' …' : '')) : rankTagTxt) +'<br>';
 		}
-		output+=(rankTag.length>1 ? addTooltip(rankTagTxt,rankTagTip+(rankTagSlice? ' > …' : '')) : rankTagTxt) +'<br>';
 	}
+	output+='<br>';
 	//tag数
 	if (withTag){
-		var tagTxt='相同tag部件数：'+(tagCnt.length+1)+'个';
-		tagCnt.sort(function(a,b){return a[0] - b[0]});
-		var tagTip='';
-		for (var i=0; i<showCnt; i++){
-			if (tagCnt[i]) {tagTip+=clothes[tagCnt[i][1]].name+' ';}
+		for (var j=0; j<clothes[id].tags.length+1; j++){
+			if(clothes[id].tags.length<2&&j>0) {break;}
+			var tagj=j<clothes[id].tags.length?clothes[id].tags[j]:clothes[id].tags.join('+');
+			var tagTxt='tag'+tagj+'部件数：'+(tagCnt[tagj].length+1)+'个';
+			tagCnt[tagj].sort(function(a,b){return a[0] - b[0]});
+			var tagTip='';
+			for (var i=0; i<showCnt; i++){
+				if (tagCnt[tagj][i]) {tagTip+=clothes[tagCnt[tagj][i][1]].name+' ';}
+			}
+			if (tagCnt[tagj].length > showCnt) tagTip += '…';
+			output+=(tagCnt[tagj].length>0 ? addTooltip(tagTxt,tagTip) : tagTxt) +'<br>';
 		}
-		if (tagCnt.length > showCnt) tagTip += '…';
-		output+=(tagCnt.length>0 ? addTooltip(tagTxt,tagTip) : tagTxt) +'<br>';
 	}
+	output+='<br>';
 	//被吊打
 	var replTxt='属性被覆盖：'+(repl.length)+'个';
 	repl.sort(function(a,b){return a[0] - b[0]});
@@ -303,18 +330,23 @@ function propanal_byid(id){
 		replTip+=clothes[repl[i][1]].name+'\n'+raw_tag+'\n';
 	}
 	output+=(repl.length>0 ? addTooltip(replTxt,replTip+(replSlice? '…' : '')) : replTxt) +'<br>';
+	output+='<br>';
 	//被吊打+tag
 	if (withTag){
-		var replTagTxt='属性+tag被覆盖：'+(replTag.length)+'个';
-		replTag.sort(function(a,b){return a[0] - b[0]});
-		if (replTag.length>showCnt) {replTag=replTag.slice(0,showCnt); var replTagSlice=1;}
-		var replTagTip='';
-		for (var i in replTag){
-			var raw_tag=cell_tag(replTag[i][1]);
-			if (raw_tag.indexOf('\n')>0) {raw_tag=raw_tag.substr(0,raw_tag.indexOf('\n'));}
-			replTagTip+=clothes[replTag[i][1]].name+'\n'+raw_tag+'\n';
+		for (var j=0; j<clothes[id].tags.length+1; j++){
+			if(clothes[id].tags.length<2&&j>0) {break;}
+			var tagj=j<clothes[id].tags.length?clothes[id].tags[j]:clothes[id].tags.join('+');
+			var replTagTxt='属性+'+tagj+'被覆盖：'+(replTag[tagj].length)+'个';
+			replTag[tagj].sort(function(a,b){return a[0] - b[0]});
+			if (replTag[tagj].length>showCnt) {replTag[tagj]=replTag[tagj].slice(0,showCnt); var replTagSlice=1;}
+			var replTagTip='';
+			for (var i in replTag[tagj]){
+				var raw_tag=cell_tag(replTag[tagj][i][1]);
+				if (raw_tag.indexOf('\n')>0) {raw_tag=raw_tag.substr(0,raw_tag.indexOf('\n'));}
+				replTagTip+=clothes[replTag[tagj][i][1]].name+'\n'+raw_tag+'\n';
+			}
+			output+=(replTag[tagj].length>0 ? addTooltip(replTagTxt,replTagTip+(replTagSlice? '…' : '')) : replTagTxt) +'<br>';
 		}
-		output+=(replTag.length>0 ? addTooltip(replTagTxt,replTagTip+(replTagSlice? '…' : '')) : replTagTxt) +'<br>';
 	}
 	output+='</span>';
 	$('#topsearch_info').html(output);
