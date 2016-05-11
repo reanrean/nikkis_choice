@@ -261,23 +261,25 @@ function propanal_byid(id){
 	var rankTxt='同属性排名：第'+(rank.length+1);
 	rank.sort(function(a,b){return a[0] - b[0]});
 	rank=rank.concat(rankEq);
+	if (rank.length>showCnt*2) {rank=rank.slice(0,showCnt*2); var rankSlice=1;}
 	var rankTip='';
 	for (var i in rank){
 		if (i>0) {rankTip+= (rank[i][0]==rank[i-1][0]) ? ' = ' : ' > ';}
 		rankTip+=clothes[rank[i][1]].name;
 	}
-	output+=(rank.length>1 ? addTooltip(rankTxt,rankTip) : rankTxt) +'<br>';
+	output+=(rank.length>1 ? addTooltip(rankTxt,rankTip+(rankSlice? ' > …' : '')) : rankTxt) +'<br>';
 	//同属性+tag排名
 	if (withTag){
 		var rankTagTxt='同属性同tag排名：第'+(rankTag.length+1);
 		rankTag.sort(function(a,b){return a[0] - b[0]});
 		rankTag=rankTag.concat(rankTagEq);
+		if (rankTag.length>showCnt*2) {rankTag=rankTag.slice(0,showCnt*2); var rankTagSlice=1;}
 		var rankTagTip='';
 		for (var i in rankTag){
 			if (i>0) {rankTagTip+= (rankTag[i][0]==rankTag[i-1][0]) ? ' = ' : ' > ';}
 			rankTagTip+=clothes[rankTag[i][1]].name;
 		}
-		output+=(rankTag.length>1 ? addTooltip(rankTagTxt,rankTagTip) : rankTagTxt) +'<br>';
+		output+=(rankTag.length>1 ? addTooltip(rankTagTxt,rankTagTip+(rankTagSlice? ' > …' : '')) : rankTagTxt) +'<br>';
 	}
 	//tag数
 	if (withTag){
@@ -293,24 +295,26 @@ function propanal_byid(id){
 	//被吊打
 	var replTxt='属性被覆盖：'+(repl.length)+'个';
 	repl.sort(function(a,b){return a[0] - b[0]});
+	if (repl.length>showCnt) {repl=repl.slice(0,showCnt); var replSlice=1;}
 	var replTip='';
 	for (var i in repl){
 		var raw_tag=cell_tag(repl[i][1]);
 		if (raw_tag.indexOf('\n')>0) {raw_tag=raw_tag.substr(0,raw_tag.indexOf('\n'));}
 		replTip+=clothes[repl[i][1]].name+'\n'+raw_tag+'\n';
 	}
-	output+=(repl.length>0 ? addTooltip(replTxt,replTip) : replTxt) +'<br>';
+	output+=(repl.length>0 ? addTooltip(replTxt,replTip+(replSlice? '…' : '')) : replTxt) +'<br>';
 	//被吊打+tag
 	if (withTag){
 		var replTagTxt='属性+tag被覆盖：'+(replTag.length)+'个';
 		replTag.sort(function(a,b){return a[0] - b[0]});
+		if (replTag.length>showCnt) {replTag=replTag.slice(0,showCnt); var replTagSlice=1;}
 		var replTagTip='';
 		for (var i in replTag){
 			var raw_tag=cell_tag(replTag[i][1]);
 			if (raw_tag.indexOf('\n')>0) {raw_tag=raw_tag.substr(0,raw_tag.indexOf('\n'));}
 			replTagTip+=clothes[replTag[i][1]].name+'\n'+raw_tag+'\n';
 		}
-		output+=(replTag.length>0 ? addTooltip(replTagTxt,replTagTip) : replTagTxt) +'<br>';
+		output+=(replTag.length>0 ? addTooltip(replTagTxt,replTagTip+(replTagSlice? '…' : '')) : replTagTxt) +'<br>';
 	}
 	output+='</span>';
 	$('#topsearch_info').html(output);
