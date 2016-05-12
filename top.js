@@ -495,7 +495,7 @@ function propanal_byall(){
 			cell+=td(cellRank);
 			
 			if (!$('#hideNores').is(":checked")||isSec||isTop){
-				out+=tr(cell,' class="'+(isTop?'inTop ':(isSec?'inSec ':''))+'normTipLeft"');
+				out+=tr(cell,' class="'+(isTop?'inTop':(isSec?'inSec':'inNone'))+'"');
 			}
 		}
 	}
