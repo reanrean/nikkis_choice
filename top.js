@@ -182,9 +182,8 @@ function calctop(){
 			$('#alert_msg').html('选取列表为空_(:з」∠)_');
 		}else{
 			if(limitMode==2){
-				//clearOutput();
-				//prop anal
-				$('#alert_msg').html('暂不支持此功能_(:з」∠)_');
+				clearOutput();
+				propanal_byall();
 			}else{
 				if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
 					$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
@@ -201,7 +200,7 @@ function calctop(){
 		}else{
 			if(limitMode==2){
 				clearOutput();
-				propanal_byid(top_id);
+				out_propanal_byid(top_id);
 			}else{
 				if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
 					$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
@@ -214,7 +213,7 @@ function calctop(){
 			}
 		}
 	}
-	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*30+50)+"px");
+	$('#topsearch_info').css("margin-bottom",($("#showCnt").val()*25+50)+"px");
 }
 
 function clearOutput(){
@@ -232,6 +231,7 @@ function propanal_byid(id){
 	var tagCnt=[];
 	var repl=[];
 	var replTag=[];
+	var isTop=0; var isSec=0;
 	var thisScore=Math.round(balanceScore(id,id));
 	for (var i in clothes){
 		if (clothes[i].type.type!=clothes[id].type.type) {continue;}
@@ -271,85 +271,226 @@ function propanal_byid(id){
 			}
 		}
 	}
-	var output=info_byid(id);
-	output+='<span class="normTip">';
+	
 	//同属性排名
-	var rankTxt='同属性排名：第'+(rank.length+1);
 	rank.sort(function(a,b){return a[0] - b[0]});
+	if (rank.length==0) {isTop=1;}
+	if (rank.length<showCnt) {isSec=1;}
+	var rankTxt=(rank.length+1);
 	rank=rank.concat(rankEq);
 	if (rank.length>showCnt*2) {rank=rank.slice(0,showCnt*2); var rankSlice=1;}
 	var rankTip='';
-	for (var i in rank){
-		if (i>0) {rankTip+= (rank[i][0]==rank[i-1][0]) ? ' = ' : ' > ';}
-		rankTip+=clothes[rank[i][1]].name;
+	if (rank.length>1){
+		for (var i in rank){
+			if (i>0) {rankTip+= (rank[i][0]==rank[i-1][0] ? ' = ' : ' > ');}
+			rankTip+=clothes[rank[i][1]].name;
+			if ((i==0&&rank[0][1]!=id)||(i==1&&rank[0][1]==id)) {rankTip+='['+cell_tag(rank[i][1],0).replace(/简|可|活|纯|凉|华|成|雅|性|暖/g,'')+']';}
+		}
+		rankTip+=(rankSlice? ' …' : '');
 	}
-	output+=(rank.length>1 ? addTooltip(rankTxt,rankTip+(rankSlice? ' …' : '')) : rankTxt) +'<br>';
-	output+='<br>';
-	//同属性+tag排名
+	var out_rank=[rankTxt,rankTip];
+	//同属性同tag排名
+	var out_rankTag=[];
 	if (withTag){
-		for (var j=0; j<clothes[id].tags.length+1; j++){
-			if(clothes[id].tags.length<2&&j>0) {break;}
-			var tagj=j<clothes[id].tags.length?clothes[id].tags[j]:clothes[id].tags.join('+');
-			var rankTagTxt='同属性+'+tagj+'排名：第'+(rankTag[tagj].length+1);
+		for (var tagj in rankTag){
 			rankTag[tagj].sort(function(a,b){return a[0] - b[0]});
+			if (rankTag[tagj].length==0) {isTop=1;}
+			if (rankTag[tagj].length<showCnt) {isSec=1;}
+			var rankTagTxt=(rankTag[tagj].length+1);
 			rankTag[tagj]=rankTag[tagj].concat(rankTagEq[tagj]);
 			if (rankTag[tagj].length>showCnt*2) {rankTag[tagj]=rankTag[tagj].slice(0,showCnt*2); var rankTagSlice=1;}
 			var rankTagTip='';
-			for (var i in rankTag[tagj]){
-				if (i>0) {rankTagTip+= (rankTag[tagj][i][0]==rankTag[tagj][i-1][0]) ? ' = ' : ' > ';}
-				rankTagTip+=clothes[rankTag[tagj][i][1]].name;
+			if (rankTag[tagj].length>1){
+				for (var i in rankTag[tagj]){
+					if (i>0) {rankTagTip+= (rankTag[tagj][i][0]==rankTag[tagj][i-1][0] ? ' = ' : ' > ');}
+					rankTagTip+=clothes[rankTag[tagj][i][1]].name;
+					if ((i==0&&rankTag[tagj][0][1]!=id)||(i==1&&rankTag[tagj][0][1]==id)) {rankTagTip+='['+cell_tag(rankTag[tagj][i][1],0).replace(/简|可|活|纯|凉|华|成|雅|性|暖/g,'')+']';}
+				}
+				rankTagTip+=(rankTagSlice? ' …' : '');
 			}
-			output+=(rankTag[tagj].length>1 ? addTooltip(rankTagTxt,rankTagTip+(rankTagSlice? ' …' : '')) : rankTagTxt) +'<br>';
+			out_rankTag[tagj]=[rankTagTxt,rankTagTip];
 		}
 	}
-	output+='<br>';
-	//tag数
+	//相同tag部件数
+	var out_tagCnt=[];
 	if (withTag){
-		for (var j=0; j<clothes[id].tags.length+1; j++){
-			if(clothes[id].tags.length<2&&j>0) {break;}
-			var tagj=j<clothes[id].tags.length?clothes[id].tags[j]:clothes[id].tags.join('+');
-			var tagTxt='tag'+tagj+'部件数：'+(tagCnt[tagj].length+1)+'个';
+		for (var tagj in tagCnt){
 			tagCnt[tagj].sort(function(a,b){return a[0] - b[0]});
+			if (tagCnt[tagj].length==0) {isTop=1;}
+			if (tagCnt[tagj].length<showCnt) {isSec=1;}
+			var tagTxt=tagCnt[tagj].length;
+			if (tagCnt[tagj].length>showCnt*2) {tagCnt[tagj]=tagCnt[tagj].slice(0,showCnt*2); var tagCntSlice=1;}
 			var tagTip='';
-			for (var i=0; i<showCnt; i++){
-				if (tagCnt[tagj][i]) {tagTip+=clothes[tagCnt[tagj][i][1]].name+' ';}
+			if (tagCnt[tagj].length>0){
+				for (var i in tagCnt[tagj]){
+					if(i>0) {tagTip+='、';} 
+					tagTip+=clothes[tagCnt[tagj][i][1]].name;
+				}
+				tagTip+=(tagCntSlice? ' …' : '');
 			}
-			if (tagCnt[tagj].length > showCnt) tagTip += '…';
-			output+=(tagCnt[tagj].length>0 ? addTooltip(tagTxt,tagTip) : tagTxt) +'<br>';
+			out_tagCnt[tagj]=[tagTxt,tagTip];
 		}
 	}
-	output+='<br>';
-	//被吊打
-	var replTxt='属性被覆盖：'+(repl.length)+'个';
+	//属性被覆盖
 	repl.sort(function(a,b){return a[0] - b[0]});
+	if (repl.length==0) {isTop=1;}
+	var replTxt=repl.length;
 	if (repl.length>showCnt) {repl=repl.slice(0,showCnt); var replSlice=1;}
 	var replTip='';
-	for (var i in repl){
-		var raw_tag=cell_tag(repl[i][1]);
-		if (raw_tag.indexOf('\n')>0) {raw_tag=raw_tag.substr(0,raw_tag.indexOf('\n'));}
-		replTip+=clothes[repl[i][1]].name+'\n'+raw_tag+'\n';
+	if (repl.length>0){
+		for (var i in repl){
+			replTip+=clothes[repl[i][1]].name+'\n'+cell_tag(repl[i][1],0)+'\n';
+		}
+		replTip+=replSlice? '…' : '';
 	}
-	output+=(repl.length>0 ? addTooltip(replTxt,replTip+(replSlice? '…' : '')) : replTxt) +'<br>';
-	output+='<br>';
-	//被吊打+tag
+	var out_repl=[replTxt,replTip];
+	//属性+tag被覆盖
+	var out_replTag=[];
 	if (withTag){
-		for (var j=0; j<clothes[id].tags.length+1; j++){
-			if(clothes[id].tags.length<2&&j>0) {break;}
-			var tagj=j<clothes[id].tags.length?clothes[id].tags[j]:clothes[id].tags.join('+');
-			var replTagTxt='属性+'+tagj+'被覆盖：'+(replTag[tagj].length)+'个';
+		for (var tagj in replTag){
 			replTag[tagj].sort(function(a,b){return a[0] - b[0]});
+			if (replTag[tagj].length==0) {isTop=1;}
+			var replTagTxt=replTag[tagj].length;
 			if (replTag[tagj].length>showCnt) {replTag[tagj]=replTag[tagj].slice(0,showCnt); var replTagSlice=1;}
 			var replTagTip='';
-			for (var i in replTag[tagj]){
-				var raw_tag=cell_tag(replTag[tagj][i][1]);
-				if (raw_tag.indexOf('\n')>0) {raw_tag=raw_tag.substr(0,raw_tag.indexOf('\n'));}
-				replTagTip+=clothes[replTag[tagj][i][1]].name+'\n'+raw_tag+'\n';
+			if (replTag[tagj].length>0){
+				for (var i in replTag[tagj]){
+					replTagTip+=clothes[replTag[tagj][i][1]].name+'\n'+cell_tag(replTag[tagj][i][1],0)+'\n';
+				}
+				replTagTip+=replTagSlice? '…' : '';
 			}
-			output+=(replTag[tagj].length>0 ? addTooltip(replTagTxt,replTagTip+(replTagSlice? '…' : '')) : replTagTxt) +'<br>';
+			out_replTag[tagj]=[replTagTxt,replTagTip];
+		}
+	}
+	return [out_rank,out_rankTag,out_tagCnt,out_repl,out_replTag,isTop,isSec];
+}
+
+function out_propanal_byid(id){
+	var withTag=clothes[id].tags[0] ? true : false;
+	var result=propanal_byid(id);
+	var out_rank=result[0]; 
+	var out_rankTag=result[1];
+	var out_tagCnt=result[2]; 
+	var out_repl=result[3];
+	var out_replTag=result[4];
+	
+	var output=info_byid(id);
+	output+='<span class="normTip">';
+	//同属性排名
+	output+='同属性排名：<br>';
+	var rankTxt='－'+(withTag?'不计tag：':'')+(out_rank[0]==1&&out_rank[1]?'并列':'')+'第'+out_rank[0];
+	output+=(out_rank[1] ? addTooltip(rankTxt,out_rank[1]) : rankTxt) +'<br>';
+	//同属性同tag排名
+	if (withTag){
+		for (var tagj in out_rankTag){
+			var rankTagTxt='－'+tagj+'：'+(out_rank[0]==1&&out_rank[1]?'并列':'')+'第'+out_rankTag[tagj][0];
+			output+=(out_rankTag[tagj][1] ? addTooltip(rankTagTxt,out_rankTag[tagj][1]) : rankTagTxt) +'<br>';
+		}
+	}
+	output+='<br>';
+	//相同tag部件数
+	if (withTag){
+		output+='相同tag部件数：<br>';
+		for (var tagj in out_tagCnt){
+			var tagTxt='－'+tagj+'：'+out_tagCnt[tagj][0]+'个';
+			output+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
+		}
+		output+='<br>';
+	}
+	//属性被覆盖
+	output+='属性被覆盖：<br>';
+	var replTxt='－'+(withTag?'不计tag：':'')+out_repl[0]+'个';
+	output+=(out_repl[1] ? addTooltip(replTxt,out_repl[1]) : replTxt) +'<br>';
+	//属性+tag被覆盖
+	if (withTag){
+		for (var tagj in out_replTag){
+			var replTagTxt='－'+tagj+'：'+out_replTag[tagj][0]+'个';
+			output+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
 		}
 	}
 	output+='</span>';
 	$('#topsearch_info').html(output);
+}
+
+function propanal_byall(){
+	var out='<table border="1" class="propByAll'+((showMerc||showSource)?' propSrc':'')+'">';
+	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('同属性排名')+td('相同tag数')+td('属性被覆盖'));
+	for (var c in category){//sort by category
+		for (var i in cartList){
+			id=cartList[i];
+			if(clothes[id].type.type!=category[c]){continue;}
+			var withTag=clothes[id].tags[0] ? true : false;
+			var result=propanal_byid(id);
+			var out_rank=result[0]; 
+			var out_rankTag=result[1];
+			var out_tagCnt=result[2]; 
+			var out_repl=result[3];
+			var out_replTag=result[4];
+			var isTop=result[5];
+			var isSec=result[6];
+			
+			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)),'class="inName normTip"');
+			cell+=td(clothes[id].type.type,'class="inName"');
+			if(showSource||showMerc){
+				var cell_3rd='';
+				if(showSource){
+					var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
+					srcs=conv_source(srcs,'定',clothes[id].type.mainType);
+					cell_3rd=srcs;
+				}
+				if(showMerc){
+					var price=getMerc(id);
+					if(price) {
+						var hasStr=0;
+						for (var r in replaceSrc){
+							if(cell_3rd.indexOf(replaceSrc[r])>-1) {cell_3rd=cell_3rd.replace(replaceSrc[r],price); hasStr=1; break;}
+						}
+						if (!hasStr) {cell_3rd=price};
+					}
+				}
+				cell+=td(cell_3rd,' class="inName"');
+			}
+			
+			
+			//同属性排名
+			var cellRank='';
+			var rankTxt=(withTag?'不计tag：':'')+(out_rank[0]==1&&out_rank[1]?'并列':'')+'第'+out_rank[0];
+			cellRank+=(out_rank[1] ? addTooltip(rankTxt,out_rank[1]) : rankTxt) +'<br>';
+			if (withTag){
+				for (var tagj in out_rankTag){
+					var rankTagTxt=tagj+'：'+(out_rank[0]==1&&out_rank[1]?'并列':'')+'第'+out_rankTag[tagj][0];
+					cellRank+=(out_rankTag[tagj][1] ? addTooltip(rankTagTxt,out_rankTag[tagj][1]) : rankTagTxt) +'<br>';
+				}
+			}
+			cell+=td(cellRank);
+			//tag
+			if (withTag){
+				var cellRank='';
+				for (var tagj in out_tagCnt){
+					var tagTxt=tagj+'：'+out_tagCnt[tagj][0]+'个';
+					cellRank+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
+				}
+				cell+=td(cellRank);
+			}else {cell+=td('-');}
+			//属性被覆盖
+			var cellRank='';
+			var replTxt=(withTag?'不计tag：':'')+out_repl[0]+'个';
+			cellRank+=(out_repl[1] ? addTooltip(replTxt,out_repl[1]) : replTxt) +'<br>';
+			if (withTag){
+				for (var tagj in out_replTag){
+					var replTagTxt=tagj+'：'+out_replTag[tagj][0]+'个';
+					cellRank+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
+				}
+			}
+			cell+=td(cellRank);
+			
+			if (!$('#hideNores').is(":checked")||isSec||isTop){
+				out+=tr(cell,' class="'+(isTop?'inTop ':(isSec?'inSec ':''))+'normTipLeft"');
+			}
+		}
+	}
+	out+='</table>';
+	$('#topsearch_info').html(out);
 }
 
 function balanceScore(id,comp){ //calc balance score in prop of id
@@ -403,7 +544,7 @@ function calctop_byall(){
 			var rowspan=1;
 			if(inTop.length>0 && inSec.length>0) {rowspan++;}
 			
-			var cell=td(addTooltip(clothes[id].name,cell_tag(id)),'rowspan="'+rowspan+'" class="inName normTip'+(inTop.length>0?' haveTop':'')+'"');
+			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)),'rowspan="'+rowspan+'" class="inName normTip'+(inTop.length>0?' haveTop':'')+'"');
 			cell+=td(clothes[id].type.type,'rowspan="'+rowspan+'" class="inName'+(inTop.length>0?' haveTop':'')+'"');
 			if(showSource||showMerc){
 				var cell_3rd='';
@@ -622,7 +763,7 @@ function info_byid(id){
 	return output;
 }
 
-function cell_tag(id){
+function cell_tag(id,tagInd){
 	var ret='';
 	if(clothes[id].simple[0]) {ret+='简'+clothes[id].simple[0];}
 	if(clothes[id].simple[1]) {ret+='华'+clothes[id].simple[1];}
@@ -634,7 +775,7 @@ function cell_tag(id){
 	if(clothes[id].pure[1]) {ret+='|性'+clothes[id].pure[1];}
 	if(clothes[id].cool[0]) {ret+='|凉'+clothes[id].cool[0];}
 	if(clothes[id].cool[1]) {ret+='|暖'+clothes[id].cool[1];}
-	if(clothes[id].tags[0]) {ret+='\n'+clothes[id].tags.join(',');}
+	if(tagInd&&clothes[id].tags[0]) {ret+='\n'+clothes[id].tags.join(',');}
 	return ret;
 }
 
