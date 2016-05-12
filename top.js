@@ -12,7 +12,7 @@ function init_top(){
 	$("#maxHide").val(5);
 }
 
-var top_id='';
+var top_id=0;
 var theme_name;
 var inTop=[];
 var inSec=[];
@@ -248,7 +248,8 @@ function propanal_byid(id){
 		if (withTag&&clothes[i].tags[0]){
 			for (var j=0;j<clothes[id].tags.length+1;j++){
 				if(clothes[id].tags.length<2&&j>0) {break;}
-				var tagj=j<clothes[id].tags.length?clothes[id].tags[j]:clothes[id].tags.join('+');
+				var tagj=j<clothes[id].tags.length?'tag'+clothes[id].tags[j]:clothes[id].tags.join('+');
+				//add 'tag' to solve 'pop' issue
 				
 				if(!tagCnt[tagj]) {tagCnt[tagj]=[];}
 				if(!rankTag[tagj]) {rankTag[tagj]=[];}
@@ -269,7 +270,7 @@ function propanal_byid(id){
 					}
 				}
 			}
-		}
+		}	
 	}
 	
 	//同属性排名
@@ -279,6 +280,7 @@ function propanal_byid(id){
 	var rankTxt=(rank.length+1);
 	rank=rank.concat(rankEq);
 	if (rank.length>showCnt*2) {rank=rank.slice(0,showCnt*2); var rankSlice=1;}
+	else {var rankSlice=0;}
 	var rankTip='';
 	if (rank.length>1){
 		for (var i in rank){
@@ -299,6 +301,7 @@ function propanal_byid(id){
 			var rankTagTxt=(rankTag[tagj].length+1);
 			rankTag[tagj]=rankTag[tagj].concat(rankTagEq[tagj]);
 			if (rankTag[tagj].length>showCnt*2) {rankTag[tagj]=rankTag[tagj].slice(0,showCnt*2); var rankTagSlice=1;}
+			else {var rankTagSlice=0;}
 			var rankTagTip='';
 			if (rankTag[tagj].length>1){
 				for (var i in rankTag[tagj]){
@@ -320,6 +323,7 @@ function propanal_byid(id){
 			if (tagCnt[tagj].length<showCnt) {isSec=1;}
 			var tagTxt=tagCnt[tagj].length;
 			if (tagCnt[tagj].length>showCnt*2) {tagCnt[tagj]=tagCnt[tagj].slice(0,showCnt*2); var tagCntSlice=1;}
+			else {var tagCntSlice=0;}
 			var tagTip='';
 			if (tagCnt[tagj].length>0){
 				for (var i in tagCnt[tagj]){
@@ -336,6 +340,7 @@ function propanal_byid(id){
 	if (repl.length==0) {isTop=1;}
 	var replTxt=repl.length;
 	if (repl.length>showCnt) {repl=repl.slice(0,showCnt); var replSlice=1;}
+	else {var replSlice=0;}
 	var replTip='';
 	if (repl.length>0){
 		for (var i in repl){
@@ -352,6 +357,7 @@ function propanal_byid(id){
 			if (replTag[tagj].length==0) {isTop=1;}
 			var replTagTxt=replTag[tagj].length;
 			if (replTag[tagj].length>showCnt) {replTag[tagj]=replTag[tagj].slice(0,showCnt); var replTagSlice=1;}
+			else {var replTagSlice=0;}
 			var replTagTip='';
 			if (replTag[tagj].length>0){
 				for (var i in replTag[tagj]){
@@ -383,7 +389,7 @@ function out_propanal_byid(id){
 	//同属性同tag排名
 	if (withTag){
 		for (var tagj in out_rankTag){
-			var rankTagTxt='－'+tagj+'：'+(out_rankTag[tagj][0]==1&&out_rankTag[tagj][1]?'并列':'')+'第'+out_rankTag[tagj][0];
+			var rankTagTxt='－'+rmtagstr(tagj)+'：'+(out_rankTag[tagj][0]==1&&out_rankTag[tagj][1]?'并列':'')+'第'+out_rankTag[tagj][0];
 			output+=(out_rankTag[tagj][1] ? addTooltip(rankTagTxt,out_rankTag[tagj][1]) : rankTagTxt) +'<br>';
 		}
 	}
@@ -392,7 +398,7 @@ function out_propanal_byid(id){
 	if (withTag){
 		output+='相同tag部件数：<br>';
 		for (var tagj in out_tagCnt){
-			var tagTxt='－'+tagj+'：'+out_tagCnt[tagj][0]+'个';
+			var tagTxt='－'+rmtagstr(tagj)+'：'+out_tagCnt[tagj][0]+'个';
 			output+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
 		}
 		output+='<br>';
@@ -404,7 +410,7 @@ function out_propanal_byid(id){
 	//属性+tag被覆盖
 	if (withTag){
 		for (var tagj in out_replTag){
-			var replTagTxt='－'+tagj+'：'+out_replTag[tagj][0]+'个';
+			var replTagTxt='－'+rmtagstr(tagj)+'：'+out_replTag[tagj][0]+'个';
 			output+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
 		}
 	}
@@ -462,7 +468,7 @@ function propanal_byall(){
 			cellRank+=(out_rank[1] ? addTooltip(rankTxt,out_rank[1]) : rankTxt) +'<br>';
 			if (withTag){
 				for (var tagj in out_rankTag){
-					var rankTagTxt=tagj+'：'+(out_rankTag[tagj][0]==1&&out_rankTag[tagj][1]?'并列':'')+'第'+out_rankTag[tagj][0];
+					var rankTagTxt=rmtagstr(tagj)+'：'+(out_rankTag[tagj][0]==1&&out_rankTag[tagj][1]?'并列':'')+'第'+out_rankTag[tagj][0];
 					cellRank+=(out_rankTag[tagj][1] ? addTooltip(rankTagTxt,out_rankTag[tagj][1]) : rankTagTxt) +'<br>';
 				}
 			}
@@ -471,7 +477,7 @@ function propanal_byall(){
 			if (withTag){
 				var cellRank='';
 				for (var tagj in out_tagCnt){
-					var tagTxt=tagj+'：'+out_tagCnt[tagj][0]+'个';
+					var tagTxt=rmtagstr(tagj)+'：'+out_tagCnt[tagj][0]+'个';
 					cellRank+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
 				}
 				cell+=td(cellRank);
@@ -482,7 +488,7 @@ function propanal_byall(){
 			cellRank+=(out_repl[1] ? addTooltip(replTxt,out_repl[1]) : replTxt) +'<br>';
 			if (withTag){
 				for (var tagj in out_replTag){
-					var replTagTxt=tagj+'：'+out_replTag[tagj][0]+'个';
+					var replTagTxt=rmtagstr(tagj)+'：'+out_replTag[tagj][0]+'个';
 					cellRank+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
 				}
 			}
@@ -1072,6 +1078,10 @@ function hide_opt(){
 function show_opt(){
 	$('#options').show();
 	$('#show_opt').hide();
+}
+
+function rmtagstr(txt){
+	return txt.replace('tag','');
 }
 
 function getMerc(id){
