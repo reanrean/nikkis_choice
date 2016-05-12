@@ -195,7 +195,9 @@ function calctop(){
 				limitMode=1;
 				storeTopByCate_all();
 				for(var l=0;l<cartNum;l++){
-					topsearch_info_all+=topsearch_info_n[l]+('<span class="limit">'+calctop_byall(l).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>');
+					topsearch_info_all+=topsearch_info_n[l];
+					topsearch_info_all+='<span class="limit">'+calctop_byall(l).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>';
+					topsearch_info_all+='<span class="prop">'+propanal_byall(l).replace(/\n/g,'\\n')+'</span>';
 				}
 				if ($('#hideNores').is(":checked")){indexes+='<br>注：本页只显示顶配/高配部件。'}
 				$('#ajglz_out').val(header()+indexes+middle()+topsearch_info_all+footer());
@@ -203,6 +205,94 @@ function calctop(){
 				$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 			}
 		}
+}
+
+function propanal_byall(cartList_num){
+	//***modified from top.js, rmb to update if it is changed in top.js***
+	if($('#showSource').is(":checked")){var showSource=1;}
+	else{var showSource=0;}
+	if($('#showMerc').is(":checked")){var showMerc=1;}
+	else{var showMerc=0;}
+	
+	var out='<table border="1" class="propByAll'+((showMerc||showSource)?' propSrc':'')+'">';
+	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('同属性排名')+td('相同tag数')+td('属性被覆盖'));
+	
+	var out_cont='';
+	for (var c in category){//sort by category
+		for (var i in cartList[cartList_num]){
+			id=cartList[cartList_num][i];
+			if(clothes[id].type.type!=category[c]){continue;}
+			var withTag=clothes[id].tags[0] ? true : false;
+			var result=propanal_byid(id);
+			var out_rank=result[0]; 
+			var out_rankTag=result[1];
+			var out_tagCnt=result[2]; 
+			var out_repl=result[3];
+			var out_replTag=result[4];
+			var isTop=result[5];
+			var isSec=result[6];
+			
+			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)));
+			cell+=td(clothes[id].type.type);
+			if(showSource||showMerc){
+				var cell_3rd='';
+				if(showSource){
+					var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
+					srcs=conv_source(srcs,'定',clothes[id].type.mainType);
+					cell_3rd=srcs;
+				}
+				if(showMerc){
+					var price=getMerc(id);
+					if(price) {
+						var hasStr=0;
+						for (var r in replaceSrc){
+							if(cell_3rd.indexOf(replaceSrc[r])>-1) {cell_3rd=cell_3rd.replace(replaceSrc[r],price); hasStr=1; break;}
+						}
+						if (!hasStr) {cell_3rd=price};
+					}
+				}
+				cell+=td(cell_3rd);
+			}
+			
+			//同属性排名
+			var cellRank='';
+			var rankTxt=(withTag?'不计tag:':'')+(out_rank[0]==1&&out_rank[1]?'并列':'')+'第'+out_rank[0];
+			cellRank+=(out_rank[1] ? addTooltip(rankTxt,out_rank[1]) : rankTxt) +'<br>';
+			if (withTag){
+				for (var tagj in out_rankTag){
+					var rankTagTxt=rmtagstr(tagj)+':'+(out_rankTag[tagj][0]==1&&out_rankTag[tagj][1]?'并列':'')+'第'+out_rankTag[tagj][0];
+					cellRank+=(out_rankTag[tagj][1] ? addTooltip(rankTagTxt,out_rankTag[tagj][1]) : rankTagTxt) +'<br>';
+				}
+			}
+			cell+=td(cellRank);
+			//tag
+			if (withTag){
+				var cellRank='';
+				for (var tagj in out_tagCnt){
+					var tagTxt=rmtagstr(tagj)+':'+out_tagCnt[tagj][0]+'个';
+					cellRank+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
+				}
+				cell+=td(cellRank);
+			}else {cell+=td('-');}
+			//属性被覆盖
+			var cellRank='';
+			var replTxt=(withTag?'不计tag:':'')+out_repl[0]+'个';
+			cellRank+=(out_repl[1] ? addTooltip(replTxt,out_repl[1]) : replTxt) +'<br>';
+			if (withTag){
+				for (var tagj in out_replTag){
+					var replTagTxt=rmtagstr(tagj)+':'+out_replTag[tagj][0]+'个';
+					cellRank+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
+				}
+			}
+			cell+=td(cellRank);
+			
+			if (!$('#hideNores').is(":checked")||isSec||isTop){
+				out_cont+=tr(cell,(isTop?'class="top"':''));
+			}
+		}
+	}
+	if(out_cont) {return out+out_cont+'</table>';}
+	else {return '<p class="normal" align="center">无顶配/高配信息</p>';}
 }
 
 function calctop_byall(cartList_num){
@@ -227,20 +317,7 @@ function calctop_byall(cartList_num){
 			calctop_byid(id);
 			var rowspan=(inTop.length>0&&inSec.length>0)? 2:1;
 			
-			var cell_tag='';
-			if(clothes[id].simple[0]) {cell_tag+='简'+clothes[id].simple[0];}
-			if(clothes[id].simple[1]) {cell_tag+='华'+clothes[id].simple[1];}
-			if(clothes[id].active[0]) {cell_tag+='|活'+clothes[id].active[0];}
-			if(clothes[id].active[1]) {cell_tag+='|雅'+clothes[id].active[1];}
-			if(clothes[id].cute[0]) {cell_tag+='|可'+clothes[id].cute[0];}
-			if(clothes[id].cute[1]) {cell_tag+='|成'+clothes[id].cute[1];}
-			if(clothes[id].pure[0]) {cell_tag+='|纯'+clothes[id].pure[0];}
-			if(clothes[id].pure[1]) {cell_tag+='|性'+clothes[id].pure[1];}
-			if(clothes[id].cool[0]) {cell_tag+='|凉'+clothes[id].cool[0];}
-			if(clothes[id].cool[1]) {cell_tag+='|暖'+clothes[id].cool[1];}
-			if(clothes[id].tags[0]) {cell_tag+='\n'+clothes[id].tags.join(',');}
-			
-			var cell=td(addTooltip(clothes[id].name,cell_tag),(rowspan>1?'rowspan="'+rowspan+'"':''));
+			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)),(rowspan>1?'rowspan="'+rowspan+'"':''));
 			cell+=td(clothes[id].type.type,(rowspan>1?'rowspan="'+rowspan+'"':''));
 			if(showSource||showMerc){
 				var cell_3rd='';
@@ -434,8 +511,12 @@ function genModule(){
 	clearCart(1);
 	$('#cartName1').val('');
 	$('#ajglz_title').val('');
+	$('.modable').find('input[type=checkbox]').prop('checked',false);
 	//start
 	var modes=$('#modes').val();
+	if(modules_top_checkbox[modes]){
+		for (var c in modules_top_checkbox[modes]) {$('#'+modules_top_checkbox[modes][c]).prop('checked',true);}
+	}
 	var title=[];
 	for (var m in modules_top){
 		if (modules_top[m][0]==modes) {title.push(modules_top[m][1]);}
