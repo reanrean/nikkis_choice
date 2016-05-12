@@ -413,6 +413,11 @@ function out_propanal_byid(id){
 }
 
 function propanal_byall(){
+	if($('#showSource').is(":checked")){var showSource=1;}
+	else{var showSource=0;}
+	if($('#showMerc').is(":checked")){var showMerc=1;}
+	else{var showMerc=0;}
+	
 	var out='<table border="1" class="propByAll'+((showMerc||showSource)?' propSrc':'')+'">';
 	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('同属性排名')+td('相同tag数')+td('属性被覆盖'));
 	for (var c in category){//sort by category
@@ -450,7 +455,6 @@ function propanal_byall(){
 				}
 				cell+=td(cell_3rd,' class="inName"');
 			}
-			
 			
 			//同属性排名
 			var cellRank='';
