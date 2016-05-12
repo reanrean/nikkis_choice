@@ -12,7 +12,7 @@ function init_top(){
 	$("#maxHide").val(5);
 }
 
-var top_id=0;
+var top_id='';
 var theme_name;
 var inTop=[];
 var inSec=[];
