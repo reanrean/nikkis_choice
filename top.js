@@ -258,7 +258,7 @@ function propanal_byid(id){
 			
 				for (var k=0;k<clothes[i].tags.length+1;k++){
 					if(clothes[i].tags.length<2&&k>0) {break;}
-					var tagk=k<clothes[i].tags.length?clothes[i].tags[k]:clothes[i].tags.join('+');
+					var tagk=k<clothes[i].tags.length?'tag'+clothes[i].tags[k]:clothes[i].tags.join('+');
 					if(tagk==tagj) {
 						if (i!=id) tagCnt[tagj].push([rankScore,i]);
 						if (rankScore>thisScore) {rankTag[tagj].push([rankScore,i]);}
