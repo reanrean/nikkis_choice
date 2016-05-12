@@ -6,13 +6,14 @@
 	<link rel="icon" href="../index/img/favicon.jpg" type="image/x-icon" />
 	<meta name="renderer" content="webkit">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-	<title>Miracle Nikki - 奇迹暖暖顶配页面生成器 for 傲娇攻略组(≥o≤)</title>
+	<title>Miracle Nikki - 奇迹暖暖顶配页面生成器 for 傲娇攻略组(≥ω≤)</title>
 	<link rel="stylesheet" href="bootstrap/bootstrap.min.css">
 	<style>
 		a.monkey {color:inherit;text-decoration:none;}
 		body {margin:1em; font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;}
 		fieldset {width:100%; max-width:270px; padding:.35em .625em .75em; border:1px solid silver;}
 		legend {border:0; width:auto; margin-bottom:0; font-size:14px;}
+		label {font-weight:normal; line-height:100%;}
 		button.btn-cust {border:0px}
 		td {padding:5px;}
 		tr:first-child {font-weight:bold;}
@@ -33,7 +34,7 @@
 </head>
 <body>
 	<p>
-		<b>奇迹暖暖顶配页面生成器</b> for 傲娇攻略组(≥o≤)<br/>
+		<b>奇迹暖暖顶配页面生成器</b> for 傲娇攻略组(≥ω≤)<br/>
 		→<a href="top.html">非攻略组成员请左转原版</a>←<br/>
 	</p>
 	<hr>
@@ -48,11 +49,13 @@
 	<fieldset>
 		<legend>选项（重新计算生效）</legend>
 		模板：<span id="searchModule"></span><br>
-		计算 <input type="checkbox" id="showJJC" checked />竞技场 <input type="checkbox" id="showAlly" checked />联盟 <input type="checkbox" id="showNormal" checked />主线<br>
+		计算 <input type="checkbox" id="showJJC" checked /><label for="showJJC">竞技场</label> <input type="checkbox" id="showAlly" checked /><label for="showAlly">联盟</label> <input type="checkbox" id="showNormal" checked /><label for="showNormal">主线</label><br>
 		计算<input type="text" id="showCnt" size="2" style="line-height:100%;"/>件高配信息<br>
 		结果大于<input type="text" id="maxHide" size="2" style="line-height:100%;"/>时折叠<br>
-		<input type="checkbox" id="hideNores" />只显示有结果的部件<br>
-		显示 <input type="checkbox" id="showSource" />来源 <input type="checkbox" id="showMerc" />兑换数量<br>
+		<span class="modable">
+		<input type="checkbox" id="hideNores" /><label for="hideNores">只显示顶配/高配部件</label><br>
+		显示 <input type="checkbox" id="showSource" /><label for="showSource">来源</label> <input type="checkbox" id="showMerc" /><label for="showMerc">兑换数量</label><br>
+		</span>
 		<span style="display:none"><input type="checkbox" id="cartMode" onclick="chgcartMode()" checked />选取多件</span>
 	</fieldset></span>
 	<span id="cartContent">
