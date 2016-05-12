@@ -35,9 +35,10 @@
 			position: absolute; content: attr(tooltip); display: inline-block; z-index: 255; 
 			white-space:pre; color: black; background-color: #EAF2FA;
 		}
-		.normTip [tooltip]:hover:before, .normTipLeft [tooltip]:hover:before {
-			width: 170px; word-break:break-all; white-space:pre-wrap;
+		table.propByAll tr td:nth-last-child(2) [tooltip]:hover:before, table.propByAll tr td:nth-last-child(3) [tooltip]:hover:before {
+			width: 150px; word-break:break-all; white-space:pre-wrap;
 		}
+		table.propByAll tr td:nth-last-child(1) [tooltip]:hover:before {margin-left:-120px;}
 		.normTip [tooltip]:hover:before {margin-left:0px;}
 	</style>
 	<script type='text/javascript' charset="UTF-8" src='jquery.js'></script>
