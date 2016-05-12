@@ -383,7 +383,7 @@ function out_propanal_byid(id){
 	//同属性同tag排名
 	if (withTag){
 		for (var tagj in out_rankTag){
-			var rankTagTxt='－'+tagj+'：'+(out_rank[0]==1&&out_rank[1]?'并列':'')+'第'+out_rankTag[tagj][0];
+			var rankTagTxt='－'+tagj+'：'+(out_rankTag[tagj][0]==1&&out_rankTag[tagj][1]?'并列':'')+'第'+out_rankTag[tagj][0];
 			output+=(out_rankTag[tagj][1] ? addTooltip(rankTagTxt,out_rankTag[tagj][1]) : rankTagTxt) +'<br>';
 		}
 	}
@@ -458,7 +458,7 @@ function propanal_byall(){
 			cellRank+=(out_rank[1] ? addTooltip(rankTxt,out_rank[1]) : rankTxt) +'<br>';
 			if (withTag){
 				for (var tagj in out_rankTag){
-					var rankTagTxt=tagj+'：'+(out_rank[0]==1&&out_rank[1]?'并列':'')+'第'+out_rankTag[tagj][0];
+					var rankTagTxt=tagj+'：'+(out_rankTag[tagj][0]==1&&out_rankTag[tagj][1]?'并列':'')+'第'+out_rankTag[tagj][0];
 					cellRank+=(out_rankTag[tagj][1] ? addTooltip(rankTagTxt,out_rankTag[tagj][1]) : rankTagTxt) +'<br>';
 				}
 			}
