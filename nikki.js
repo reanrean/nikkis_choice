@@ -467,6 +467,7 @@ function drawFilter() {//refactor me
 
 var currentCategory;
 function switchCate(c) {
+	$("#searchResultList").html('');
 	currentCategory = c;
 	$("ul#categoryTab li").removeClass("active");
 	$("#category_container div").removeClass("active");
@@ -622,6 +623,21 @@ function goTop() {
 	}, 500);
 }
 
+function searchResult(){
+	switchCate(0);
+	var searchTxt=$('#searchResultInput').val();
+	if (searchTxt){
+		for (var h in CATEGORY_HIERARCHY){
+			var outCate=[];
+			for (var i in clothes){
+				if (clothes[i].type.mainType==CATEGORY_HIERARCHY[h]&&clothes[i].name.indexOf(searchTxt)>=0){
+					$('#searchResultList').append(clothesNameTd(clothes[i]).css('float','left'));
+				}
+			}
+		}
+	}
+}
+
 function initEvent() {
 	$(".fliter").change(function () {
 		onChangeUiFilter();
@@ -670,6 +686,16 @@ function initEvent() {
 		onChangeUiFilter();
 		menuFixed("clothes");
 		return false;
+	});
+	$("#searchResultCheck").click(function(){
+		if ($('#searchResultCheck').is(":checked")) $('#searchResult').show();
+		else $('#searchResult').hide();
+	});
+	$('#searchResultInput').keydown(function(e) {
+		if (e.keyCode==13) {
+			$(this).blur();
+			searchResult();
+		}
 	});
 	initOnekey();
 }
