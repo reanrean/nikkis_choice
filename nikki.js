@@ -630,7 +630,7 @@ function searchResult(){
 		for (var h in CATEGORY_HIERARCHY){
 			var outCate=[];
 			for (var i in clothes){
-				if (clothes[i].type.mainType==CATEGORY_HIERARCHY[h]&&clothes[i].name.indexOf(searchTxt)>=0){
+				if (clothes[i].type.mainType==h&&clothes[i].name.indexOf(searchTxt)>=0){
 					$('#searchResultList').append(clothesNameTd(clothes[i]).css('float','left'));
 				}
 			}
