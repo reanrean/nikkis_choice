@@ -123,6 +123,7 @@
 							<div class="fliter_option clear">
 								<div class="checkbox"><label><input type="checkbox" class="fliter" value="own" checked /> 拥有<span id='inventoryCount'/></label></div>
 								<div class="checkbox"><label><input type="checkbox" class="fliter" value="missing" checked /> 没有</label></div>
+								<div class="checkbox"><label><input type="checkbox" id="searchResultCheck"/> 搜索</label></div>
 								<a href="#" class = "showmore" style="display:inline-block;cursor:pointer">↓显示全部衣服↓</a>
 							</div><!-- fliter_option -->
 						</div>
@@ -140,6 +141,11 @@
 			</div><!-- fliter -->
 		</div><!-- top -->
 		<hr>
+		<div id = 'searchResult' style="display:none">
+			<input type="text" id="searchResultInput" placeholder="输入名字搜索" /><button class="btn btn-default btn-sm" onclick="searchResult()">GO</button>
+			<div id='searchResultList' width="100%"></div>
+		<hr>
+		</div>
 		<div id = 'shoppingCartContainer'>
 			推荐穿戴部件
 			<button class="btn btn-default" style="float:right" onclick="clearShoppingCart()">清空</button>
