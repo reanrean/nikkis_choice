@@ -631,7 +631,13 @@ function searchResult(){
 			var outCate=[];
 			for (var i in clothes){
 				if (clothes[i].type.mainType==h&&clothes[i].name.indexOf(searchTxt)>=0){
-					$('#searchResultList').append(clothesNameTd(clothes[i]).css('float','left'));
+					outCate.push(clothesNameTd(clothes[i]).css('float','left'));
+				}
+			}
+			if (outCate.length>0){
+				$('#searchResultList').append('<div class="name table-td btn-info" style="float: left;">'+h+'：</div>');
+				for (var i in outCate){
+					$('#searchResultList').append(outCate[i]);
 				}
 			}
 		}
