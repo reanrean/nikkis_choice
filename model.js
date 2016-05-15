@@ -167,15 +167,14 @@ Clothes = function(csv) {
           //skills handling
           if(filters.highscore1==lightBonus[0]) lights[1]=Math.round(lights[1] * 1.27);
           if(filters.highscore2==lightBonus[0]) lights[1]=Math.round(lights[1] * 1.778);
-          if(0 > filters[lightBonus[0]] && "-" == lightBonus[1]){
-            if("-" == lightBonus[1]){
-              this.bonusByCategory.scores[lightBonus[0]][1] += lights[1] * 1;
-            }
-            else{
-              this.bonusByCategory.scores[lightBonus[0]][0] += lights[1] * 1;
-            }
-            this.bonusScore += lights[1] * 1;
+          if("-" == lightBonus[1]){
+            this.bonusByCategory.scores[lightBonus[0]][1] += lights[1] * 1;
+            if(0 > filters[lightBonus[0]]) this.bonusScore += lights[1] * 1;
           }
+          if("+" == lightBonus[1]){
+            this.bonusByCategory.scores[lightBonus[0]][0] += lights[1] * 1;
+            if(0 < filters[lightBonus[0]]) this.bonusScore += lights[1] * 1;
+		  }
         }
       }
 
