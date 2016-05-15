@@ -174,7 +174,7 @@ Clothes = function(csv) {
           if("+" == lightBonus[1]){
             this.bonusByCategory.scores[lightBonus[0]][0] += lights[1] * 1;
             if(0 < filters[lightBonus[0]]) this.bonusScore += lights[1] * 1;
-		  }
+          }
         }
       }
 
