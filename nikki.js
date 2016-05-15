@@ -706,8 +706,8 @@ function autogenLimit(){
 				if (!weight) {
 					weight = 1;
 				}
-				if (f==FEATURES[b]) {weight=accMul(weight,1.27); criteria.highscore1=f;}
-				if (f==FEATURES[a]) {weight=accMul(weight,1.778); criteria.highscore2=f;}
+				if (f==FEATURES[b]) {weight=accMul(weight,1.27);criteria.highscore1=f;}
+				if (f==FEATURES[a]) {weight=accMul(weight,1.778);criteria.highscore2=f;}
 				var checked = $('input[name=' + f + ']:radio:checked');
 				if (checked.length) {
 					criteria[f] = parseInt(checked.val()) * weight;
@@ -745,7 +745,6 @@ function autogenLimit(){
 		}
 	}
 	addBoost(boosts[0],boosts[1]);
-	alert(scoreTotal+'/'+shoppingCart.totalScore.sumScore)
 }
 
 function addBoost(boost1,boost2){
