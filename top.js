@@ -225,7 +225,7 @@ function clearOutput(){
 function propanal_byid(id){
 	//1.同属性排名 2.同属性+tag 3.tag数 4.被吊打 5.被吊打+tag
 	var showCnt=$("#showCnt").val();
-	var withTag=clothes[id].tags[0] ? true : false;
+	var withTag=clothesWithTag(clothes[id]);
 	var rank=[]; var rankEq=[];
 	var rankTag=[]; var rankTagEq=[];
 	var tagCnt=[];
@@ -372,7 +372,7 @@ function propanal_byid(id){
 }
 
 function out_propanal_byid(id){
-	var withTag=clothes[id].tags[0] ? true : false;
+	var withTag=clothesWithTag(clothes[id]);
 	var result=propanal_byid(id);
 	var out_rank=result[0]; 
 	var out_rankTag=result[1];
@@ -431,7 +431,7 @@ function propanal_byall(){
 		for (var i in cartList){
 			id=cartList[i];
 			if(clothes[id].type.type!=category[c]){continue;}
-			var withTag=clothes[id].tags[0] ? true : false;
+			var withTag=clothesWithTag(clothes[id]);
 			var result=propanal_byid(id);
 			var out_rank=result[0]; 
 			var out_rankTag=result[1];
@@ -1086,6 +1086,11 @@ function show_opt(){
 
 function rmtagstr(txt){
 	return txt.replace('tag','');
+}
+
+function clothesWithTag(piece){
+	if(piece.type.type=='萤光之灵') return false;
+	else return piece.tags[0] ? true : false;
 }
 
 function getMerc(id){
