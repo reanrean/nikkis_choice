@@ -45,9 +45,11 @@ function onChangeCriteria() {
 			weight = 1;
 		}
 		if (uiFilter["highscore"]) {
-			var highscore1 = $('#' + f + "1d778.active").length ? 1.778 : 1;
-			var highscore2 = $('#' + f + "1d27.active").length ? 1.27 : 1;
+			var highscore2 = $('#' + f + "1d778.active").length ? 1.778 : 1;
+			var highscore1 = $('#' + f + "1d27.active").length ? 1.27 : 1;
 			weight = accMul(accMul(weight, highscore1), highscore2);
+			if (highscore1>1) criteria.highscore1=f;
+			if (highscore2>1) criteria.highscore2=f;
 		}
 		var checked = $('input[name=' + f + ']:radio:checked');
 		if (checked.length) {
@@ -167,6 +169,7 @@ function chooseAccessories(accfilters) {
 }
 
 function refreshShoppingCart() {
+	shoppingCart.validate(criteria);
 	shoppingCart.calc(criteria);
 	drawTable(shoppingCart.toList(byCategoryAndScore), "shoppingCart", true);
 }
@@ -287,7 +290,7 @@ function byId(a, b) {
 function filterTopAccessories(filters) {
 	filters['own'] = true;
 	var accCate = CATEGORY_HIERARCHY['饰品'];
-	var accCNum = accCateNum;//note: this variable is not in seal100x's version
+	var accCNum = accCateNum;
 	var accSNum = 9;
 	for (var i in accCate) {
 		filters[accCate[i]] = true;
@@ -355,18 +358,6 @@ function filterTopClothes(filters) {
 				result[clothes[i].type.type] = clothes[i];
 			}
 		}
-	}
-	if(result["上装"] && result["下装"] && result["连衣裙"]){
-		if(result["上装"].sumScore + result["下装"].sumScore > result["连衣裙"].sumScore){
-			delete result["连衣裙"];
-		}
-		else{
-			delete result["上装"];
-			delete result["下装"];
-		}
-	}else if((result["上装"] || result["下装"]) && result["连衣裙"]){
-		delete result["上装"];
-		delete result["下装"];
 	}
 	return result;
 }
@@ -481,7 +472,8 @@ function switchCate(c) {
 function changeFilter() {
 	$("#theme")[0].options[0].selected = true;
 	currentLevel = null;
-	onChangeCriteria();
+	if (uiFilter['highscore']) autogenLimit();
+	else onChangeCriteria();
 }
 
 function changeTheme() {
@@ -491,7 +483,8 @@ function changeTheme() {
 	if (allThemes[theme]) {
 		setFilters(allThemes[theme]);
 	}
-	onChangeCriteria();
+	if (uiFilter['highscore']) autogenLimit();
+	else onChangeCriteria();
 }
 
 var currentLevel; // used for post filtering.
@@ -623,10 +616,37 @@ function goTop() {
 	}, 500);
 }
 
+function getDistinct(arr){
+	var newArr=[];
+	for (var i in arr){
+		if(jQuery.inArray(arr[i], newArr)<0){
+			newArr.push(arr[i]);
+		}
+	}
+	return newArr;
+}
+
 function searchResult(){
 	switchCate(0);
 	var searchTxt=$('#searchResultInput').val();
 	if (searchTxt){
+		var outSet=[];
+		for (var i in clothes){
+			if(clothes[i].set.indexOf(searchTxt)>=0) {outSet.push(clothes[i].set);}
+		}
+		if (outSet.length>0) {
+			outSet=getDistinct(outSet);
+			$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;">套装：</div>');
+			for (var i in outSet) {$('#searchResultList').append('<div class="name table-td" style="float: left;"><a class="button searchResultSet">'+outSet[i]+'</a></div>');}
+			$(".searchResultSet").click(function () {
+				switchCate(0);
+				var setName=this.innerHTML;
+				$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;">'+setName+'：</div>');
+				for (var i in clothes){
+					if(clothes[i].set==setName) {$('#searchResultList').append(clothesNameTd(clothes[i]).css('float','left'));}
+				}
+			});
+		}
 		for (var h in CATEGORY_HIERARCHY){
 			var outCate=[];
 			for (var i in clothes){
@@ -635,13 +655,104 @@ function searchResult(){
 				}
 			}
 			if (outCate.length>0){
-				$('#searchResultList').append('<div class="name table-td btn-info" style="float: left;">'+h+'：</div>');
+				$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;">'+h+'：</div>');
 				for (var i in outCate){
 					$('#searchResultList').append(outCate[i]);
 				}
 			}
 		}
 	}
+}
+
+var calcGlobalClothes=0;
+function autogenLimit(){
+	//onChangeCriteria, calc normal weight
+	criteria = {};
+	for (var i in FEATURES) {
+		var f = FEATURES[i];
+		var weight = parseFloat($('#' + f + "Weight").val());
+		if (!weight) {
+			weight = 1;
+		}
+		var checked = $('input[name=' + f + ']:radio:checked');
+		if (checked.length) {
+			criteria[f] = parseInt(checked.val()) * weight;
+		}
+	}
+	tagToBonus(criteria, 'tag1');
+	tagToBonus(criteria, 'tag2');
+	if (global.additionalBonus && global.additionalBonus.length > 0) {
+		criteria.bonus = global.additionalBonus;
+	}
+	criteria.levelName = $("#theme").val();
+	var clothesOrigScore=[];
+	for(var i in clothes){
+		clothes[i].calc(criteria);
+		var sum_score=(clothes[i].type.mainType=='饰品') ? Math.round(accSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum))) : clothes[i].sumScore;
+		clothesOrigScore[i]=sum_score;
+	}
+	
+	//start loop
+	var scoreTotal=0;
+	var boosts=[];
+	for (var a in FEATURES){
+		for (var b in FEATURES){
+			if (FEATURES[b]==FEATURES[a]) continue;
+			//onChangeCriteria, calc highscore
+			criteria = {};
+			for (var i in FEATURES) {
+				var f = FEATURES[i];
+				var weight = parseFloat($('#' + f + "Weight").val());
+				if (!weight) {
+					weight = 1;
+				}
+				if (f==FEATURES[b]) {weight=accMul(weight,1.27);}
+				if (f==FEATURES[a]) {weight=accMul(weight,1.778);}
+				var checked = $('input[name=' + f + ']:radio:checked');
+				if (checked.length) {
+					criteria[f] = parseInt(checked.val()) * weight;
+				}
+			}
+			tagToBonus(criteria, 'tag1');
+			tagToBonus(criteria, 'tag2');
+			if (global.additionalBonus && global.additionalBonus.length > 0) {
+				criteria.bonus = global.additionalBonus;
+			}
+			criteria.levelName = $("#theme").val();
+			//calc sumScores
+			shoppingCart.clear();
+			var currScoreByCate=[];
+			for (var i in clothes){
+				if ((!calcGlobalClothes)&&(!clothes[i].own)) continue;
+				var c=clothes[i].type.type;
+				if ($.inArray(c, skipCategory)>=0) continue;
+				if (!currScoreByCate[c]) currScoreByCate[c]=0;
+				if (clothesOrigScore[i]*1.778 < currScoreByCate[c]) continue; //short cut, no hope to become the new winner; from ip
+				clothes[i].calc(criteria);
+				var sum_score= (clothes[i].type.mainType=='饰品') ? Math.round(accSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum))) : clothes[i].sumScore;
+				if (sum_score>currScoreByCate[c]) {
+					shoppingCart.put(clothes[i]);
+					currScoreByCate[c]=sum_score;
+				}
+			}
+			shoppingCart.validate(criteria);
+			shoppingCart.calc(criteria);
+			var tmpScore=shoppingCart.totalScore.sumScore;
+			if (tmpScore>scoreTotal){
+				scoreTotal=tmpScore;
+				boosts=[FEATURES[b],FEATURES[a]];
+			}
+		}
+	}
+	addBoost(boosts[0],boosts[1]);
+}
+
+function addBoost(boost1,boost2){
+	$(".1d27").removeClass("active");
+	$(".1d778").removeClass("active");
+	$('#' + boost1 + "1d27").addClass("active");
+	$('#' + boost2 + "1d778").addClass("active");
+	onChangeCriteria();
 }
 
 function initEvent() {
@@ -653,7 +764,8 @@ function initEvent() {
 		if (this.value == "highscore") {
 			$(".highscore-link").toggle();
 			$(".highscore-rank").toggle();
-			onChangeCriteria();
+			if ($(this).is(':checked')) autogenLimit();
+			else onChangeCriteria();
 		}
 		if (this.value == "acc9") {
 			onChangeCriteria();
@@ -694,8 +806,7 @@ function initEvent() {
 		return false;
 	});
 	$("#searchResultCheck").click(function(){
-		if ($('#searchResultCheck').is(":checked")) $('#searchResult').show();
-		else $('#searchResult').hide();
+		$('#searchResult').toggle();
 	});
 	$('#searchResultInput').keydown(function(e) {
 		if (e.keyCode==13) {
