@@ -164,6 +164,9 @@ Clothes = function(csv) {
         var lights = this.tags[0].split("+");
         if(2 == lights.length && CHINESE_TO_FEATURES[lights[0]]){
           var lightBonus = CHINESE_TO_FEATURES[lights[0]];
+          //skills handling
+          if(filters.highscore1==lightBonus[0]) lights[1]=Math.round(lights[1] * 1.27);
+          if(filters.highscore2==lightBonus[0]) lights[1]=Math.round(lights[1] * 1.778);
           if(0 > filters[lightBonus[0]] && "-" == lightBonus[1]){
             if("-" == lightBonus[1]){
               this.bonusByCategory.scores[lightBonus[0]][1] += lights[1] * 1;
@@ -346,6 +349,22 @@ var shoppingCart = {
     }
     // fake a clothes
     this.totalScore = fakeClothes(this.cart);
+  },
+  validate: function(criteria){
+    if(this.cart["上装"] && this.cart["下装"] && this.cart["连衣裙"]){
+      this.cart['上装'].calc(criteria);
+      this.cart['下装'].calc(criteria);
+      this.cart['连衣裙'].calc(criteria);
+      if(this.cart['上装'].sumScore + this.cart['下装'].sumScore > this.cart['连衣裙'].sumScore){
+        shoppingCart.remove('连衣裙');
+      }else{
+        shoppingCart.remove('上装');
+        shoppingCart.remove('下装');
+      }
+    }else if((this.cart["上装"] || this.cart["下装"]) && this.cart["连衣裙"]){
+        shoppingCart.remove('上装');
+        shoppingCart.remove('下装');
+    }
   }
 };
 
