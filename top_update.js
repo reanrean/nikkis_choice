@@ -342,13 +342,8 @@ function mapFt(ft,theme){
 }
 
 function chgStaffMode(){
-	if ($('#staffMode').is(":checked")){
-		$('#staffModeOn').show();
-		$('#topsearch_note').hide();
-	}else{
-		$('#staffModeOn').hide();
-		$('#topsearch_note').show();
-	}
+	$('#staffModeOn').toggle();
+	$('#topsearch_note').toggle();
 }
 
 function verify(){
