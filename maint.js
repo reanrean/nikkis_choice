@@ -27,7 +27,7 @@ function go(){
 		line+=td(ahref('<b>Pattern</b>','go_comp_pattern()'));
 		line+=td(ahref('<b>Add</b>','go_add()'));
 		line+=td(ahref('<b>CheckSource</b>','go_src()'));
-		line+=td('<a href="maint_top/hs-ip.html" target="_blank"><b>LevelWeight</b></a>');
+		line+=td('<a href="hs-rean.html" target="_blank"><b>LevelWeight</b></a>');
 	menu+=tr(line);
 	$("#menu").html(menu);
 	$("#info").html('');
