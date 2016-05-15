@@ -1,0 +1,143 @@
+<!DOCTYPE HTML>
+<html lang="zh">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+		<link rel="icon" href="favicon.ico" type="image/x-icon" />
+		<meta name="renderer" content="webkit">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+		<title>Level Weight Generator by Rean</title>
+		<link rel="stylesheet" href="bootstrap/bootstrap.min.css">
+		<link rel="stylesheet" href="onekeystrategy.css">
+		<link rel="stylesheet" href="style.css">
+		<link rel="stylesheet" type="text/css" href="ui.css">
+		<link rel="stylesheet" type="text/css" href="mobileui.css" media="only screen and (max-width: 650px)">
+		<script type='text/javascript' charset="UTF-8" src='jquery.js'></script>
+		<script type='text/javascript' charset="UTF-8" src='jquery.freezeheader.js'></script>
+		<script type='text/javascript' charset="UTF-8" src="bootstrap/bootstrap.min.js"></script>
+		<script type='text/javascript' charset="UTF-8" src="tool.js"></script>
+		<script type='text/javascript' charset="UTF-8" src='data/wardrobe.js'></script>
+		<script type='text/javascript' charset="UTF-8" src='scoring.js'></script>
+		<script type='text/javascript' charset="UTF-8" src='data/levels.js'></script>
+		<script type='text/javascript' charset="UTF-8" src='data/flist.js'></script>
+		<script type='text/javascript' charset="UTF-8" src='model.js'></script>
+		<script type='text/javascript' charset="UTF-8" src='data/pattern.js'></script>
+		<script type='text/javascript' charset="UTF-8" src='ui.js'></script>
+		<script type='text/javascript' charset="UTF-8" src='nikki.js'></script>
+		<script type='text/javascript' charset="UTF-8">
+		var calcGlobalClothes=1;
+		function addBoost(boost1,boost2){
+			$('#output_row').append("'"+$("#theme").val()+"':['"+boost1+"','"+boost2+"'],"+"<br>");
+		}
+		</script>
+	</head>
+	<body>
+	<p id="output_row"></p>	
+		<div class='top'>
+			<div class="fliter">
+				<div id='filtersTop'>
+					<select id="theme" onChange="changeTheme()"></select><div id='reanComment'>&emsp;<label><input type="checkbox" class="fliter" value="highscore"> >ω<</label></div>
+				</div>
+				<div class="fliter_form_div" style="display:none">
+					<form name="filter_form" class="form-inline">
+						<div class="fliter_form_div_left">
+							<div class='facet'>
+								<div class="weightContainer" role="group" data-toggle="buttons">
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="simple" value="1"/> 简约</label>
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="simple" value="-1"/> 华丽</label>
+									<input class="btn-sm" placeholder="权重" type="text" id="simpleWeight" name="simpleWeight" value="1" onChange="changeFilter()" />
+									<span class="highscore-link btn-sm 1d778" id="simple1d778">微笑+飞吻</span>
+									<span class="highscore-link btn-sm 1d27" id="simple1d27">微笑</span>
+									<span class="highscore-rank btn-sm" id="simplerank"></span>
+								</div>
+								<div class="weightContainer" role="group" data-toggle="buttons">
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="cute" value="1"/> 可爱</label>
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="cute" value="-1"/> 成熟</label>
+									<input class="btn-sm" placeholder="权重" type="text" id="cuteWeight" name="cuteWeight" value="1" onChange="changeFilter()" />
+									<span class="highscore-link btn-sm 1d778" id="cute1d778">微笑+飞吻</span>
+									<span class="highscore-link btn-sm 1d27" id="cute1d27">微笑</span>
+									<span class="highscore-rank btn-sm" id="cuterank"></span>
+								</div>
+								<div class="weightContainer" role="group" data-toggle="buttons">
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="active" value="1"/> 活泼</label>
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="active" value="-1"/> 优雅</label>
+									<input class="btn-sm" placeholder="权重" type="text" id="activeWeight" name="activeWeight" value="1" onChange="changeFilter()" />
+									<span class="highscore-link btn-sm 1d778" id="active1d778">微笑+飞吻</span>
+									<span class="highscore-link btn-sm 1d27" id="active1d27">微笑</span>
+									<span class="highscore-rank btn-sm" id="activerank"></span>
+								</div>
+								<div class="weightContainer" role="group" data-toggle="buttons">
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="pure" value="1"/> 清纯</label>
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="pure" value="-1"/> 性感</label>
+									<input class="btn-sm" placeholder="权重" type="text" id="pureWeight" name="pureWeight" value="1" onChange="changeFilter()" />
+									<span class="highscore-link btn-sm 1d778" id="pure1d778">微笑+飞吻</span>
+									<span class="highscore-link btn-sm 1d27" id="pure1d27">微笑</span>
+									<span class="highscore-rank btn-sm" id="purerank"></span>
+								</div>
+								<div class="weightContainer" role="group" data-toggle="buttons">
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="cool" value="1"/> 清凉</label>
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="cool" value="-1"/> 保暖</label>
+									<input class="btn-sm" placeholder="权重" type="text" id="coolWeight" name="coolWeight" value="1" onChange="changeFilter()" />
+									<span class="highscore-link btn-sm 1d778" id="cool1d778">微笑+飞吻</span>
+									<span class="highscore-link btn-sm 1d27" id="cool1d27">微笑</span>
+									<span class="highscore-rank btn-sm" id="coolrank"></span>
+								</div>
+								<div class='weightContainer' id = "tag1Container" role="group" data-toggle="buttons">
+									<input class="btn-sm" placeholder="tag1" type="text" id="tag1" name="tag1" onChange="changeFilter()" />
+									<label class="btn btn-sm btn-default active"><input class="filter-radio" type="radio" name="tag1method" value="add" checked/> 加分</label>
+									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="tag1method" value="replace"/> 替换</label>
+									<select class="btn-sm" id="tag1base" onChange="changeFilter()">
+										<option>SS</option>
+										<option>S</option>
+										<option>A</option>
+										<option>B</option>
+										<option>C</option>
+									</select>
+									<input class="btn-sm" type="text" id="tag1weight" name="tag1weight" value="1" onChange="changeFilter()" />
+								</div>
+									<div class='weightContainer' id = "tag2Container" role="group" data-toggle="buttons">
+										<input class="btn-sm" placeholder="tag2" type="text" id="tag2" name="tag2" onChange="changeFilter()" />
+										<label class="btn btn-sm btn-default active"><input class="filter-radio" type="radio" name="tag2method" value="add" checked/> 加分</label>
+										<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="tag2method" value="replace"/> 替换</label>
+										<select class="btn-sm" id="tag2base" onChange="changeFilter()">
+											<option>SS</option>
+											<option>S</option>
+											<option>A</option>
+											<option>B</option>
+											<option>C</option>
+										</select>
+										<input class="btn-sm" type="text" id="tag2weight" name="tag2weight" value="1" onChange="changeFilter()" />
+									</div>
+							</div><!-- facet -->
+						</div>
+					</form>
+				</div><!-- fliter_form_div -->
+			</div><!-- fliter -->
+		</div><!-- top -->
+		<span style="display:none">
+		<div id = 'shoppingCartContainer'>
+			推荐穿戴部件
+			<button class="btn btn-default" style="float:right" onclick="clearShoppingCart()">清空</button>
+			<div id='shoppingCart' class="table"></div>
+		</div>
+		<hr>
+		<div id = 'category_container'></div>
+		<div id = "clothes" class="table"></div>
+		<div class = "showmore" id= "showmore" isshowmore="1">↓显示全部衣服↓</div>
+		<div id = "end"></div>
+	<hr>
+		<p>导入批量衣服，请先选择要导入的类别，然后在文本框内输入编号，用空格、逗号或者换行隔开</p>
+		<div id = "import">
+			<select id="importCate" onChange="clearImport()" ></select><br/>
+			<textarea id="importData" rows=5 style="width:60%" ></textarea>
+			<button onClick="doImport()">导入</button>
+		</div>
+	<hr>
+		<p>我拥有的服装 （复制衣橱文本框内容以备份衣橱）<br/>
+		<span id='wardrobe_cnt'></span></p>
+		<textarea id="myClothes" rows=10 style="width:60%"></textarea><br/>
+		<button onClick="loadCustomInventory()">Update Inventory</button>
+	<hr>
+	</span>
+	</body>
+</html>
