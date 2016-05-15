@@ -17,6 +17,22 @@
 		<script type='text/javascript' charset="UTF-8" src="bootstrap/bootstrap.min.js"></script>
 		<script type='text/javascript' charset="UTF-8" src="tool.js"></script>
 		<script type='text/javascript' charset="UTF-8" src='data/wardrobe.js'></script>
+		<script type='text/javascript' charset="UTF-8">
+		var wardrobe_orig=wardrobe;
+		var wardrobe=function() {
+			var ret = [];
+			var skip_new=(window.location.href.toUpperCase().indexOf('?OLD')>0) ? 1 : 0 ;
+			for (var i in wardrobe_orig) {
+				var tmp=wardrobe[i];
+				if(skip_new) {if($.inArray(tmp[17],lastVersion)>=0) {continue;};}
+				ret.push(tmp);
+			}
+			return ret;
+		}();
+		$(document).ready(function () {
+			$('#rean_cnt').html(wardrobe.length);
+		});
+		</script>
 		<script type='text/javascript' charset="UTF-8" src='scoring.js'></script>
 		<script type='text/javascript' charset="UTF-8" src='data/levels.js'></script>
 		<script type='text/javascript' charset="UTF-8" src='data/flist.js'></script>
@@ -28,6 +44,42 @@
 		var calcGlobalClothes=1;
 		function addBoost(boost1,boost2){
 			$('#output_row').append("'"+$("#theme").val()+"':['"+boost1+"','"+boost2+"'],"+"<br>");
+			if(window.location.href.toUpperCase().indexOf('?DEBUG')>0){
+				$(".1d27").removeClass("active");
+				$(".1d778").removeClass("active");
+				$('#' + boost1 + "1d27").addClass("active");
+				$('#' + boost2 + "1d778").addClass("active");
+				criteria = {};
+				for (var i in FEATURES) {
+					var f = FEATURES[i];
+					var weight = parseFloat($('#' + f + "Weight").val());
+					if (!weight) {
+						weight = 1;
+					}
+					if (uiFilter["highscore"]) {
+						var highscore2 = $('#' + f + "1d778.active").length ? 1.778 : 1;
+						var highscore1 = $('#' + f + "1d27.active").length ? 1.27 : 1;
+						weight = accMul(accMul(weight, highscore1), highscore2);
+						if (highscore1>1) criteria.highscore1=f;
+						if (highscore2>1) criteria.highscore2=f;
+					}
+					var checked = $('input[name=' + f + ']:radio:checked');
+					if (checked.length) {
+						criteria[f] = parseInt(checked.val()) * weight;
+					}
+				}
+				tagToBonus(criteria, 'tag1');
+				tagToBonus(criteria, 'tag2');
+				if (global.additionalBonus && global.additionalBonus.length > 0) {
+					criteria.bonus = global.additionalBonus;
+				}
+				criteria.levelName = $("#theme").val();
+				criteria['missing'] = true;
+				chooseAccessories(criteria);
+				for (var c in category){
+					if (shoppingCart.cart[category[c]]) $('#output_row').append(shoppingCart.cart[category[c]].name+shoppingCart.cart[category[c]].version);
+				}
+			}
 		}
 		</script>
 	</head>
@@ -36,7 +88,11 @@
 		<div class='top'>
 			<div class="fliter">
 				<div id='filtersTop'>
-					<select id="theme" onChange="changeTheme()"></select><div id='reanComment'>&emsp;<label><input type="checkbox" class="fliter" value="highscore"> >ω<</label></div>
+					<select id="theme" onChange="changeTheme()"></select>
+					<div id='reanComment'>
+					<label><input type="checkbox" class="fliter" value="highscore"> >ω< </label>
+					Cnt:<span id="rean_cnt"></span>
+					</div>
 				</div>
 				<div class="fliter_form_div" style="display:none">
 					<form name="filter_form" class="form-inline">
