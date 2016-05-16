@@ -1,4 +1,4 @@
- $(document).ready(function () {
+$(document).ready(function () {
 	init_top_update();
 });
 
@@ -202,6 +202,7 @@ function compByTheme(){
 
 function compByThemeName(name){
 	var sum_score=0;
+	var sum_wholetheme=0;
 	var sum_array=[]; //cate, diff, [new],[old]
 	var rest=0;
 	var new_tmp_array=[];
@@ -214,6 +215,7 @@ function compByThemeName(name){
 			continue;
 		}
 		if(storeTop[name][c][1].length==0){continue;}
+		sum_wholetheme+=storeTop[name][c][1][0][1];
 		if(storeTop_old[name][c][1].length==0){//dun have old score
 			var diff=storeTop[name][c][1][0][1];
 			sum_score+=diff; 
@@ -253,6 +255,7 @@ function compByThemeName(name){
 	var diff=new_dress_score-old_dress_score;
 	diff=Math.round(diff*dp)/dp;
 	sum_score+=diff;
+	sum_wholetheme+=new_dress_score;
 	if(old_dress_score==0||new_dress_array[0][0]!=old_dress_array[0][0]||
 		(new_cate=='上下装'&&(old_tmp_array['下装'][0]==0||new_tmp_array['下装'][1][0][0]!=old_tmp_array['下装'][1][0][0]))) {
 		sum_array.unshift([new_cate,diff,new_dress_array,old_dress_array]);
@@ -261,21 +264,23 @@ function compByThemeName(name){
 	
 	sum_score=Math.round(sum_score*dp)/dp;
 	rest=Math.round(rest*dp)/dp;
-	return [name,sum_score,sum_array,rest];
+	sum_wholetheme=Math.round(sum_wholetheme);
+	return [name,sum_score,sum_array,rest,sum_wholetheme];
 }
 
 function outputByCate(total){
 	var output='<table border="1">';
-	output+=tr(td('关卡')+td('理论分差')+td('部位')+td('理论分差')+td('顶配'));
+	output+=tr(td('关卡')+td('理论分差/总分')+td('部位')+td('理论分差')+td('顶配'));
 	total.sort(function(a,b){return b[1] - a[1]});
 	for(var i in total){
 		var name=total[i][0];
 		var sum_score=total[i][1];
 		var rowspan=total[i][2].length;
 		var rest=total[i][3];
+		var sum_wholetheme=total[i][4];
 		if (rest!=0) {rowspan++;}
 		if(rowspan){
-			var outLine=td(name+'<br>'+tasksAddFt(name),'rowspan="'+rowspan+'"')+td(sum_score,'rowspan="'+rowspan+'"');
+			var outLine=td(name+'<br>'+tasksAddFt(name),'rowspan="'+rowspan+'"')+td(sum_score+'<br>/'+sum_wholetheme,'rowspan="'+rowspan+'"');
 			for(var j in total[i][2]){
 				var cate=total[i][2][j][0];
 				var diff_score=total[i][2][j][1]; 
@@ -440,14 +445,14 @@ function onChangeCriteria(limitMode) {
 		//rean mod
 		if(limitMode&&limitMode==1){
 			if(tasksAdd[theme_name]){
-				if (f==tasksAdd[theme_name][0]) {weight=weight*1.27;}
-				if (f==tasksAdd[theme_name][1]) {weight=weight*1.778;}
+				if (f==tasksAdd[theme_name][0]) {weight=accMul(weight,1.27); criteria.highscore1=f;}
+				if (f==tasksAdd[theme_name][1]) {weight=accMul(weight,1.778); criteria.highscore2=f;}
 			}
 		}
 		if(limitMode&&limitMode==2){
 			if(tasksAdd_old[theme_name]){
-				if (f==tasksAdd_old[theme_name][0]) {weight=weight*1.27;}
-				if (f==tasksAdd_old[theme_name][1]) {weight=weight*1.778;}
+				if (f==tasksAdd_old[theme_name][0]) {weight=accMul(weight,1.27); criteria.highscore1=f;}
+				if (f==tasksAdd_old[theme_name][1]) {weight=accMul(weight,1.778); criteria.highscore2=f;}
 			}
 		}
 		/*if (uiFilter["highscore"]) {
