@@ -1170,8 +1170,8 @@ function onChangeCriteria() {
 		//rean mod
 		if(limitMode==1){
 			if(tasksAdd[theme_name]){
-				if (f==tasksAdd[theme_name][0]) {weight=weight*1.27;}
-				if (f==tasksAdd[theme_name][1]) {weight=weight*1.778;}
+				if (f==tasksAdd[theme_name][0]) {weight=accMul(weight,1.27); criteria.highscore1=f;}
+				if (f==tasksAdd[theme_name][1]) {weight=accMul(weight,1.778); criteria.highscore2=f;}
 			}
 		}
 		/*if (uiFilter["highscore"]) {
