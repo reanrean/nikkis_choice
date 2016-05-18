@@ -260,12 +260,6 @@ function replaceBonusInfo(base, weight, tag) {
 function addBonusInfo(base, weight, tag) {
   return bonusInfo(base, weight, tag, false);
 }
- 
-var additionalLevelInfo = {
-  "4-2": [swimsuitFactory()],
-  "4-3": [swimsuitFactory()],
-  '7-6': [specialFactory76A(), specialFactory76B()]
-};
 
 var addSkillsInfo = {
 '1-1': [null,['微笑','挑剔','沉睡','灰姑娘']],
