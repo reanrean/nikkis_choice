@@ -722,8 +722,9 @@ function autogenLimit(){
 			//calc sumScores
 			shoppingCart.clear();
 			var currScoreByCate=[];
+			var ownCnt=loadFromStorage().length>0 ? 1 : 0;
 			for (var i in clothes){
-				if ((!calcGlobalClothes)&&(!clothes[i].own)) continue;
+				if ((!calcGlobalClothes)&&(!clothes[i].own)&&ownCnt) continue;
 				var c=clothes[i].type.type;
 				if ($.inArray(c, skipCategory)>=0) continue;
 				if (!currScoreByCate[c]) currScoreByCate[c]=0;
