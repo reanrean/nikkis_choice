@@ -417,3 +417,9 @@ function addBonusInfo(base, weight, tag) {
   '联盟委托: 4-5': [addBonusInfo('B', 2.2412, "婚纱")],
   '联盟委托: 4-6': [addBonusInfo('SS', 0.5058, "波西米亚")],
  };
+
+var additionalLevelInfo = {
+  "4-2": [swimsuitFactory()],
+  "4-3": [swimsuitFactory()],
+  '7-6': [specialFactory76A(), specialFactory76B()]
+};
