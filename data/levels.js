@@ -395,7 +395,9 @@ function featureBasedScoringFactory(bonus, multiplier){
     var byFeature = {};
     for (var i in FEATURES) {
       var f = FEATURES[i];
-      var addon = Math.abs(criteria[f] * clothes.type.score[bonus] * multiplier);
+      //var addon = Math.abs(criteria[f] * clothes.type.score[bonus] * multiplier);
+      //rean mod
+      var addon = Math.abs(criteria[f] * base[bonus] * scoringSize[clothes.type.mainType] * multiplier);
       byFeature[f] = addon;
       total += addon;
     }
