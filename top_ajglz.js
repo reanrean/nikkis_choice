@@ -215,7 +215,7 @@ function propanal_byall(cartList_num){
 	else{var showMerc=0;}
 	
 	var out='<table border="1" class="propByAll'+((showMerc||showSource)?' propSrc':'')+'">';
-	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('同属性排名')+td('相同tag数')+td('属性被覆盖'));
+	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('同属性排名')+td('同部位同tag数')+td('属性被覆盖'));
 	
 	var out_cont='';
 	for (var c in category){//sort by category
