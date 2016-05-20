@@ -281,7 +281,7 @@ function propanal_byid(id){
 		if(clothes[id].type.type=='连衣裙'){
 			var topRes=maxBalScore('上装',id);
 			var botRes=maxBalScore('下装',id);
-			if (topRes[0]+botRes[0]>thisScore){rankTip='['+topRes[1].name+'+'+botRes[1].name+']\n'; rankTxt+='(不及上下)';}
+			if (topRes[0]+botRes[0]>thisScore){rankTip='['+topRes[1].name+'+'+botRes[1].name+']\n'; rankTxt+='(不及上下装)';}
 			else{isTop=1;}
 		}else if(clothes[id].type.type=='上装'){
 			var dreRes=maxBalScore('连衣裙',id);
@@ -319,7 +319,7 @@ function propanal_byid(id){
 				if(clothes[id].type.type=='连衣裙'){
 					var topRes=maxBalScore('上装',id,tagj);
 					var botRes=maxBalScore('下装',id,tagj);
-					if (topRes[0]+botRes[0]>thisScore){rankTagTip='['+topRes[1].name+'+'+botRes[1].name+']\n'; rankTagTxt+='(不及上下)';}
+					if (topRes[0]+botRes[0]>thisScore){rankTagTip='['+topRes[1].name+'+'+botRes[1].name+']\n'; rankTagTxt+='(不及上下装)';}
 					else{isTop=1;}
 				}else if(clothes[id].type.type=='上装'){
 					var dreRes=maxBalScore('连衣裙',id,tagj);
@@ -356,7 +356,7 @@ function propanal_byid(id){
 			tagCnt[tagj].sort(function(a,b){return b[0] - a[0]});
 			if (tagCnt[tagj].length==0) {
 				if(clothes[id].type.type=='连衣裙'){//除去错误连衣裙/上下装顶配
-					if (countIfTag('上装',tagj)&&countIfTag('下装',tagj)){tagTxt+='(有上下)';}
+					if (countIfTag('上装',tagj)&&countIfTag('下装',tagj)){tagTxt+='(有上下装)';}
 					else{isTop=1;}
 				}else if(clothes[id].type.type=='上装'||clothes[id].type.type=='下装'){
 					if (countIfTag('连衣裙',tagj)){tagTxt+='(有裙子)';}
@@ -391,7 +391,7 @@ function propanal_byid(id){
 					if(supp_byid(id,i)){isSupped[1]=1;}
 				}
 			}
-			if (isSupped[0]==1&&isSupped[1]==1) {replTxt+='(有上下)';}
+			if (isSupped[0]==1&&isSupped[1]==1) {replTxt+='(有上下装)';}
 			else{isTop=1;}
 		}else {isTop=1;}
 	}
@@ -431,7 +431,7 @@ function propanal_byid(id){
 							}
 						}
 					}
-					if (isSupped[0]==1&&isSupped[1]==1) {replTagTxt+='(有上下)';}
+					if (isSupped[0]==1&&isSupped[1]==1) {replTagTxt+='(有上下装)';}
 					else{isTop=1;}
 				}else {isTop=1;}
 			}
