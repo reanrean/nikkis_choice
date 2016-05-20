@@ -274,14 +274,31 @@ function propanal_byid(id){
 	}
 	
 	//同属性排名
-	rank.sort(function(a,b){return a[0] - b[0]});
-	if (rank.length==0) {isTop=1;}
-	if (rank.length<showCnt) {isSec=1;}
+	rank.sort(function(a,b){return b[0] - a[0]});
 	var rankTxt=(rank.length+1);
+	var rankTip='';
+	if (rank.length==0) {//除去错误连衣裙/上下装顶配
+		if(clothes[id].type.type=='连衣裙'){
+			var topRes=maxBalScore('上装',id);
+			var botRes=maxBalScore('下装',id);
+			if (topRes[0]+botRes[0]>thisScore){rankTip='['+topRes[1].name+'+'+botRes[1].name+']\n'; rankTxt+='(不及上下)';}
+			else{isTop=1;}
+		}else if(clothes[id].type.type=='上装'){
+			var dreRes=maxBalScore('连衣裙',id);
+			var botRes=maxBalScore('下装',id);
+			if (dreRes[0]>thisScore+botRes[0]){rankTip='['+dreRes[1].name+']\n'; rankTxt+='(不及裙子)';}
+			else{isTop=1;}
+		}else if(clothes[id].type.type=='下装'){
+			var dreRes=maxBalScore('连衣裙',id);
+			var topRes=maxBalScore('上装',id);
+			if (dreRes[0]>thisScore+topRes[0]){rankTip='['+dreRes[1].name+']\n'; rankTxt+='(不及裙子)';}
+			else{isTop=1;}
+		}else {isTop=1;}
+	}
+	if (rank.length<showCnt) {isSec=1;}
 	rank=rank.concat(rankEq);
 	if (rank.length>showCnt*2) {rank=rank.slice(0,showCnt*2); var rankSlice=1;}
 	else {var rankSlice=0;}
-	var rankTip='';
 	if (rank.length>1){
 		for (var i in rank){
 			if (i>0) {rankTip+= (rank[i][0]==rank[i-1][0] ? ' = ' : ' > ');}
@@ -295,14 +312,31 @@ function propanal_byid(id){
 	var out_rankTag=[];
 	if (withTag){
 		for (var tagj in rankTag){
-			rankTag[tagj].sort(function(a,b){return a[0] - b[0]});
-			if (rankTag[tagj].length==0) {isTop=1;}
-			if (rankTag[tagj].length<showCnt) {isSec=1;}
+			rankTag[tagj].sort(function(a,b){return b[0] - a[0]});
 			var rankTagTxt=(rankTag[tagj].length+1);
+			var rankTagTip='';
+			if (rankTag[tagj].length==0) {//除去错误连衣裙/上下装顶配
+				if(clothes[id].type.type=='连衣裙'){
+					var topRes=maxBalScore('上装',id,tagj);
+					var botRes=maxBalScore('下装',id,tagj);
+					if (topRes[0]+botRes[0]>thisScore){rankTagTip='['+topRes[1].name+'+'+botRes[1].name+']\n'; rankTagTxt+='(不及上下)';}
+					else{isTop=1;}
+				}else if(clothes[id].type.type=='上装'){
+					var dreRes=maxBalScore('连衣裙',id,tagj);
+					var botRes=maxBalScore('下装',id,tagj);
+					if (dreRes[0]>thisScore+botRes[0]){rankTagTip='['+dreRes[1].name+']\n'; rankTagTxt+='(不及裙子)';}
+					else{isTop=1;}
+				}else if(clothes[id].type.type=='下装'){
+					var dreRes=maxBalScore('连衣裙',id,tagj);
+					var topRes=maxBalScore('上装',id,tagj);
+					if (dreRes[0]>thisScore+topRes[0]){rankTagTip='['+dreRes[1].name+']\n'; rankTagTxt+='(不及裙子)';}
+					else{isTop=1;}
+				}else {isTop=1;}
+			}
+			if (rankTag[tagj].length<showCnt) {isSec=1;}
 			rankTag[tagj]=rankTag[tagj].concat(rankTagEq[tagj]);
 			if (rankTag[tagj].length>showCnt*2) {rankTag[tagj]=rankTag[tagj].slice(0,showCnt*2); var rankTagSlice=1;}
 			else {var rankTagSlice=0;}
-			var rankTagTip='';
 			if (rankTag[tagj].length>1){
 				for (var i in rankTag[tagj]){
 					if (i>0) {rankTagTip+= (rankTag[tagj][i][0]==rankTag[tagj][i-1][0] ? ' = ' : ' > ');}
@@ -318,10 +352,18 @@ function propanal_byid(id){
 	var out_tagCnt=[];
 	if (withTag){
 		for (var tagj in tagCnt){
-			tagCnt[tagj].sort(function(a,b){return a[0] - b[0]});
-			if (tagCnt[tagj].length==0) {isTop=1;}
+			var tagTxt=tagCnt[tagj].length+'个';
+			tagCnt[tagj].sort(function(a,b){return b[0] - a[0]});
+			if (tagCnt[tagj].length==0) {
+				if(clothes[id].type.type=='连衣裙'){//除去错误连衣裙/上下装顶配
+					if (countIfTag('上装',tagj)&&countIfTag('下装',tagj)){tagTxt+='(有上下)';}
+					else{isTop=1;}
+				}else if(clothes[id].type.type=='上装'||clothes[id].type.type=='下装'){
+					if (countIfTag('连衣裙',tagj)){tagTxt+='(有裙子)';}
+					else{isTop=1;}
+				}else {isTop=1;}
+			}
 			if (tagCnt[tagj].length<showCnt) {isSec=1;}
-			var tagTxt=tagCnt[tagj].length;
 			if (tagCnt[tagj].length>showCnt*2) {tagCnt[tagj]=tagCnt[tagj].slice(0,showCnt*2); var tagCntSlice=1;}
 			else {var tagCntSlice=0;}
 			var tagTip='';
@@ -336,9 +378,23 @@ function propanal_byid(id){
 		}
 	}
 	//属性被覆盖
-	repl.sort(function(a,b){return a[0] - b[0]});
-	if (repl.length==0) {isTop=1;}
-	var replTxt=repl.length;
+	repl.sort(function(a,b){return b[0] - a[0]});
+	var replTxt=repl.length+'个';
+	if (repl.length==0) {//除去错误连衣裙，上下装逻辑没想好
+		if(clothes[id].type.type=='连衣裙'){
+			var isSupped=[0,0];
+			for (var i in clothes){
+				if(clothes[i].type.type=='上装'&&isSupped[0]==0){
+					if(supp_byid(id,i)){isSupped[0]=1;}
+				}
+				if(clothes[i].type.type=='下装'&&isSupped[1]==0){
+					if(supp_byid(id,i)){isSupped[1]=1;}
+				}
+			}
+			if (isSupped[0]==1&&isSupped[1]==1) {replTxt+='(有上下)';}
+			else{isTop=1;}
+		}else {isTop=1;}
+	}
 	if (repl.length>showCnt) {repl=repl.slice(0,showCnt); var replSlice=1;}
 	else {var replSlice=0;}
 	var replTip='';
@@ -353,9 +409,32 @@ function propanal_byid(id){
 	var out_replTag=[];
 	if (withTag){
 		for (var tagj in replTag){
-			replTag[tagj].sort(function(a,b){return a[0] - b[0]});
-			if (replTag[tagj].length==0) {isTop=1;}
-			var replTagTxt=replTag[tagj].length;
+			var replTagTxt=replTag[tagj].length+'个';;
+			replTag[tagj].sort(function(a,b){return b[0] - a[0]});
+			if (replTag[tagj].length==0) {//除去错误连衣裙顶配，上下装逻辑没想好
+				if(clothes[id].type.type=='连衣裙'){
+					var isSupped=[0,0];
+					for (var i in clothes){
+						if(!clothes[i].tags.length) {continue;}
+						if((clothes[i].type.type=='上装'&&isSupped[0]==0)||(clothes[i].type.type=='下装'&&isSupped[1]==0)){
+							for (var k=0;k<clothes[i].tags.length+1;k++){
+								if(clothes[i].tags.length<2&&k>0) {break;}
+								var tagk=k<clothes[i].tags.length?'tag'+clothes[i].tags[k]:clothes[i].tags.join('+');
+								if(tagk==tagj) {
+									if(clothes[i].type.type=='上装'){
+										if(supp_byid(id,i)){isSupped[0]=1;}
+									}
+									if(clothes[i].type.type=='下装'){
+										if(supp_byid(id,i)){isSupped[1]=1;}
+									}
+								}
+							}
+						}
+					}
+					if (isSupped[0]==1&&isSupped[1]==1) {replTagTxt+='(有上下)';}
+					else{isTop=1;}
+				}else {isTop=1;}
+			}
 			if (replTag[tagj].length>showCnt) {replTag[tagj]=replTag[tagj].slice(0,showCnt); var replTagSlice=1;}
 			else {var replTagSlice=0;}
 			var replTagTip='';
@@ -369,6 +448,44 @@ function propanal_byid(id){
 		}
 	}
 	return [out_rank,out_rankTag,out_tagCnt,out_repl,out_replTag,isTop,isSec];
+}
+
+function maxBalScore(ctype,id,tagName){
+	var balScore=0; var balCloth={};
+	for (var i in clothes){
+		if (clothes[i].type.type!=ctype) {continue;}
+		if (tagName){
+			if(!clothes[i].tags.length) {continue;}
+			for (var k=0;k<clothes[i].tags.length+1;k++){
+				if(clothes[i].tags.length<2&&k>0) {break;}
+				var tagk=k<clothes[i].tags.length?'tag'+clothes[i].tags[k]:clothes[i].tags.join('+');
+				if(tagk==tagName) {
+					var rankScore=Math.round(balanceScore(id,i));
+					if(rankScore>balScore) {balScore=rankScore; balCloth=clothes[i];}
+					break;
+				}
+			}
+		}else {
+			var rankScore=Math.round(balanceScore(id,i));
+			if(rankScore>balScore) {balScore=rankScore; balCloth=clothes[i];}
+		}
+	}
+	return [balScore,balCloth];
+}
+
+function countIfTag(type,tagName){
+	for (var i in clothes){
+		if(clothes[i].type.type!=type) {continue;}
+		if(!clothes[i].tags.length) {continue;}
+		for (var k=0;k<clothes[i].tags.length+1;k++){
+			if(clothes[i].tags.length<2&&k>0) {break;}
+			var tagk=k<clothes[i].tags.length?'tag'+clothes[i].tags[k]:clothes[i].tags.join('+');
+			if(tagk==tagName) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 function out_propanal_byid(id){
@@ -397,21 +514,21 @@ function out_propanal_byid(id){
 	output+='<br>';
 	//相同tag部件数
 	if (withTag){
-		output+='相同tag部件数：<br>';
+		output+='同部位同tag数：<br>';
 		for (var tagj in out_tagCnt){
-			var tagTxt='－'+rmtagstr(tagj)+'：'+out_tagCnt[tagj][0]+'个';
+			var tagTxt='－'+rmtagstr(tagj)+'：'+out_tagCnt[tagj][0];
 			output+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
 		}
 		output+='<br>';
 	}
 	//属性被覆盖
 	output+='属性被覆盖：<br>';
-	var replTxt='－'+(withTag?'不计tag：':'')+out_repl[0]+'个';
+	var replTxt='－'+(withTag?'不计tag：':'')+out_repl[0];
 	output+=(out_repl[1] ? addTooltip(replTxt,out_repl[1]) : replTxt) +'<br>';
 	//属性+tag被覆盖
 	if (withTag){
 		for (var tagj in out_replTag){
-			var replTagTxt='－'+rmtagstr(tagj)+'：'+out_replTag[tagj][0]+'个';
+			var replTagTxt='－'+rmtagstr(tagj)+'：'+out_replTag[tagj][0];
 			output+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
 		}
 	}
@@ -426,7 +543,7 @@ function propanal_byall(){
 	else{var showMerc=0;}
 	
 	var out='<table border="1" class="propByAll'+((showMerc||showSource)?' propSrc':'')+'">';
-	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('同属性排名')+td('相同tag数')+td('属性被覆盖'));
+	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('同属性排名')+td('同部位同tag数')+td('属性被覆盖'));
 	for (var c in category){//sort by category
 		for (var i in cartList){
 			id=cartList[i];
@@ -479,18 +596,18 @@ function propanal_byall(){
 			if (withTag){
 				var cellRank='';
 				for (var tagj in out_tagCnt){
-					var tagTxt=rmtagstr(tagj)+'：'+out_tagCnt[tagj][0]+'个';
+					var tagTxt=rmtagstr(tagj)+'：'+out_tagCnt[tagj][0];
 					cellRank+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
 				}
 				cellContent+=td(cellRank);
 			}else {cellContent+=td('-');}
 			//属性被覆盖
 			var cellRank='';
-			var replTxt=(withTag?'不计tag：':'')+out_repl[0]+'个';
+			var replTxt=(withTag?'不计tag：':'')+out_repl[0];
 			cellRank+=(out_repl[1] ? addTooltip(replTxt,out_repl[1]) : replTxt) +'<br>';
 			if (withTag){
 				for (var tagj in out_replTag){
-					var replTagTxt=rmtagstr(tagj)+'：'+out_replTag[tagj][0]+'个';
+					var replTagTxt=rmtagstr(tagj)+'：'+out_replTag[tagj][0];
 					cellRank+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
 				}
 			}
@@ -508,16 +625,16 @@ function propanal_byall(){
 
 function balanceScore(id,comp){ //calc balance score in prop of id
 	var out=0;
-	if(clothes[id].simple[0]) { if(clothes[comp].simple[0]) out+=base[clothes[comp].simple[0]];}
-	if(clothes[id].simple[1]) { if(clothes[comp].simple[1]) out+=base[clothes[comp].simple[1]];}
-	if(clothes[id].active[0]) { if(clothes[comp].active[0]) out+=base[clothes[comp].active[0]];}
-	if(clothes[id].active[1]) { if(clothes[comp].active[1]) out+=base[clothes[comp].active[1]];}
-	if(clothes[id].cute[0]) { if(clothes[comp].cute[0]) out+=base[clothes[comp].cute[0]];}
-	if(clothes[id].cute[1]) { if(clothes[comp].cute[1]) out+=base[clothes[comp].cute[1]];}
-	if(clothes[id].pure[0]) { if(clothes[comp].pure[0]) out+=base[clothes[comp].pure[0]];}
-	if(clothes[id].pure[1]) { if(clothes[comp].pure[1]) out+=base[clothes[comp].pure[1]];}
-	if(clothes[id].cool[0]) { if(clothes[comp].cool[0]) out+=base[clothes[comp].cool[0]];}
-	if(clothes[id].cool[1]) { if(clothes[comp].cool[1]) out+=base[clothes[comp].cool[1]];}
+	if(clothes[id].simple[0]) { if(clothes[comp].simple[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].simple[0]];}
+	if(clothes[id].simple[1]) { if(clothes[comp].simple[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].simple[1]];}
+	if(clothes[id].active[0]) { if(clothes[comp].active[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].active[0]];}
+	if(clothes[id].active[1]) { if(clothes[comp].active[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].active[1]];}
+	if(clothes[id].cute[0]) { if(clothes[comp].cute[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cute[0]];}
+	if(clothes[id].cute[1]) { if(clothes[comp].cute[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cute[1]];}
+	if(clothes[id].pure[0]) { if(clothes[comp].pure[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].pure[0]];}
+	if(clothes[id].pure[1]) { if(clothes[comp].pure[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].pure[1]];}
+	if(clothes[id].cool[0]) { if(clothes[comp].cool[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cool[0]];}
+	if(clothes[id].cool[1]) { if(clothes[comp].cool[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cool[1]];}
 	return out;
 }
 
