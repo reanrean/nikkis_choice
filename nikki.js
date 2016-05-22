@@ -636,14 +636,14 @@ function searchResult(){
 		}
 		if (outSet.length>0) {
 			outSet=getDistinct(outSet);
-			$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;">套装：</div>');
+			$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;border-radius: 0.2em;">套装：</div>');
 			for (var i in outSet) {$('#searchResultList').append('<div class="name table-td" style="float: left;"><a class="button searchResultSet">'+outSet[i]+'</a></div>');}
 			$(".searchResultSet").click(function () {
 				switchCate(0);
 				var setName=this.innerHTML;
-				$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;">'+setName+'：</div>');
+				$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;border-radius: 0.2em;">'+setName+'：</div>');
 				for (var i in clothes){
-					if(clothes[i].set==setName) {$('#searchResultList').append(clothesNameTd(clothes[i]).css('float','left'));}
+					if(clothes[i].set==setName) {$('#searchResultList').append(clothesNameTd(clothes[i],1).css('float','left'));}
 				}
 			});
 		}
@@ -651,7 +651,7 @@ function searchResult(){
 			var outCate=[];
 			for (var i in clothes){
 				if (clothes[i].type.mainType==h&&clothes[i].name.indexOf(searchTxt)>=0){
-					outCate.push(clothesNameTd(clothes[i]).css('float','left'));
+					outCate.push(clothesNameTd(clothes[i],1).css('float','left'));
 				}
 			}
 			if (outCate.length>0){
@@ -808,6 +808,10 @@ function initEvent() {
 	});
 	$("#searchResultCheck").click(function(){
 		$('#searchResult').toggle();
+	});
+	$("#searchResultMode").click(function(){
+		if ($(this).hasClass("active")) {$(this).removeClass("active");$(this).html('衣柜');}
+		else {$(this).addClass("active");$(this).html('购物车');}
 	});
 	$('#searchResultInput').keydown(function(e) {
 		if (e.keyCode==13) {
