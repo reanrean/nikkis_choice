@@ -115,9 +115,9 @@ function list(datas, isShoppingCart) {
 	return $list;
 }
 
-function clothesNameTd(piece) {
+function clothesNameTd(piece,inSearch) {
 	var cls = "name table-td";
-	var deps = piece.getDeps('   ', 1);
+	var deps = inSearch? '' : piece.getDeps('   ', 1);
 	var tooltip = '';
 	if (deps && deps.length > 0) {
 		tooltip = deps;
@@ -131,11 +131,15 @@ function clothesNameTd(piece) {
 	$clothesNameA.text(piece.name);
 	if(tooltip != ''){
 		$clothesNameA.attr("tooltip",tooltip);
-		
 	}
 	$clothesNameA.click(function () {
-		toggleInventory(piece.type.mainType, piece.id, this);
-		return false;
+		if (inSearch&&($('#searchResultMode').hasClass("active"))){
+			shoppingCart.put(clothesSet[piece.type.mainType][piece.id]);
+			refreshShoppingCart();
+		}else{
+			toggleInventory(piece.type.mainType, piece.id, this);
+			return false;
+		}
 	});
 	var $clothesNameTd = $("<div>");
 	$clothesNameTd.attr("id", "clickable-" + (piece.type.mainType + piece.id));
