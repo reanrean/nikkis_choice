@@ -641,7 +641,7 @@ function searchResult(){
 			$(".searchResultSet").click(function () {
 				switchCate(0);
 				var setName=this.innerHTML;
-				$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;border-radius: 0.2em;">'+setName+'：</div>');
+				$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;">'+setName+'：</div>');
 				for (var i in clothes){
 					if(clothes[i].set==setName) {$('#searchResultList').append(clothesNameTd(clothes[i],1).css('float','left'));}
 				}
@@ -655,7 +655,7 @@ function searchResult(){
 				}
 			}
 			if (outCate.length>0){
-				$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;">'+h+'：</div>');
+				$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;border-radius: 0.2em;">'+h+'：</div>');
 				for (var i in outCate){
 					$('#searchResultList').append(outCate[i]);
 				}
