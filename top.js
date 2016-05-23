@@ -303,7 +303,7 @@ function propanal_byid(id){
 		for (var i in rank){
 			if (i>0) {rankTip+= (rank[i][0]==rank[i-1][0] ? ' = ' : ' > ');}
 			rankTip+=clothes[rank[i][1]].name;
-			if ((i==0&&rank[0][1]!=id)||(i==1&&rank[0][1]==id)) {rankTip+='['+cell_tag(rank[i][1],0).replace(/简|可|活|纯|凉|华|成|雅|性|暖/g,'')+']';}
+			if ((i==0&&rank[0][1]!=id)||(i==1&&rank[0][1]==id)) {rankTip+='['+cell_tag(rank[i][1],0,id).replace(/简|可|活|纯|凉|华|成|雅|性|暖/g,'')+']';}
 		}
 		rankTip+=(rankSlice? ' …' : '');
 	}
@@ -341,7 +341,7 @@ function propanal_byid(id){
 				for (var i in rankTag[tagj]){
 					if (i>0) {rankTagTip+= (rankTag[tagj][i][0]==rankTag[tagj][i-1][0] ? ' = ' : ' > ');}
 					rankTagTip+=clothes[rankTag[tagj][i][1]].name;
-					if ((i==0&&rankTag[tagj][0][1]!=id)||(i==1&&rankTag[tagj][0][1]==id)) {rankTagTip+='['+cell_tag(rankTag[tagj][i][1],0).replace(/简|可|活|纯|凉|华|成|雅|性|暖/g,'')+']';}
+					if ((i==0&&rankTag[tagj][0][1]!=id)||(i==1&&rankTag[tagj][0][1]==id)) {rankTagTip+='['+cell_tag(rankTag[tagj][i][1],0,id).replace(/简|可|活|纯|凉|华|成|雅|性|暖/g,'')+']';}
 				}
 				rankTagTip+=(rankTagSlice? ' …' : '');
 			}
@@ -624,17 +624,22 @@ function propanal_byall(){
 }
 
 function balanceScore(id,comp){ //calc balance score in prop of id
-	var out=0;
-	if(clothes[id].simple[0]) { if(clothes[comp].simple[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].simple[0]];}
-	if(clothes[id].simple[1]) { if(clothes[comp].simple[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].simple[1]];}
-	if(clothes[id].active[0]) { if(clothes[comp].active[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].active[0]];}
-	if(clothes[id].active[1]) { if(clothes[comp].active[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].active[1]];}
-	if(clothes[id].cute[0]) { if(clothes[comp].cute[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cute[0]];}
-	if(clothes[id].cute[1]) { if(clothes[comp].cute[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cute[1]];}
-	if(clothes[id].pure[0]) { if(clothes[comp].pure[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].pure[0]];}
-	if(clothes[id].pure[1]) { if(clothes[comp].pure[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].pure[1]];}
-	if(clothes[id].cool[0]) { if(clothes[comp].cool[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cool[0]];}
-	if(clothes[id].cool[1]) { if(clothes[comp].cool[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cool[1]];}
+	var out=0; var matchFeatures={};
+	if(clothes[id].simple[0]) { if(clothes[comp].simple[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].simple[0]]; matchFeatures['simple+']=1;}
+	if(clothes[id].simple[1]) { if(clothes[comp].simple[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].simple[1]]; matchFeatures['simple-']=1;}
+	if(clothes[id].active[0]) { if(clothes[comp].active[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].active[0]]; matchFeatures['active+']=1;}
+	if(clothes[id].active[1]) { if(clothes[comp].active[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].active[1]]; matchFeatures['active-']=1;}
+	if(clothes[id].cute[0]) { if(clothes[comp].cute[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cute[0]]; matchFeatures['cute+']=1;}
+	if(clothes[id].cute[1]) { if(clothes[comp].cute[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cute[1]]; matchFeatures['cute-']=1;}
+	if(clothes[id].pure[0]) { if(clothes[comp].pure[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].pure[0]]; matchFeatures['pure+']=1;}
+	if(clothes[id].pure[1]) { if(clothes[comp].pure[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].pure[1]]; matchFeatures['pure-']=1;}
+	if(clothes[id].cool[0]) { if(clothes[comp].cool[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cool[0]]; matchFeatures['cool+']=1;}
+	if(clothes[id].cool[1]) { if(clothes[comp].cool[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cool[1]]; matchFeatures['cool-']=1;}
+	if (clothes[comp].type.type=='萤光之灵'){
+		var compTags=clothes[comp].tags[0].split("+");
+		var ft=CHINESE_TO_FEATURES[compTags[0]].join('');
+		if(matchFeatures[ft]) out+=parseInt(compTags[1]);
+	}
 	return out;
 }
 
@@ -893,18 +898,22 @@ function info_byid(id){
 	return output;
 }
 
-function cell_tag(id,tagInd){
+function cell_tag(id,tagInd,baseId){
 	var ret='';
-	if(clothes[id].simple[0]) {ret+='简'+clothes[id].simple[0];}
-	if(clothes[id].simple[1]) {ret+='华'+clothes[id].simple[1];}
-	if(clothes[id].active[0]) {ret+='|活'+clothes[id].active[0];}
-	if(clothes[id].active[1]) {ret+='|雅'+clothes[id].active[1];}
-	if(clothes[id].cute[0]) {ret+='|可'+clothes[id].cute[0];}
-	if(clothes[id].cute[1]) {ret+='|成'+clothes[id].cute[1];}
-	if(clothes[id].pure[0]) {ret+='|纯'+clothes[id].pure[0];}
-	if(clothes[id].pure[1]) {ret+='|性'+clothes[id].pure[1];}
-	if(clothes[id].cool[0]) {ret+='|凉'+clothes[id].cool[0];}
-	if(clothes[id].cool[1]) {ret+='|暖'+clothes[id].cool[1];}
+	if(clothes[id].simple[0]&&((baseId&&clothes[baseId].simple[0])||(!baseId))) {ret+='简'+clothes[id].simple[0];}
+	if(clothes[id].simple[1]&&((baseId&&clothes[baseId].simple[1])||(!baseId))) {ret+='华'+clothes[id].simple[1];}
+	ret+='|';
+	if(clothes[id].active[0]&&((baseId&&clothes[baseId].active[0])||(!baseId))) {ret+='活'+clothes[id].active[0];}
+	if(clothes[id].active[1]&&((baseId&&clothes[baseId].active[1])||(!baseId))) {ret+='雅'+clothes[id].active[1];}
+	ret+='|';
+	if(clothes[id].cute[0]&&((baseId&&clothes[baseId].cute[0])||(!baseId))) {ret+='可'+clothes[id].cute[0];}
+	if(clothes[id].cute[1]&&((baseId&&clothes[baseId].cute[1])||(!baseId))) {ret+='成'+clothes[id].cute[1];}
+	ret+='|';
+	if(clothes[id].pure[0]&&((baseId&&clothes[baseId].pure[0])||(!baseId))) {ret+='纯'+clothes[id].pure[0];}
+	if(clothes[id].pure[1]&&((baseId&&clothes[baseId].pure[1])||(!baseId))) {ret+='性'+clothes[id].pure[1];}
+	ret+='|';
+	if(clothes[id].cool[0]&&((baseId&&clothes[baseId].cool[0])||(!baseId))) {ret+='凉'+clothes[id].cool[0];}
+	if(clothes[id].cool[1]&&((baseId&&clothes[baseId].cool[1])||(!baseId))) {ret+='暖'+clothes[id].cool[1];}
 	if(tagInd&&clothes[id].tags[0]) {ret+='\n'+clothes[id].tags.join(',');}
 	return ret;
 }
