@@ -136,6 +136,7 @@ function clothesNameTd(piece,inSearch) {
 		if (inSearch&&($('#searchResultMode').hasClass("active"))){
 			shoppingCart.put(clothesSet[piece.type.mainType][piece.id]);
 			refreshShoppingCart();
+			return false;
 		}else{
 			toggleInventory(piece.type.mainType, piece.id, this);
 			return false;
