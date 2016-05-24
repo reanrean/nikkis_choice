@@ -222,7 +222,7 @@ function propanal_byall(cartList_num){
 		for (var i in cartList[cartList_num]){
 			id=cartList[cartList_num][i];
 			if(clothes[id].type.type!=category[c]){continue;}
-			var withTag=clothes[id].tags[0] ? true : false;
+			var withTag=clothesWithTag(clothes[id]);
 			var result=propanal_byid(id);
 			var out_rank=result[0]; 
 			var out_rankTag=result[1];
