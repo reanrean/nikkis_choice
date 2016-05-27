@@ -81,6 +81,27 @@
 				}
 			}
 		}
+		function genLimit(){
+			var date1=new Date();
+			for (var c in tasksRaw){
+				theme_name=c;
+				if (allThemes[theme_name]) {
+					$("#theme").val(theme_name);
+					setFilters(allThemes[theme_name]);
+					autogenLimit();
+				}
+			}
+			for (var d in levelsRaw){
+				theme_name='关卡: '+d;
+				if (allThemes[theme_name]) {
+					$("#theme").val(theme_name);
+					setFilters(allThemes[theme_name]);
+					autogenLimit();
+				}
+			}
+			var date2=new Date();
+			$('#output_row').append('Done! Time used: '+((date2-date1)/1000).toFixed(2)+' secs<br>');
+		}
 		</script>
 	</head>
 	<body>
@@ -91,7 +112,8 @@
 					<select id="theme" onChange="changeTheme()"></select>
 					<div id='reanComment'>
 					<label><input type="checkbox" class="fliter" value="highscore"> >ω< </label>
-					Cnt:<span id="rean_cnt"></span>
+					Cnt:<span id="rean_cnt"></span><br>
+					<a href="" style="text-decoration:none;color:#333;" onclick="genLimit();return false;">&lt;All at once&gt;</a>
 					</div>
 				</div>
 				<div class="fliter_form_div" style="display:none">
