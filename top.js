@@ -625,16 +625,17 @@ function propanal_byall(){
 
 function balanceScore(id,comp){ //calc balance score in prop of id
 	var out=0; var matchFeatures={};
-	if(clothes[id].simple[0]) { if(clothes[comp].simple[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].simple[0]]; matchFeatures['simple+']=1;}
-	if(clothes[id].simple[1]) { if(clothes[comp].simple[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].simple[1]]; matchFeatures['simple-']=1;}
-	if(clothes[id].active[0]) { if(clothes[comp].active[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].active[0]]; matchFeatures['active+']=1;}
-	if(clothes[id].active[1]) { if(clothes[comp].active[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].active[1]]; matchFeatures['active-']=1;}
-	if(clothes[id].cute[0]) { if(clothes[comp].cute[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cute[0]]; matchFeatures['cute+']=1;}
-	if(clothes[id].cute[1]) { if(clothes[comp].cute[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cute[1]]; matchFeatures['cute-']=1;}
-	if(clothes[id].pure[0]) { if(clothes[comp].pure[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].pure[0]]; matchFeatures['pure+']=1;}
-	if(clothes[id].pure[1]) { if(clothes[comp].pure[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].pure[1]]; matchFeatures['pure-']=1;}
-	if(clothes[id].cool[0]) { if(clothes[comp].cool[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cool[0]]; matchFeatures['cool+']=1;}
-	if(clothes[id].cool[1]) { if(clothes[comp].cool[1]) out+=scoring[clothes[comp].type.mainType][clothes[comp].cool[1]]; matchFeatures['cool-']=1;}
+	//if(clothes[id].simple[0]) { if(clothes[comp].simple[0]) out+=scoring[clothes[comp].type.mainType][clothes[comp].simple[0]]; matchFeatures['simple+']=1;}
+	if(clothes[id].simple[0]) { if(clothes[comp].simple[0]) out+=Math.abs(clothes[comp].simple[2]); matchFeatures['simple+']=1;}
+	if(clothes[id].simple[1]) { if(clothes[comp].simple[1]) out+=Math.abs(clothes[comp].simple[2]); matchFeatures['simple-']=1;}
+	if(clothes[id].active[0]) { if(clothes[comp].active[0]) out+=Math.abs(clothes[comp].active[2]); matchFeatures['active+']=1;}
+	if(clothes[id].active[1]) { if(clothes[comp].active[1]) out+=Math.abs(clothes[comp].active[2]); matchFeatures['active-']=1;}
+	if(clothes[id].cute[0]) { if(clothes[comp].cute[0]) out+=Math.abs(clothes[comp].cute[2]); matchFeatures['cute+']=1;}
+	if(clothes[id].cute[1]) { if(clothes[comp].cute[1]) out+=Math.abs(clothes[comp].cute[2]); matchFeatures['cute-']=1;}
+	if(clothes[id].pure[0]) { if(clothes[comp].pure[0]) out+=Math.abs(clothes[comp].pure[2]); matchFeatures['pure+']=1;}
+	if(clothes[id].pure[1]) { if(clothes[comp].pure[1]) out+=Math.abs(clothes[comp].pure[2]); matchFeatures['pure-']=1;}
+	if(clothes[id].cool[0]) { if(clothes[comp].cool[0]) out+=Math.abs(clothes[comp].cool[2]); matchFeatures['cool+']=1;}
+	if(clothes[id].cool[1]) { if(clothes[comp].cool[1]) out+=Math.abs(clothes[comp].cool[2]); matchFeatures['cool-']=1;}
 	if (clothes[comp].type.type=='萤光之灵'){
 		var compTags=clothes[comp].tags[0].split("+");
 		var ft=CHINESE_TO_FEATURES[compTags[0]].join('');
