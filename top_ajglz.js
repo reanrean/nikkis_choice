@@ -269,18 +269,18 @@ function propanal_byall(cartList_num){
 			if (withTag){
 				var cellRank='';
 				for (var tagj in out_tagCnt){
-					var tagTxt=rmtagstr(tagj)+':'+out_tagCnt[tagj][0]+'个';
+					var tagTxt=rmtagstr(tagj)+':'+out_tagCnt[tagj][0];
 					cellRank+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
 				}
 				cell+=td(cellRank);
 			}else {cell+=td('-');}
 			//属性被覆盖
 			var cellRank='';
-			var replTxt=(withTag?'不计tag:':'')+out_repl[0]+'个';
+			var replTxt=(withTag?'不计tag:':'')+out_repl[0];
 			cellRank+=(out_repl[1] ? addTooltip(replTxt,out_repl[1]) : replTxt) +'<br>';
 			if (withTag){
 				for (var tagj in out_replTag){
-					var replTagTxt=rmtagstr(tagj)+':'+out_replTag[tagj][0]+'个';
+					var replTagTxt=rmtagstr(tagj)+':'+out_replTag[tagj][0];
 					cellRank+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
 				}
 			}
