@@ -636,12 +636,12 @@ function searchResult(){
 		}
 		if (outSet.length>0) {
 			outSet=getDistinct(outSet);
-			$('#searchResultList').append('<div class="name table-td search searchCate"><a class="button">套装：</a></div>');
-			for (var i in outSet) {$('#searchResultList').append('<div class="name table-td search"><a class="button searchResultSet">'+outSet[i]+'</a></div>');}
+			$('#searchResultList').append('<div class="name table-td search searchCate"><span class="button">套装：</span></div>');
+			for (var i in outSet) {$('#searchResultList').append('<div class="name table-td search"><span class="button searchResultSet">'+outSet[i]+'</span></div>');}
 			$(".searchResultSet").click(function () {
 				switchCate(0);
 				var setName=this.innerHTML;
-				$('#searchResultList').append('<div class="name table-td search">'+setName+'：</div>');
+				$('#searchResultList').append('<div class="name table-td search searchCate"><span class="button">'+setName+'：</span></div>');
 				for (var i in clothes){
 					if(clothes[i].set==setName) {$('#searchResultList').append(clothesNameTd_Search(clothes[i],1).css('float','left'));}
 				}
@@ -655,7 +655,7 @@ function searchResult(){
 				}
 			}
 			if (outCate.length>0){
-				$('#searchResultList').append('<div class="name table-td search searchCate"><a class="button">'+h+'：</a></div>');
+				$('#searchResultList').append('<div class="name table-td search searchCate"><span class="button">'+h+'：</span></div>');
 				for (var i in outCate){
 					$('#searchResultList').append(outCate[i]);
 				}
