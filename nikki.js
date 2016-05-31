@@ -636,14 +636,14 @@ function searchResult(){
 		}
 		if (outSet.length>0) {
 			outSet=getDistinct(outSet);
-			$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;border-radius: 0.2em;">套装：</div>');
-			for (var i in outSet) {$('#searchResultList').append('<div class="name table-td" style="float: left;"><a class="button searchResultSet">'+outSet[i]+'</a></div>');}
+			$('#searchResultList').append('<div class="name table-td search searchCate"><a class="button">套装：</a></div>');
+			for (var i in outSet) {$('#searchResultList').append('<div class="name table-td search"><a class="button searchResultSet">'+outSet[i]+'</a></div>');}
 			$(".searchResultSet").click(function () {
 				switchCate(0);
 				var setName=this.innerHTML;
-				$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;">'+setName+'：</div>');
+				$('#searchResultList').append('<div class="name table-td search">'+setName+'：</div>');
 				for (var i in clothes){
-					if(clothes[i].set==setName) {$('#searchResultList').append(clothesNameTd(clothes[i],1).css('float','left'));}
+					if(clothes[i].set==setName) {$('#searchResultList').append(clothesNameTd_Search(clothes[i],1).css('float','left'));}
 				}
 			});
 		}
@@ -651,11 +651,11 @@ function searchResult(){
 			var outCate=[];
 			for (var i in clothes){
 				if (clothes[i].type.mainType==h&&clothes[i].name.indexOf(searchTxt)>=0){
-					outCate.push(clothesNameTd(clothes[i],1).css('float','left'));
+					outCate.push(clothesNameTd_Search(clothes[i],1).css('float','left'));
 				}
 			}
 			if (outCate.length>0){
-				$('#searchResultList').append('<div class="name table-td btn-primary" style="float:left;border-radius: 0.2em;">'+h+'：</div>');
+				$('#searchResultList').append('<div class="name table-td search searchCate"><a class="button">'+h+'：</a></div>');
 				for (var i in outCate){
 					$('#searchResultList').append(outCate[i]);
 				}
