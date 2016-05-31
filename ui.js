@@ -115,9 +115,9 @@ function list(datas, isShoppingCart) {
 	return $list;
 }
 
-function clothesNameTd(piece,inSearch) {
+function clothesNameTd(piece) {
 	var cls = "name table-td";
-	var deps = inSearch? '' : piece.getDeps('   ', 1);
+	var deps = piece.getDeps('   ', 1);
 	var tooltip = '';
 	if (deps && deps.length > 0) {
 		tooltip = deps;
@@ -131,9 +131,27 @@ function clothesNameTd(piece,inSearch) {
 	$clothesNameA.text(piece.name);
 	if(tooltip != ''){
 		$clothesNameA.attr("tooltip",tooltip);
+		
 	}
 	$clothesNameA.click(function () {
-		if (inSearch&&($('#searchResultMode').hasClass("active"))){
+		toggleInventory(piece.type.mainType, piece.id, this);
+		return false;
+	});
+	var $clothesNameTd = $("<div>");
+	$clothesNameTd.attr("id", "clickable-" + (piece.type.mainType + piece.id));
+	$clothesNameTd.addClass(cls);
+	$clothesNameTd.append($clothesNameA);
+	return $clothesNameTd;
+}
+
+function clothesNameTd_Search(piece) {
+	var cls = "name table-td";
+	cls += piece.own ? ' own' : '';
+
+	var $clothesNameA = $("<a>").attr("href", "#").addClass("button");
+	$clothesNameA.text(piece.name);
+	$clothesNameA.click(function () {
+		if ($('#searchResultMode').hasClass("active")){
 			shoppingCart.put(clothesSet[piece.type.mainType][piece.id]);
 			refreshShoppingCart();
 			return false;
