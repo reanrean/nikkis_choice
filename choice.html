@@ -107,25 +107,25 @@
 									</select>
 									<input class="btn-sm" type="text" id="tag1weight" name="tag1weight" value="1" onChange="changeFilter()" />
 								</div>
-								<div class='weightContainer' id = "tag2Container" role="group" data-toggle="buttons">
-									<input class="btn-sm" placeholder="tag2" type="text" id="tag2" name="tag2" onChange="changeFilter()" />
-									<label class="btn btn-sm btn-default active"><input class="filter-radio" type="radio" name="tag2method" value="add" checked/> 加分</label>
-									<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="tag2method" value="replace"/> 替换</label>
-									<select class="btn-sm" id="tag2base" onChange="changeFilter()">
-										<option>SS</option>
-										<option>S</option>
-										<option>A</option>
-										<option>B</option>
-										<option>C</option>
-										<option>F</option>
-									</select>
-									<input class="btn-sm" type="text" id="tag2weight" name="tag2weight" value="1" onChange="changeFilter()" />
-								</div>
+									<div class='weightContainer' id = "tag2Container" role="group" data-toggle="buttons">
+										<input class="btn-sm" placeholder="tag2" type="text" id="tag2" name="tag2" onChange="changeFilter()" />
+										<label class="btn btn-sm btn-default active"><input class="filter-radio" type="radio" name="tag2method" value="add" checked/> 加分</label>
+										<label class="btn btn-sm btn-default"><input class="filter-radio" type="radio" name="tag2method" value="replace"/> 替换</label>
+										<select class="btn-sm" id="tag2base" onChange="changeFilter()">
+											<option>SS</option>
+											<option>S</option>
+											<option>A</option>
+											<option>B</option>
+											<option>C</option>
+											<option>F</option>
+										</select>
+										<input class="btn-sm" type="text" id="tag2weight" name="tag2weight" value="1" onChange="changeFilter()" />
+									</div>
 							</div><!-- facet -->
 							<div class="fliter_option clear">
 								<div class="checkbox"><label><input type="checkbox" class="fliter" value="own" checked /> 拥有<span id='inventoryCount'/></label></div>
 								<div class="checkbox"><label><input type="checkbox" class="fliter" value="missing" checked /> 没有</label></div>
-								<div class="checkbox"><label><input type="checkbox" id="searchResultCheck"/> 搜索</label></div>
+								<div class="checkbox"><label><input type="checkbox" id="searchResultCheck" onclick="toggleSearchResult()" /> 搜索</label></div>
 								<a href="#" class = "showmore" style="display:inline-block;cursor:pointer">↓显示全部衣服↓</a>
 							</div><!-- fliter_option -->
 						</div>
@@ -143,7 +143,7 @@
 			</div><!-- fliter -->
 		</div><!-- top -->
 		<hr>
-		<div id = 'searchResult' style="display:none">
+		<div id = 'searchResult'>
 			<input type="text" id="searchResultInput" placeholder="输入名字搜索" /><button class="btn btn-default btn-sm" onclick="searchResult()">GO</button><button class="btn btn-default btn-sm" id="searchResultMode">衣柜</button>
 			<div id='searchResultList' width="100%"></div>
 		<hr>
