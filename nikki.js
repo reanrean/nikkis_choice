@@ -626,6 +626,11 @@ function getDistinct(arr){
 	return newArr;
 }
 
+function toggleSearchResult(){
+	if($("#searchResultCheck").is(':checked')) $('#searchResult').show();
+	else $('#searchResult').hide();
+}
+
 function searchResult(){
 	switchCate(0);
 	var searchTxt=$('#searchResultInput').val();
@@ -806,9 +811,6 @@ function initEvent() {
 		menuFixed("clothes");
 		return false;
 	});
-	$("#searchResultCheck").click(function(){
-		$('#searchResult').toggle();
-	});
 	$("#searchResultMode").click(function(){
 		if ($(this).hasClass("active")) {$(this).removeClass("active");$(this).html('衣柜');}
 		else {$(this).addClass("active");$(this).html('购物车');}
@@ -819,6 +821,7 @@ function initEvent() {
 			searchResult();
 		}
 	});
+	toggleSearchResult();
 	initOnekey();
 }
 
