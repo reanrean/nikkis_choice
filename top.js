@@ -10,6 +10,7 @@ function init_top(){
 	gen_setList();
 	$("#showCnt").val(5);
 	$("#maxHide").val(5);
+	sortTags();
 }
 
 var top_id='';
@@ -1080,6 +1081,12 @@ function getTopCloByCate(filters,rescnt,type){
 		}
 	}
 	return result;
+}
+
+function sortTags(){
+	for (var i in clothes){
+		if(clothes[i].tags.length>1){clothes[i].tags.sort();}
+	}
 }
 
 function show_limitNote(){
