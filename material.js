@@ -8,8 +8,8 @@ $(document).ready(function () {
 
 var highlight=['星之海','韶颜倾城','格莱斯'];
 var highlight_style=['xzh','syqc','gls'];
-var src=['公','少','店·金币,店·钻石,店','重构','迷,幻,飘渺,昼夜,云禅','兑,联盟·小铺','']; //note:'重构' is hardcoded in function
-var src_desc=['公主级掉落','少女级掉落','商店购买','元素重构','谜之屋','兑换','其它'];
+var src=['公','少','店·金币,店·钻石,店','设计图','重构','迷,幻,飘渺,昼夜,云禅,流光庭园','兑,联盟·小铺,联盟·工坊','']; //note:'重构' is hardcoded in function
+var src_desc=['公主级掉落','少女级掉落','商店购买','设计图','元素重构','谜之屋','兑换','其它'];
 var maxc=1;
 var reqCnt=[];
 var parentInd=[];
@@ -24,7 +24,7 @@ var cartCont=[];
 function show_scope(){
 	$("#chooseSub2").html('');
 	var chooseScope='';
-	chooseScope+=selectBox("selectScope","chgScope()",[1,2,3],['按关卡','按套装','按部件']);
+	chooseScope+=selectBox("selectScope","chgScope()",[1,2,3,4],['按关卡','按套装','按部件','按星级']);
 	chooseScope+='&ensp;-&ensp;'
 	$("#chooseScope").html(chooseScope);
 	chgScope();
@@ -73,6 +73,19 @@ function chgScope(){
 			chooseLevel+=selectBox("degree_level","chgScopeSub()",chapVal,chapText);
 			$("#chooseLevel").html(chooseLevel);
 			chgScopeSub();
+			break;
+		case '4': 
+			var chapVal=[]; var chapText=[];
+			for (var c in clothes){
+				if(jQuery.inArray(clothes[c].stars, chapVal)<0){
+					chapVal.push(clothes[c].stars);
+				}
+			}
+			chapVal.sort(function(a,b){return b - a});
+			for (var i in chapVal) {chapText.push(chapVal[i]+'星');}
+			chooseLevel+=selectBox("degree_level","chgStars()",chapVal,chapText);
+			$("#chooseLevel").html(chooseLevel);
+			chgStars();
 			break;
 	}
 }
@@ -160,6 +173,7 @@ function chgScopeSub(){
 			selectArr=selectArr.concat(tmpArr1);
 		}else if(j==4){
 			for(var c in clothes){
+				if(clothes[c].type.type=='萤光之灵') continue;
 				if(clothes[c].tags[0]){
 					for (var tag in clothes[c].tags){
 						selectArr.push(clothes[c].tags[tag]);
@@ -258,6 +272,73 @@ function chgScopeSub2(j,k,l){
 	}
 	$("#levelDropInfo").html(levelDropInfo? levelDropInfo:'');
 	$("#levelDropNote").html(levelDropNote? levelDropNote:'');
+}
+
+function chgStars(){
+	$("#levelDropInfo").html('');
+	$("#levelDropNote").html('');
+	
+	var j=$("#degree_level").val();
+	var chooseSub='&ensp;-&ensp;';
+	
+	var selectArr=[];
+	for (var i in clothes){
+		if(clothes[i].stars==j){
+			for (var s in src_desc){
+				if (src_desc[s].indexOf('重构')>-1) continue;
+				for (var ss in src[s]){
+					if(clothes[i].source.indexOf(src[s][ss])>-1){
+						selectArr.push(src_desc[s]);
+						break;
+					}
+				}
+			}
+		}
+	}
+	selectArr=getDistinct(selectArr);
+	selectArr.sort(function(a,b){return $.inArray(a,src_desc) - $.inArray(b,src_desc)});
+	selectArr.unshift('请选择');
+	chooseSub+=selectBox('chooseCate','chgStars2()',selectArr,selectArr);
+	chooseSub+=ahref('&#x1f50d;','chgStars2()','search');
+	$("#chooseSub").html(chooseSub);
+	chgStars2();
+}
+
+function chgStars2(){
+	j=$("#degree_level").val();
+	k=$("#chooseCate").val();
+	
+	var kp=$.inArray(k,src_desc);
+	if(kp>-1){
+		var srcs=src[kp].split(',');
+		var outStars2=[];
+		for (var i in clothes){
+			if(clothes[i].stars!=j) continue;
+			for (var s in srcs){
+				if(clothes[i].source.indexOf(srcs[s])>-1) {outStars2.push([clothes[i],srcs[s]]);break;}
+			}
+		}
+		if(kp<2){
+			outStars2.sort(function(a,b){return compareStr(a[0].source,b[0].source)});
+		}else{
+			outStars2.sort(function(a,b){return $.inArray(a[1],srcs)==$.inArray(b[1],srcs) ? $.inArray(a[0].type.type,category)-$.inArray(b[0].type.type,category) : $.inArray(a[1],srcs)-$.inArray(b[1],srcs)})
+		}
+		if(outStars2.length>0){
+			var levelDropInfo=table()+tr(tab('名称')+tab('来源')+tab('部位')+tab('材料需求统计'),'style="font-weight:bold;"');
+			for (var i in outStars2){
+				levelDropInfo+=tr(tab(outStars2[i][0].name)+tab(outStars2[i][0].source)+tab(outStars2[i][0].type.mainType)+tab(add_genFac(outStars2[i][0].getDeps('   ', 1),1), 'class="level_drop_cnt"'));
+			}
+			levelDropInfo+=table(1);
+		}
+	}
+	$("#levelDropInfo").html(levelDropInfo? levelDropInfo:'');
+	$("#levelDropNote").html(levelDropNote? levelDropNote:'');
+}
+
+function compareStr(str1,str2){
+	if ( str1 < str2 ) return -1;
+	if ( str1 > str2 ) return 1;
+	return 0;
 }
 
 function showFactorInfo(){
