@@ -641,7 +641,7 @@ function searchResult(){
 		}
 		if (outSet.length>0) {
 			outSet=getDistinct(outSet);
-			$('#searchResultList').append(button_search('套装：','searchCate'));
+			$('#searchResultList').append(button_search('套装','searchCate'));
 			for (var i in outSet) {$('#searchResultList').append(button_search(outSet[i],'','searchResultSet'));}
 			$(".searchResultSet").click(function () {
 				switchCate(0);
