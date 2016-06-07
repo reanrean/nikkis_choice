@@ -415,7 +415,7 @@ function matches(c, criteria, filters) {
 }
 
 function loadCustomInventory() {
-	var myClothes = $("#myClothes").val();
+	var myClothes = $("#myClothes").val().replace(/上衣/g,'上装');
 	if (myClothes.indexOf('|') > 0) {
 		loadNew(myClothes);
 	} else {
