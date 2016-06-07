@@ -424,30 +424,10 @@ function showLevelDropInfo(){
 				var src_sp=clothes[i].source.split("/");
 				for (k=0;k<src_sp.length;k++){
 					if(src_sp[k].indexOf(j+'-'+l2+degree)==0){//if source matches chapter&level
-						/*var deps1=clothes[i].getDeps('   ', 1);
-						var deps=add_genFac(deps1,1);
-						var item='';
-						
-						for (var h in highlight){
-							if(deps1.indexOf(highlight[h])>-1){
-								var style=highlight_style[h];
-								var ind=deps.lastIndexOf(highlight[h]);
-								while(ind>-1){//in case it appears 2 times like 5-10
-									var HRow_end=deps.indexOf('\n',ind)>-1 ? deps.indexOf('\n',ind) : deps.length;
-									var HRow_start=deps.substr(0,ind).lastIndexOf('\n   [')+1;
-									deps=deps.substr(0,HRow_start)+span(deps.substr(HRow_start,HRow_end-HRow_start),style)+deps.substr(HRow_end);
-									ind=deps.substr(0,HRow_start).lastIndexOf(highlight[h]);
-								}
-								item+=span(clothes[i].name,style)+'<br/>';
-							}
-						}*/
 						var depsResult=addhighlightdeps(i);
-						//if(!item){item=clothes[i].name;}
 						var item=depsResult[1]?depsResult[1]:clothes[i].name;
-						
 						var line=tab(ahref(item,'genFactor('+i+')','inherit'));
 							line+=tab(src_sp[k]);
-							//line+=tab(deps,'class="level_drop_cnt"');
 							line+=tab(depsResult[0],'class="level_drop_cnt"');
 						levelDropInfo+=tr(line);
 					}
