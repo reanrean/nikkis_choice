@@ -843,7 +843,7 @@ function getMerc(piece){
 
 function getPatternPrice(id){
 	for (var pc in patternPrice){
-		if (clothes[id].type.mainType==patternPrice[pc][0]&&clothes[id].name==patternPrice[pc][1]){
+		if (clothes[id].type.mainType==patternPrice[pc][0]&&clothes[id].id==patternPrice[pc][1]){
 			return patternPrice[pc][2];
 		}
 	}
