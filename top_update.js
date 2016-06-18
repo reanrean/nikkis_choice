@@ -11,6 +11,7 @@ function init_top_update(){
 	$('#staffModeOn').hide();
 	init_passcode();
 	$('#showCnt').val(3);
+	$('#showScore').val(500);
 	$('#limitNote').html('<a href="" onclick="return false;" tooltip="联盟委托和主线关卡使用极限权重，具体请见顶配查询器的说明。">说明</a>');
 }
 
@@ -33,6 +34,7 @@ var lastVersion_id=function() {
 
 function calctopupd(){
 	if (isNaN(parseInt($("#showCnt").val())) || $("#showCnt").val()<1) {$("#showCnt").val(1);}
+	if (isNaN(parseInt($("#showScore").val())) || $("#showScore").val()<0) {$("#showScore").val(0);}
 	if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
 		$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
 	}else{
@@ -269,6 +271,7 @@ function compByThemeName(name){
 }
 
 function outputByCate(total){
+	var showScore=parseInt($("#showScore").val());
 	var output='<table border="1">';
 	output+=tr(td('关卡')+td('理论分差/总分')+td('部位')+td('理论分差')+td('顶配'));
 	total.sort(function(a,b){return b[1] - a[1]});
@@ -305,10 +308,10 @@ function outputByCate(total){
 					}
 				}
 				outLine+=td(cate)+td(diff_score)+td(addTooltip(new_res,tooltip));
-				output+=tr(outLine, sum_score>0? '' : 'style="display:none;"');
+				output+=tr(outLine, sum_score>0&&sum_score>=showScore? '' : 'style="display:none;"');
 				outLine='';
 			}
-			if (rest!=0) {output+=tr(td('[极限权重变化]')+td(rest)+td(''));}
+			if (rest!=0) {output+=tr(td('[极限权重变化]')+td(rest)+td(''), sum_score>0&&sum_score>=showScore? '' : 'style="display:none;"');}
 		}
 	}
 	output+='</table>';
@@ -391,7 +394,8 @@ function header(){
 	h+='<br>\n';
 	h+='<span class="title3">更新人员：</span>Rean翎<br>\n';
 	h+='<span class="title3">包含版本：</span>'+$('#textBox').html()+'<br>\n';
-	h+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（饰品分数已按带满衰减），方便查看哪些关卡的理论分数更新最多，仅作为参考用。<br>\n';
+	var showScore=parseInt($("#showScore").val());
+	h+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（饰品分数已按带满衰减），'+(showScore>0? '只显示分差'+showScore+'以上的关卡，' : '')+'方便查看哪些关卡的理论分数更新最多，仅作为参考用。<br>\n';
 	h+='</p>\n';
 	h+='<hr class="mhr"/>\n';
 	h+='<p class="normal">本页内容：';
