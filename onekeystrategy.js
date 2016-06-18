@@ -189,9 +189,9 @@ function getStrCriteria(filters){
 function getstrTag(filters){
 	var str = "";
 	if(filters.bonus && filters.bonus[0] && filters.bonus[0].tagWhitelist){
-		str+="本关有TAG[" + filters.bonus[0].tagWhitelist + "]，加分约" + filters.bonus[0].param;
+		str+="本关有TAG[" + filters.bonus[0].tagWhitelist + "]";
 		if(filters.bonus[1] && filters.bonus[1].tagWhitelist){
-			str+="，TAG[" + filters.bonus[1].tagWhitelist + "], 加分约" + filters.bonus[1].param;
+			str+="，[" + filters.bonus[1].tagWhitelist + "]";
 		}
 	}
 	return str;
