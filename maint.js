@@ -138,10 +138,11 @@ function go_src(){
 	for (var c in wname[0]){
 		var ss=wname[0][c][pos].split("/");
 		for (var s in ss){
-			if (ss[s].indexOf('公')>-1) {ss[s]='公';}
-			if (ss[s].indexOf('少')>-1) {ss[s]='少';}
-			if (ss[s].indexOf('定')>-1) {ss[s]='定';}
-			if (ss[s].indexOf('进')>-1) {ss[s]='进';}
+			if (ss[s].indexOf('公')>-1) {ss[s]='*公';}
+			if (ss[s].indexOf('少')>-1) {ss[s]='*少';}
+			if (ss[s].indexOf('定')>-1) {ss[s]='*定';}
+			if (ss[s].indexOf('进')>-1) {ss[s]='*进';}
+			if (ss[s].indexOf('梦境：')>-1) {ss[s]='*梦境';}
 			if (jQuery.inArray(ss[s], src)<0) {src.push(ss[s]);}
 		}
 	}
