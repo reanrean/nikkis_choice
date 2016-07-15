@@ -232,15 +232,17 @@ function getstrClothes_mod(result,rescnt){
 				}
 			}
 		}else{
-			var isown=false;
+			//var isown=false;
 			for (j=0;j<rescnt&&result[j];j++){
-				if(j>0) {tmp2=(actScore(result[j-1])==actScore(result[j]) ? " = " : " > ");}
-				tmp2+= result[j].name + "「" + actScore(result[j]) + " " + removeNum(result[j].source) + "」";
-				if(result[j].own){isown=true;}
-				if(isown){tmp3+=tmp2;}
-				else{tmp1+=tmp2;}
+				if(j>0) {str+=(actScore(result[j-1])==actScore(result[j]) ? " = " : " > ");}
+				tmp3 = result[j].name + "「" + actScore(result[j]) + " " + removeNum(result[j].source) + "」";
+				if(result[j].own) str+=tmp3;
+				else str+='<span class="stgy_clothes_notown">'+tmp3+'</span>';
+				//if(result[j].own){isown=true;}
+				//if(isown){tmp3+=tmp2;}
+				//else{tmp1+=tmp2;}
 			}
-			str=pspan(tmp3,"clothes",tmp1,"clothes_notown");
+			//str=pspan(tmp3,"clothes",tmp1,"clothes_notown");
 			return str;
 		}
 	}
