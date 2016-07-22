@@ -1,4 +1,4 @@
-var wspos=4624;
+var wspos=6000;
 var wardrobe_a=wardrobe;
 var wardrobe=function() {
 	var ret = [];
