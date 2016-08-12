@@ -74,7 +74,7 @@ function searchSet(setName){
 	var out='<table border="1">';
 	out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
 	for (var i in clothes){
-		if(clothes[i].set==setName){
+		if(clothes[i].set==setName||clothes[i].source.indexOf('套装成就：'+setName)>-1){
 			currentList.push(i);
 		}
 	}
