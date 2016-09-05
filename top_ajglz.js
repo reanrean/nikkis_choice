@@ -238,7 +238,8 @@ function propanal_byall(cartList_num){
 				var cell_3rd='';
 				if(showSource){
 					var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
-					srcs=conv_source(srcs,'定',clothes[id].type.mainType);
+						srcs=conv_source(srcs,'定',clothes[id].type.mainType);
+					if (srcs.indexOf('套装成就：')==0) srcs='套装成就';
 					cell_3rd=srcs;
 				}
 				if(showMerc){
@@ -323,7 +324,8 @@ function calctop_byall(cartList_num){
 				var cell_3rd='';
 				if(showSource){
 					var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
-					srcs=conv_source(srcs,'定',clothes[id].type.mainType);
+						srcs=conv_source(srcs,'定',clothes[id].type.mainType);
+					if (srcs.indexOf('套装成就：')==0) srcs='套装成就';
 					cell_3rd=srcs;
 				}
 				if(showMerc){
