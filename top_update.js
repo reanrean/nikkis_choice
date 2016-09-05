@@ -15,6 +15,10 @@ function init_top_update(){
 	$('#limitNote').html('<a href="" onclick="return false;" tooltip="联盟委托和主线关卡使用极限权重，具体请见顶配查询器的说明。">说明</a>');
 }
 
+function clear_textarea(){
+	$('#ajglz_out').val('');
+}
+
 var theme_name;
 var storeTop=[];
 var storeTop_old=[];
