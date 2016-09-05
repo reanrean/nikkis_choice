@@ -164,11 +164,13 @@ function getTopCloByCate(filters,rescnt,type,old){
 
 function compByTheme(){
 	$('#topsearch_note').html('');
+	var exclLevel=$('#exclLevel').val();
 	var ajglz_out='';
 	if ($('#showNormal').is(":checked")){
 		var NM_output=[];
 		for (var d in levelsRaw){
 			theme_name='关卡: '+d;
+			if (exclLevel.length>0 && theme_name.indexOf(exclLevel)>-1) continue;
 			NM_output.push(compByThemeName(theme_name));
 		}
 		var tmp_c=outputByCate(NM_output);
@@ -180,6 +182,7 @@ function compByTheme(){
 		var LM_output=[];
 		for (var c in tasksRaw){
 			theme_name=c;
+			if (exclLevel.length>0 && theme_name.indexOf(exclLevel)>-1) continue;
 			LM_output.push(compByThemeName(theme_name));
 		}
 		var tmp_b=outputByCate(LM_output);
@@ -191,6 +194,7 @@ function compByTheme(){
 		var JJC_output=[];
 		for (var b in competitionsRaw){
 			theme_name='竞技场: '+b;
+			if (exclLevel.length>0 && theme_name.indexOf(exclLevel)>-1) continue;
 			JJC_output.push(compByThemeName(theme_name));
 		}
 		var tmp_a=outputByCate(JJC_output);
