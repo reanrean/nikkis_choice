@@ -288,8 +288,9 @@ function byId(a, b) {
 }
 
 function filterTopAccessories(filters) {
+	filters['own'] = true;
 	var ownCnt=loadFromStorage().size>0 ? 1 : 0;
-	if (ownCnt) filters['own'] = true;
+	if (!ownCnt) filters['missing'] = true;
 	var accCate = CATEGORY_HIERARCHY['饰品'];
 	var accCNum = accCateNum;
 	var accSNum = 9;
@@ -335,8 +336,9 @@ function filterTopAccessories(filters) {
 }
 
 function filterTopClothes(filters) {
+	filters['own'] = true;
 	var ownCnt=loadFromStorage().size>0 ? 1 : 0;
-	if (ownCnt) filters['own'] = true;
+	if (!ownCnt) filters['missing'] = true;
 	for (var i in CATEGORY_HIERARCHY) {
 		if (i == "袜子") {
 			filters[CATEGORY_HIERARCHY[i][0]] = true;
