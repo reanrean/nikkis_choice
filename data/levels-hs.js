@@ -38,7 +38,7 @@ var tasksAdd={
 '联盟委托: 6-2':['active','simple'],
 '联盟委托: 6-3':['cool','simple'],
 '联盟委托: 6-4':['pure','active'],
-'联盟委托: 6-5':['cute','simple'],
+'联盟委托: 6-5':['pure','cute'],
 '联盟委托: 6-6':['simple','cute'],
 '联盟委托: 6-7':['pure','cute'],
 '关卡: 1-1':['cute','active'],
