@@ -565,7 +565,7 @@ function propanal_byall(){
 			var isTop=result[5];
 			var isSec=result[6];
 			
-			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)),'class="inName normTip"');
+			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)),'class="inName normTip '+(isTop?'inTop':(isSec?'inSec':'inNone'))+'"');
 			cell+=td(clothes[id].type.type,'class="inName"');
 			if(showSource||showMerc){
 				var cell_3rd='';
@@ -599,7 +599,7 @@ function propanal_byall(){
 					cellRank+=(out_rankTag[tagj][1] ? addTooltip(rankTagTxt,out_rankTag[tagj][1]) : rankTagTxt) +'<br>';
 				}
 			}
-			cellContent+=td(cellRank);
+			cellContent+=td(cellRank,(cellRank.indexOf('第1<')>-1?'class="inTop"':' '));
 			//tag
 			if (withTag){
 				var cellRank='';
@@ -607,7 +607,7 @@ function propanal_byall(){
 					var tagTxt=rmtagstr(tagj)+'：'+out_tagCnt[tagj][0];
 					cellRank+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
 				}
-				cellContent+=td(cellRank);
+				cellContent+=td(cellRank,(cellRank.indexOf('0个<')>-1?'class="inTop"':' '));
 			}else {cellContent+=td('-');}
 			//属性被覆盖
 			var cellRank='';
@@ -619,11 +619,11 @@ function propanal_byall(){
 					cellRank+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
 				}
 			}
-			cellContent+=td(cellRank);
+			cellContent+=td(cellRank,(cellRank.indexOf('0个<')>-1?'class="inTop"':' '));
 			
 			if ($.inArray(clothes[id].type.type, skipCategory)>=0) {cellContent=td('-')+td('-')+td('-'); isTop=0; isSec=0;} //skip
 			if (!$('#hideNores').is(":checked")||isSec||isTop){
-				out+=tr(cell+cellContent,' class="'+(isTop?'inTop':(isSec?'inSec':'inNone'))+'"');
+				out+=tr(cell+cellContent);
 			}
 		}
 	}
