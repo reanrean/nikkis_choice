@@ -232,8 +232,8 @@ function propanal_byall(cartList_num){
 			var isTop=result[5];
 			var isSec=result[6];
 			
-			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)),(isTop?'class="top"':''));
-			cell+=td(clothes[id].type.type,(isTop?'class="top"':''));
+			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)));
+			cell+=td(clothes[id].type.type);
 			if(showSource||showMerc){
 				var cell_3rd='';
 				if(showSource){
@@ -288,8 +288,7 @@ function propanal_byall(cartList_num){
 			cell+=td(cellRank,(cellRank.indexOf('0个<')>-1?'class="top"':''));
 			
 			if (!$('#hideNores').is(":checked")||isSec||isTop){
-				//out_cont+=tr(cell,(isTop?'class="top"':''));
-				out_cont+=tr(cell);
+				out_cont+=tr(cell,(isTop?'class="top"':''));
 			}
 		}
 	}
