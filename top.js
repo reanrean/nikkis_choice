@@ -884,15 +884,15 @@ function hideTop(id){
 
 function storeTopByCate_single(id){
 	var cartCates=[];
+	cartCates.push(clothes[id].type.type);
 	for (var k in repelCates){
 		if($.inArray(clothes[id].type.type, repelCates[k])>-1){
 			for (var j in repelCates[k]){
 				cartCates.push(repelCates[k][j]);
 			}
-		}else{
-			cartCates.push(clothes[id].type.type);
 		}
 	}
+	cartCates=getDistinct(cartCates);
 	storeTopByCate(cartCates);
 }
 
@@ -1055,7 +1055,6 @@ function calctop_bytheme(id,them){
 	var resultList = get_storeTop_Cate(them,clothes[id].type.type);
 	//resultList[r][0]=clothes, resultList[r][1]=clothes.sumScore
 	var tmp=''; //tooltip text
-	//var resultListClo=[];
 	var thisRank=0;
 	var thisRank_same=0; //same score with others if it ranks 1
 	var moveTopToSec=0; //check repelCates to see real top 1
@@ -1083,7 +1082,6 @@ function calctop_bytheme(id,them){
 		if (resultList[r]) {
 			if (r>0) tmp+='\n';
 			tmp+=resultList[r][1]+resultList[r][0].name;
-			//resultListClo.push(resultList[r][0]);
 			if(clothes[id]==resultList[r][0]){
 				thisRank=Number(r)+1;
 				if (r==0 && resultList[1] && parseInt(resultList[0][1])==parseInt(resultList[1][1])) thisRank_same=1;
