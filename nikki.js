@@ -287,7 +287,7 @@ function byId(a, b) {
 	return (cata - catb == 0) ? a.id - b.id : cata - catb;
 }
 
-function filterTopAccessories(filters) {
+function filterTopAccessories(filters) { //rean note: it will use shoppingCart and clear it, rmb not to reuse
 	filters['own'] = true;
 	var ownCnt=loadFromStorage().size>0 ? 1 : 0;
 	if (!ownCnt) filters['missing'] = true;
@@ -317,20 +317,21 @@ function filterTopAccessories(filters) {
 			}
 		}
 	}
-	var toSortS = []; var totalS = 0;
-	for (var c in resultS) {
-		toSortS.push(resultS[c]);
-	}
-	toSortS.sort(byScoreS(accSNum));
-	if (toSortS.length > accSNum) toSortS = toSortS.slice(0, accSNum);
-	for (var i in toSortS) {
-		totalS += accSumScore(toSortS[i], accSNum);
-	}
-	var toSortAll = []; var totalAll = 0;
-	for (var c in resultAll) {
-		toSortAll.push(resultAll[c]);
-		totalAll += accSumScore(resultAll[c], accCNum);
-	}
+	
+	shoppingCart.clear();
+	shoppingCart.putAll(resultS);
+	shoppingCart.validate(filters,accSNum);
+	var totalS = shoppingCart.totalScore;
+	var toSortS = clone(shoppingCart.cart);
+	
+	shoppingCart.clear();
+	shoppingCart.putAll(resultAll);
+	shoppingCart.validate(filters);
+	var totalAll = shoppingCart.totalScore;
+	var toSortAll = clone(shoppingCart.cart);
+	
+	shoppingCart.clear();
+	
 	if (totalS > totalAll || uiFilter["acc9"] ) return toSortS;
 	else return toSortAll;
 }
@@ -715,8 +716,8 @@ function autogenLimit(){
 				if (!weight) {
 					weight = 1;
 				}
-				if (f==FEATURES[b]) {weight=accMul(weight,1.27);criteria.highscore1=f;}
-				if (f==FEATURES[a]) {weight=accMul(weight,1.778);criteria.highscore2=f;}
+				if (f==FEATURES[b]) {weight=accMul(weight,1.27); criteria.highscore1=f;}
+				if (f==FEATURES[a]) {weight=accMul(weight,1.778); criteria.highscore2=f;}
 				var checked = $('input[name=' + f + ']:radio:checked');
 				if (checked.length) {
 					criteria[f] = parseInt(checked.val()) * weight;
@@ -745,7 +746,7 @@ function autogenLimit(){
 					currScoreByCate[c]=sum_score;
 				}
 			}
-			shoppingCart.validate(criteria);
+			shoppingCart.validate(criteria,(uiFilter["acc9"]?9:accCateNum));
 			shoppingCart.calc(criteria);
 			var tmpScore=shoppingCart.totalScore.sumScore;
 			if (tmpScore>scoreTotal){
