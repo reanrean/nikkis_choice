@@ -395,10 +395,12 @@ function storeTopByCate_all(){
 	for (var l in cartList){
 	for (var i in cartList[l]){
 		cartCates.push(clothes[cartList[l][i]].type.type);
-		if($.inArray(clothes[cartList[l][i]].type.type, ['连衣裙','上装','下装'])>-1){
-			cartCates.push('连衣裙');
-			cartCates.push('上装');
-			cartCates.push('下装');
+		for (var k in repelCates){
+			if($.inArray(clothes[cartList[l][i]].type.type, repelCates[k])>-1){
+				for (var j in repelCates[k]){
+					cartCates.push(repelCates[k][j]);
+				}
+			}
 		}
 	}
 	}
