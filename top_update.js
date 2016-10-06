@@ -110,12 +110,12 @@ function storeTopByCate(){
 
 function getTopCloByCate(filters,rescnt,type,old){
 	var result = [];
-	if ($.inArray(type, skipCategory)>=0) {return result;}
+	if ($.inArray(type, skipCategory)>=0) return result;
 	for (var i in clothes) {
-		if (clothes[i].type.type!=type){continue;}//skip other categories
-		if (old>0&&$.inArray(i,lastVersion_id)>-1) {continue;}
+		if (clothes[i].type.type!=type) continue;//skip other categories
+		if (old>0&&$.inArray(i,lastVersion_id)>-1) continue;
 		clothes[i].calc(filters);
-		if (clothes[i].isF) {continue;}
+		if (clothes[i].isF) continue;
 		var sum_score= (clothes[i].type.mainType=='饰品') ? Math.round(accSumScore(clothes[i],accCateNum)*dp)/dp : clothes[i].sumScore;
 		if (!result[0]) {
 			result[0] = [clothes[i],sum_score];
@@ -219,12 +219,16 @@ function compByThemeName(name){
 	var old_tmp_array=[];
 	for (var c in storeTop[name]){
 		//cate, [[clo,sumScore],[clo,sumScore]]
-		if($.inArray(storeTop[name][c][0],['连衣裙','上装','下装'])>=0){ //handle them at last
+		
+		var repelCatesList=[];
+		for (var i in repelCates) for (var j in repelCates[i]) repelCatesList.push(repelCates[i][j]);
+		if($.inArray(storeTop[name][c][0],repelCatesList)>=0){ //handle them at last
 			new_tmp_array[storeTop[name][c][0]]=(storeTop[name][c][1].length==0? [0,[]] : [storeTop[name][c][1][0][1],storeTop[name][c][1]]); //score, [result]
 			old_tmp_array[storeTop[name][c][0]]=(storeTop_old[name][c][1].length==0? [0,[]] : [storeTop_old[name][c][1][0][1],storeTop_old[name][c][1]]);
 			continue;
 		}
-		if(storeTop[name][c][1].length==0){continue;}
+		
+		if(storeTop[name][c][1].length==0) continue;
 		sum_wholetheme+=storeTop[name][c][1][0][1];
 		if(storeTop_old[name][c][1].length==0){//dun have old score
 			var diff=storeTop[name][c][1][0][1];
@@ -245,32 +249,63 @@ function compByThemeName(name){
 		}
 	}
 	
-	//handle dress vs top/bottom
-	if(new_tmp_array['连衣裙'][0]>=new_tmp_array['上装'][0]+new_tmp_array['下装'][0]){
-		var new_dress_score=new_tmp_array['连衣裙'][0];
-		var new_dress_array=new_tmp_array['连衣裙'][1];
-		var new_cate='连衣裙';
-	}else{
-		var new_dress_score=new_tmp_array['上装'][0]+new_tmp_array['下装'][0];
-		var new_dress_array=new_tmp_array['上装'][1].concat(new_tmp_array['下装'][1]);
-		var new_cate='上下装';
+	//handle repelCates
+	for (var i in repelCates){
+		var scoreFirst_new=0;
+		var scoreOther_new=0;
+		var scoreFirst_old=0;
+		var scoreOther_old=0;
+		var othCates='';
+		var othCatesArrNew=[];
+		var othCatesArrOld=[];
+		var othChanged=false;
+		for (var j in repelCates[i]){
+			if (j>0) {
+				scoreOther_new += new_tmp_array[repelCates[i][j]][0];
+				scoreOther_old += old_tmp_array[repelCates[i][j]][0];
+				othCates += (othCates.length>0 ? '+' : '') + shortForm(repelCates[i][j]);
+				othCatesArrNew = othCatesArrNew.concat(new_tmp_array[repelCates[i][j]][1]);
+				othCatesArrOld = othCatesArrOld.concat(old_tmp_array[repelCates[i][j]][1]);
+				if (new_tmp_array[repelCates[i][j]][0] && 
+					(old_tmp_array[repelCates[i][j]][0]==0 || new_tmp_array[repelCates[i][j]][1][0][0]!=old_tmp_array[repelCates[i][j]][1][0][0]))
+					othChanged = true;
+			}else{
+				scoreFirst_new += new_tmp_array[repelCates[i][j]][0];
+				scoreFirst_old += old_tmp_array[repelCates[i][j]][0];
+			}
+		}
+		if (scoreFirst_new>=scoreOther_new){
+			var new_dress_score=scoreFirst_new;
+			var new_dress_array=new_tmp_array[repelCates[i][0]][1];
+			var new_cate=repelCates[i][0];
+		}else{
+			var new_dress_score=scoreOther_new;
+			var new_dress_array=othCatesArrNew;
+			var new_cate=othCates;
+		}
+		if (scoreFirst_old>=scoreOther_old){
+			var old_dress_score=scoreFirst_old;
+			var old_dress_array=old_tmp_array[repelCates[i][0]][1];
+			var old_cate=repelCates[i][0];
+		}else{
+			var old_dress_score=scoreOther_old;
+			var old_dress_array=othCatesArrOld;
+			var old_cate=othCates;
+		}
+		
+		var diff=new_dress_score-old_dress_score;
+		diff=Math.round(diff*dp)/dp;
+		sum_score+=diff;
+		sum_wholetheme+=new_dress_score;
+		
+		if (new_dress_score && 
+			(old_dress_score==0 || new_dress_array[0][0]!=old_dress_array[0][0] || (new_cate==othCates && othChanged))) {
+			if (i==0) sum_array.unshift([new_cate,diff,new_dress_array,old_dress_array]); //连衣裙上下装
+			else sum_array.push([new_cate,diff,new_dress_array,old_dress_array]);
+		}else{
+			rest+=diff;
+		}
 	}
-	if(old_tmp_array['连衣裙'][0]>=old_tmp_array['上装'][0]+old_tmp_array['下装'][0]){
-		var old_dress_score=old_tmp_array['连衣裙'][0];
-		var old_dress_array=old_tmp_array['连衣裙'][1];
-	}else{
-		var old_dress_score=old_tmp_array['上装'][0]+old_tmp_array['下装'][0];
-		var old_dress_array=old_tmp_array['上装'][1].concat(old_tmp_array['下装'][1]);
-	}
-	var diff=new_dress_score-old_dress_score;
-	diff=Math.round(diff*dp)/dp;
-	sum_score+=diff;
-	sum_wholetheme+=new_dress_score;
-	if(old_dress_score==0||new_dress_array[0][0]!=old_dress_array[0][0]||
-		(new_cate=='上下装'&&(old_tmp_array['下装'][0]==0||new_tmp_array['下装'][1][0][0]!=old_tmp_array['下装'][1][0][0]))) {
-		sum_array.unshift([new_cate,diff,new_dress_array,old_dress_array]);
-	}
-	else{rest+=diff;}
 	
 	sum_score=Math.round(sum_score*dp)/dp;
 	rest=Math.round(rest*dp)/dp;
@@ -442,6 +477,10 @@ function getDistinct(arr){
 		if(ind==0) {newArr.push(arr[i])};
 	}
 	return newArr;
+}
+
+function shortForm(c){
+	return c.indexOf('-')>0 ? c.split('-')[1] : c;
 }
 
 //below modified from nikki.js
