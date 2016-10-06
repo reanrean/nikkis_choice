@@ -87,7 +87,7 @@ function showStrategy(){
 				resultList.push(result[r][c]);				
 			}
 			typeList.push(r);
-			delete result[r];
+			//delete result[r];
 		}
 	}
 	typeList.sort(byCategory);
@@ -98,10 +98,11 @@ function showStrategy(){
 		if(name.indexOf("饰品")>=0)
 			continue;
 		if (result[name]) {
-			$strategy.append('<p>');
-			$strategy.append(pspan(name+" : ", "clothes_category"));
-			$strategy.append(getstrClothes_mod(result[name],rescnt));
-			$strategy.append('</p>');
+			var categoryContent = $("<p/>");
+			categoryContent.append(pspan(name+" : ", "clothes_category"));
+			categoryContent.append(getstrClothes_mod(result[name],rescnt));
+			if (isGrey(name,result)) categoryContent.addClass("stgy_grey");
+			$strategy.append(categoryContent);
 			//$strategy.append(p(getstrClothes(result[name]), "clothes", name, "clothes_category"));
 		}
 	}
@@ -115,10 +116,11 @@ function showStrategy(){
 				accList.push(resultList[i]);
 			}
 		}
-		$strategy.append('<p>');
-		$strategy.append(pspan(typeList[t]+" : ", "clothes_category"));
-		$strategy.append(getstrClothes_mod(accList,rescnt));
-		$strategy.append('</p>');
+		var categoryContent = $("<p/>");
+		categoryContent.append(pspan(typeList[t]+" : ", "clothes_category"));
+		categoryContent.append(getstrClothes_mod(accList,rescnt));
+		if (isGrey(typeList[t],result)) categoryContent.addClass("stgy_grey");
+		$strategy.append(categoryContent);
 		//$strategy.append(p(getstrClothes(accList), "clothes", typeList[t], "clothes_category"));
 	}
 
@@ -295,6 +297,28 @@ function strat_sortlist(filters,rescnt){
 
 function actScore(obj){
 	return (obj.type.mainType=='饰品') ? Math.round(accSumScore(obj,accCateNum)) : obj.sumScore;
+}
+
+function isGrey(c,result){
+	for (var i in repelCates){
+		var sumFirst=0;
+		var sumOthers=0;
+		if($.inArray(c, repelCates[i])>=0){
+			for (var j in repelCates[i]){
+				if (j>0) {
+					if (result[repelCates[i][j]]&&result[repelCates[i][j]][0]) sumOthers+=actScore(result[repelCates[i][j]][0]);
+				}else {
+					if (result[repelCates[i][j]]&&result[repelCates[i][j]][0]) sumFirst+=actScore(result[repelCates[i][j]][0]);
+				}
+			}
+			if($.inArray(c, repelCates[i])==0){
+				if (sumFirst<sumOthers) return true;
+			}else if($.inArray(c, repelCates[i])>0){
+				if (sumOthers<sumFirst) return true;
+			}
+		}
+	}
+	return false;
 }
 
 function initOnekey(){
