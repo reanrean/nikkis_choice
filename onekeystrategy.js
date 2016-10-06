@@ -78,20 +78,6 @@ function showStrategy(){
 	}
 	
 	var result = strat_sortlist(filters,rescnt);
-
-	var typeList = [];
-	var resultList = [];
-	for (var r in result){
-		if(r.indexOf("饰品") >= 0){
-			for(var c in result[r]){
-				resultList.push(result[r][c]);				
-			}
-			typeList.push(r);
-			//delete result[r];
-		}
-	}
-	typeList.sort(byCategory);
-	//resultList.sort(byScore);
 	
 	for (var c in category){
 		var name = category[c];
@@ -107,21 +93,19 @@ function showStrategy(){
 		}
 	}
 	
-	$strategy.append(p("————————饰品 (高收集戴满"+typeList.length+"件, 低收集戴9件)————————", "divide"));
+	$strategy.append(p("————————饰品 (高收集佩戴满，低收集佩戴9件)————————", "divide"));
 		
-	for (var t in typeList){
-		var accList = [];
-		for (var i = 0; i < resultList.length; i++){
-			if (resultList[i] && resultList[i].type.type == typeList[t]){
-				accList.push(resultList[i]);
-			}
+	for (var c in category){
+		var name = category[c];
+		if(name.indexOf("饰品")<0)
+			continue;
+		if (result[name]) {
+			var categoryContent = $("<p/>");
+			categoryContent.append(pspan(name+" : ", "clothes_category"));
+			categoryContent.append(getstrClothes_mod(result[name],rescnt));
+			if (isGrey(name,result)) categoryContent.addClass("stgy_grey");
+			$strategy.append(categoryContent);
 		}
-		var categoryContent = $("<p/>");
-		categoryContent.append(pspan(typeList[t]+" : ", "clothes_category"));
-		categoryContent.append(getstrClothes_mod(accList,rescnt));
-		if (isGrey(typeList[t],result)) categoryContent.addClass("stgy_grey");
-		$strategy.append(categoryContent);
-		//$strategy.append(p(getstrClothes(accList), "clothes", typeList[t], "clothes_category"));
 	}
 
 	$author_sign = $("<div/>").addClass("stgy_author_sign_div");
@@ -296,7 +280,7 @@ function strat_sortlist(filters,rescnt){
 }
 
 function actScore(obj){
-	return (obj.type.mainType=='饰品') ? Math.round(accSumScore(obj,accCateNum)) : obj.sumScore;
+	return (obj.type.mainType=='饰品') ? ( uiFilter["acc9"] ? Math.round(accSumScore(obj,9)) : Math.round(accSumScore(obj,accCateNum))) : obj.sumScore;
 }
 
 function isGrey(c,result){
