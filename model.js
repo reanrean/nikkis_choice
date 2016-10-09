@@ -43,6 +43,7 @@ Clothes = function(csv) {
     set: csv[16],
     version: csv[17],
     deps: [],
+    exDep: '',
     toCsv: function() {
       name = this.name;
       type = this.type;
@@ -80,7 +81,7 @@ Clothes = function(csv) {
 		  if(depinfo.sourceType != "染"){
 			depNumAll = parentDepNum * depinfo.depNum - parentDepNum;
 		  }
-		  else{			  
+		  else{
 			 depNumAll = parentDepNum;
 		  }
           ret += indent + '[' + depinfo.sourceType + '][' + c.type.mainType + ']'
@@ -93,6 +94,9 @@ Clothes = function(csv) {
 		var depNumAlls = 0;
 		if(splits.length > 1)
 			depNumAlls = eval(splits.join("+"));
+		if (this.exDep) {
+			ret = indent + "[织梦]" + this.exDep + "\n" + ret;
+		}
 		if(indent == '   ' && ret != '')
 			ret = "[材料]" + this.name + (' - 总计需 '+ (depNumAlls+1) + ' 件') + "\n" + ret;
       return ret;
@@ -493,6 +497,14 @@ function calcDependencies() {
     var source = clothesSet[pattern[i][2]][pattern[i][3]];
     if (!target) continue;
     source.addDep(pattern[i][5], pattern[i][4], target);
+  }
+  if (pattern_extra){
+	for (var i in pattern_extra){
+		var source = clothesSet[pattern_extra[i][0]][pattern_extra[i][1]];
+		var target = pattern_extra[i][2];
+		if (!source) continue;
+		source.exDep += (source.exDep.length>0 ? ',' : '') + target;
+	}
   }
 }
 
