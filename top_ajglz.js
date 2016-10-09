@@ -160,7 +160,23 @@ function searchById(txt,mode){
 	}
 }
 
-function calctop(){
+function calcall(){ // calc all categories
+	var date1=new Date();
+	if (isNaN(parseInt($("#showCnt").val())) || $("#showCnt").val()<1) $("#showCnt").val(1);
+	$("#showCnt").val(parseInt($("#showCnt").val()));
+	if (isNaN(parseInt($("#maxHide").val())) || $("#maxHide").val()<1) $("#maxHide").val(1);
+	$("#maxHide").val(parseInt($("#maxHide").val()));
+	
+	storeTopByCate(category);
+	storeTop_Normal = cloneKey(storeTop);
+	limitMode=1;
+	storeTopByCate(category);
+	storeTop_Limit = cloneKey(storeTop);
+	var date2=new Date();
+	$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;');
+}
+
+function calctop(calcopts){
 	var date1=new Date();
 	if (isNaN(parseInt($("#showCnt").val())) || $("#showCnt").val()<1) $("#showCnt").val(1);
 	$("#showCnt").val(parseInt($("#showCnt").val()));
@@ -183,7 +199,8 @@ function calctop(){
 				var indexes='本页内容：';
 				var topsearch_info_all='';
 				limitMode=0;
-				storeTopByCate_all();
+				if (calcopts && calcopts == 'all') storeTop = cloneKey(storeTop_Normal); //mod; generate content without recalc
+				else storeTopByCate_all();
 				var topsearch_info_n=[];
 				for(var l=0;l<cartNum;l++){
 					var listname=($('#cartName'+(l+1)).val() ? $('#cartName'+(l+1)).val() : $('#cartName'+(l+1)).attr('placeholder'));
@@ -193,7 +210,8 @@ function calctop(){
 					indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
 				}
 				limitMode=1;
-				storeTopByCate_all();
+				if (calcopts && calcopts == 'all') storeTop = cloneKey(storeTop_Limit); //mod; generate content without recalc
+				else storeTopByCate_all();
 				for(var l=0;l<cartNum;l++){
 					topsearch_info_all+=topsearch_info_n[l];
 					topsearch_info_all+='<span class="limit">'+calctop_byall(l).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>';
@@ -389,6 +407,7 @@ function isBasicSet(id){
 }
 
 function clear_textarea(){
+	$('#ajglz_filename').val('');
 	$('#ajglz_out').val('');
 }
 
@@ -490,6 +509,16 @@ function nobr(text){
 	return '<em>'+text+'</em>';
 }
 
+function cloneKey(obj){
+	if (obj instanceof Array) {
+		var o = [];
+		for (var i in obj){
+			o[i] = cloneKey(obj[i]);
+		}
+		return o;
+	}else return obj;
+}
+
 //*******************************************search module*******************************************//
 
 function init_searchModule(){
@@ -547,4 +576,5 @@ function genModule(){
 			}
 		}
 	}
+	if(modules_top_filename[modes]) $('#ajglz_filename').val(modules_top_filename[modes]);
 }
