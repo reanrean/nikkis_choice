@@ -20,6 +20,8 @@ function init_passcode(){
 
 var cartNum=0;
 var currentCart=0;
+var storeTop_Normal=[];
+var storeTop_Limit=[];
 
 function verify(){
 	var pass='6394210ce21ac27fb5de7645824dff9be9ba0690';
@@ -199,7 +201,14 @@ function calctop(calcopts){
 				var indexes='本页内容：';
 				var topsearch_info_all='';
 				limitMode=0;
-				if (calcopts && calcopts == 'all') storeTop = cloneKey(storeTop_Normal); //mod; generate content without recalc
+				if (calcopts && calcopts == 'all') { //mod; generate content without recalc
+					if (storeTop_Normal.length>0) storeTop = cloneKey(storeTop_Normal);
+					else {
+						$('#ajglz_out').val('');
+						$('#topsearch_note').html('请先全部计算_(:з」∠)_');
+						return;
+					}
+				}
 				else storeTopByCate_all();
 				var topsearch_info_n=[];
 				for(var l=0;l<cartNum;l++){
@@ -210,7 +219,14 @@ function calctop(calcopts){
 					indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
 				}
 				limitMode=1;
-				if (calcopts && calcopts == 'all') storeTop = cloneKey(storeTop_Limit); //mod; generate content without recalc
+				if (calcopts && calcopts == 'all') { //mod; generate content without recalc
+					if (storeTop_Limit.length>0) storeTop = cloneKey(storeTop_Limit);
+					else {
+						$('#ajglz_out').val('');
+						$('#topsearch_note').html('请先全部计算_(:з」∠)_');
+						return;
+					}
+				}
 				else storeTopByCate_all();
 				for(var l=0;l<cartNum;l++){
 					topsearch_info_all+=topsearch_info_n[l];
@@ -404,6 +420,12 @@ function isBasicSet(id){
 		if(clothes[targ[i]].set) return 1;
 	}
 	return 0;
+}
+
+function download_top(){
+	var file_content=$('#ajglz_out').val();
+	var file_name=$('#ajglz_filename').val();
+	download(file_content, file_name, 'text/plain');
 }
 
 function clear_textarea(){
