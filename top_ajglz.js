@@ -490,7 +490,8 @@ function header(){
  var h='<!DOCTYPE html>';
 	h+='<head>';
 	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
-	h+='<meta http-equiv="Content-Type" content="text/html"; charset=utf-8" />';
+	//h+='<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+	h+='<meta charset="UTF-8" />';
 	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://aojiaogongluezu.github.io/nikkiup2u3/':'../../')+'css/style.css" />';
 	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/':'')+'dp-style.css" />';
 	h+='<script type="text/javascript" src="'+(appurl?'http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/':'')+'dp.js"></script>';

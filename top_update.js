@@ -420,7 +420,8 @@ function header(){
  var h='<!DOCTYPE html>\n';
 	h+='<head>\n';
 	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>\n';
-	h+='<meta http-equiv="Content-Type" content="text/html"; charset=utf-8" />\n';
+	//h+='<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />\n';
+	h+='<meta charset="UTF-8" />\n';
 	h+='<link rel="stylesheet" type="text/css" href="../../css/style.css" />\n';
 	h+='<link rel="stylesheet" type="text/css" href="dp-style.css" />\n';
 	h+='<script type="text/javascript" src="dp.js"></script>\n';
