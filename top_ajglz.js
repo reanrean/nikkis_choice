@@ -202,7 +202,7 @@ function calctop(calcopts){
 				var topsearch_info_all='';
 				limitMode=0;
 				if (calcopts && calcopts == 'all') { //mod; generate content without recalc
-					if (storeTop_Normal.length>0) storeTop = cloneKey(storeTop_Normal);
+					if (getLength(storeTop_Normal)>0) storeTop = cloneKey(storeTop_Normal);
 					else {
 						$('#ajglz_out').val('');
 						$('#topsearch_note').html('请先全部计算_(:з」∠)_');
@@ -220,7 +220,7 @@ function calctop(calcopts){
 				}
 				limitMode=1;
 				if (calcopts && calcopts == 'all') { //mod; generate content without recalc
-					if (storeTop_Limit.length>0) storeTop = cloneKey(storeTop_Limit);
+					if (getLength(storeTop_Limit)>0) storeTop = cloneKey(storeTop_Limit);
 					else {
 						$('#ajglz_out').val('');
 						$('#topsearch_note').html('请先全部计算_(:з」∠)_');
@@ -540,6 +540,12 @@ function cloneKey(obj){
 		}
 		return o;
 	}else return obj;
+}
+
+function getLength(obj){
+	var l=0;
+	for (var i in obj) {if (obj[i]) l++;}
+	return l;
 }
 
 //*******************************************search module*******************************************//
