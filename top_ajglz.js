@@ -101,6 +101,8 @@ function searchById(txt,mode){
 			for (var i in clothes){
 				if (searchById=='*'){
 					currentList.push(i);
+				}else if(searchById.indexOf('!')==0){
+					if(clothes[i].source==searchById.substr(1)) currentList.push(i);
 				}else if(searchById.indexOf('*')>-1){
 					var searchArr=searchById.split('*');
 					for (m=0;m<searchArr.length;m++){
@@ -138,11 +140,13 @@ function searchById(txt,mode){
 			for (var i in clothes){
 				if (searchById=='*'){
 					currentList.push(i);
+				}else if(searchById.indexOf('!')==0){
+					if(clothes[i].name==searchById.substr(1)) currentList.push(i);
 				}else if(searchById.indexOf('*')>-1){
 					var searchArr=searchById.split('*');
 					for (m=0;m<searchArr.length;m++){
-						if(searchArr[m].indexOf('!')==0) {if(clothes[i].name!=searchArr[m].substr(1)) break; }
-						else if(searchArr[m]!=''&&clothes[i].name.indexOf(searchArr[m])<0&&clothes[i].type.type.indexOf(searchArr[m])<0) {break;}
+						//if(searchArr[m].indexOf('!')==0) {if(clothes[i].name!=searchArr[m].substr(1)) break; } else 
+						if(searchArr[m]!=''&&clothes[i].name.indexOf(searchArr[m])<0&&clothes[i].type.type.indexOf(searchArr[m])<0) {break;}
 						if (m==searchArr.length-1) currentList.push(i);
 					}
 				}else if(clothes[i].name.indexOf(searchById)>-1||clothes[i].type.type.indexOf(searchById)>-1){
