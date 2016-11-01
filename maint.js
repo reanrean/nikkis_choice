@@ -22,12 +22,13 @@ function show(){
 }
 
 function go(){
-	var menu='<table width=100% style="table-layout: fixed">';
-	var line=td(ahref('<b>Compare</b>','go_comp()'));
-		line+=td(ahref('<b>Pattern</b>','go_comp_pattern()'));
-		line+=td(ahref('<b>Add</b>','go_add()'));
-		line+=td(ahref('<b>CheckSource</b>','go_src()'));
-		line+=td('<a href="hs-rean.html" target="_blank"><b>LevelWeight</b></a>');
+	var menu='<table width=100% style="table-layout: fixed; font-weight:bold;">';
+	var line=td(ahref('Clothes','go_comp()'));
+		line+=td(ahref('Pattern','go_comp_pattern()'));
+		line+=td(ahref('Add','go_add()'));
+		line+=td(ahref('Data','go_static()'));
+		line+=td(ahref('Source','go_src()'));
+		line+=td('<a href="hs-rean.html" target="_blank">HSLevel</a>');
 	menu+=tr(line);
 	$("#menu").html(menu);
 	$("#info").html('');
@@ -252,6 +253,173 @@ function arrowKey() {
 	});
 }
 
+function go_static(){
+	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop'];
+	var info = '<form id="static" action="">';
+	for (var i in radio){
+		info += '<label><input type="radio" name="radio_static" id="static_'+radio[i]+'" value="'+radio[i]+'" '+(i==0?'checked':'')+'>'+radio[i]+'</label><label>';
+	}
+	info += '</form><br>';
+	info += '<textarea id="static_input" rows="10" style="width:100%"></textarea><br>';
+	info += button('↓↓↓↓↓','static_generate()')+'<br>';
+	info += '<textarea id="static_output" rows="10" style="width:100%"></textarea><br>';
+	
+	$("#info").html(info);
+	$("#extra").html('');
+}
+
+function static_generate(){
+	var staticMode = $("#static input[type=radio]:checked").val();
+	var static_input = $("#static_input").val();
+	if(static_input) {
+		var contents = contentOf(static_input)[0];
+		var contentsName = contentOf(static_input)[1];
+		var out = '';
+		for (var i in contents){
+			switch(staticMode){
+				case 'merge' :
+					var tar = convert_uid(contentBy(contents[i],'id')[0]);
+					var src_arr = contentBy(contents[i],'cloth');
+					var num_arr = contentBy(contents[i],'num');
+					for (var j in src_arr){
+						var src = convert_uid(src_arr[j]);
+						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num_arr[j]+"','设'],\n";
+					}
+					break;
+				case 'evolve':
+					var tar = convert_uid(contentBy(contents[i],'id')[0]);
+					var src = convert_uid(contentBy(contents[i],'src')[0]);
+					var num = contentBy(contents[i],'num')[0];
+					if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num+"','进'],\n";
+					break;
+				case 'cvtSeries':
+					var src = convert_uid(contentBy(contents[i],'')[0]);
+					var tar_arr = contentBy(contents[i],'');
+					tar_arr = tar_arr.slice(1);
+					for (var j in tar_arr){
+						var tar = convert_uid(tar_arr[j]);
+						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','1','染'],\n";
+					}
+					break;
+				case 'convert':
+					var tar = convert_uid(contentBy(contents[i],'id')[0]);
+					var dye = convert_dye(contentBy(contents[i],'item')[0]);
+					var num = contentBy(contents[i],'num')[0];
+					if (tar.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+dye[0]+"','"+dye[1]+"','"+num+"'],\n";
+					break;
+				case 'shop':
+					var tar = convert_uid(contentBy(contents[i],'id')[0]);
+					var price = contentBy(contents[i],'price')[0];
+					var price_type = contentBy(contents[i],'price_type')[0];
+					var currency = (price_type==0 ? '金币' : '钻石');
+					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'"+currency+"'],\n";
+					break;
+				case 'arena':
+					var tar = convert_uid(contentsName[i]);
+					var price = contentBy(contents[i],'price')[0];
+					var noDisplay = contentBy(contents[i],'no_display');
+					var haveDiscount = contentBy(contents[i],'is_activity_goods')[0];
+					if (tar.name&&!noDisplay) out += "  ['"+tar.mainType+"','"+tar.id+"',"+price+","+haveDiscount+",],\n";
+					break;
+				case 'refactor':
+					var tar = convert_uid(contentBy(contents[i],'id')[0]);
+					var src_arr = contentBy(contents[i],'cloth');
+					var num_arr = contentBy(contents[i],'num');
+					for (var j in src_arr){
+						var src = convert_uid(src_arr[j]);
+						if (tar.name&&src.name) out += "['"+tar.mainType+"','"+tar.id+"','"+src.name+"',"+num_arr[j]+"],\n";
+					}
+					break;
+					
+			}
+		}
+		$("#static_output").val(out);
+	}
+}
+
+function contentOf(txt){
+	var ind=0; var ind2=0;
+	var ret=[]; var ret_cont=''; var ret_name=''; var name=[];
+	for (var i=0; i<txt.length; i++){
+		var c = txt.substr(i,1);
+		if (c=='{') ind++;
+		else if (c=='}') {
+			ind--;
+			if (ind==0) {ret.push(ret_cont.substr(1)); ret_cont=''; name.push(ret_name); ret_name='';}
+		}
+		if (ind>0) ret_cont += c;
+		else if (c.match(/^[0-9a-z]$/)) ret_name += c;
+	}
+	return [ret,name];
+}
+
+function contentBy(txt,varname){
+	txt=txt.replace(/[^0-9a-z\,_{}=]/gi,'');
+	varname = varname+'=';
+	if (txt.indexOf(varname)<0) return false;
+	var txt_sp = txt.split(varname);
+	var ret = [];
+	for (var i=1; i<txt_sp.length; i++) ret.push(txt_sp[i].split(',')[0]);
+	return ret;
+}
+
+function convert_uid(uid){
+	var mainId = uid.substr(0,1);
+	var id = (uid.substr(1,1)==0 ? uid.substr(2,3) : uid.substr(1,4));
+	var mainType = convert_type(mainId);
+	return {
+		uid: uid,
+		mainType: mainType,
+		id: id,
+		name: clothesSet[mainType][id],
+	}
+}
+
+var clothesSet = function() {
+  var ret = {};
+  for (var i in wardrobe) {
+    var t = wardrobe[i][1].split('-')[0];
+    if (!ret[t]) {
+      ret[t] = {};
+    }
+    ret[t][wardrobe[i][2]] = wardrobe[i][0];
+  }
+  return ret;
+}();
+
+function convert_type(tid){
+	switch(tid){
+		case '1' : return '发型';
+		case '2' : return '连衣裙';
+		case '3' : return '外套';
+		case '4' : return '上装';
+		case '5' : return '下装';
+		case '6' : return '袜子';
+		case '7' : return '鞋子';
+		case '8' : return '饰品';
+		case '9' : return '妆容';
+	}
+}
+
+function convert_dye(tid){
+	switch(tid){
+		case '2001' : return ['石榴红','8'];
+		case '2002' : return ['青柠黄','8'];
+		case '2003' : return ['阳光橙','8'];
+		case '2004' : return ['灵动绿','8'];
+		case '2005' : return ['天真蓝','8'];
+		case '2006' : return ['典雅紫','8'];
+		case '2007' : return ['梦幻粉','8'];
+		case '2008' : return ['珍珠白','8'];
+		case '2009' : return ['星尘黑','8'];
+		case '2010' : return ['其他染料','12'];
+		case '3001' : return ['水玉点点','20'];
+		case '3002' : return ['经典网格','20'];
+		case '3003' : return ['清新条纹','20'];
+		case '3004' : return ['高级花纹','20'];
+	}
+}
+
 $(document).ready(function () {
 	$('#passcode').keydown(function(e) {
 		if (e.keyCode==13) {
@@ -270,7 +438,7 @@ function tr(text,attr){
 }
 
 function button(text,onclick){
-	return '<button onclick="'+onclick+'">'+text+'</button>'
+	return '<button onclick="'+onclick+';return false;">'+text+'</button>'
 }
 
 function ahref(text,onclick,cls){
