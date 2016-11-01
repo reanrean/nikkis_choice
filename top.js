@@ -1376,7 +1376,7 @@ function getMerc(id){
 		}
 	}
 	for (var m in construct){
-		if(clothesSet[construct[mm][0]][construct[mm][1]]==clothes[id]){
+		if(clothesSet[construct[m][0]][construct[m][1]]==clothes[id]){
 			var constructMaterial=[];
 			for (var i in constructMaterialName) {
 				for (var mm in construct){
