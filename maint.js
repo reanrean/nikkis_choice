@@ -7,6 +7,7 @@ var rows=0;
 var field_desc=['名字','分类','编号','心级',
 	'华丽','简约','优雅','活泼','成熟','可爱','性感','清纯','清凉','保暖',
 	'tag','来源','套装','版本'];
+var skip_comp=['来源'];
 
 function show(){
 	var pass='6394210ce21ac27fb5de7645824dff9be9ba0690';
@@ -36,6 +37,15 @@ function go(){
 }
 
 function go_comp(){
+	//start - special handling for seal100x wardrobe
+	if(wardrobe_s){
+		for(var i in wardrobe_s){
+			var setInd = wardrobe_s[i][16];
+			if(jQuery.inArray(setInd.substr(setInd.length-2,setInd.length), ['·套','·基','·染']) >=0) wardrobe_s[i][16]='';
+		}
+	}
+	//end - special handling for seal100x wardrobe
+	
 	var cnt=[];
 	for (var j in wname){
 		cnt[j]=0;
@@ -54,15 +64,19 @@ function go_comp(){
 	for (var i in wname){
 		str[i]=[];
 	}
-	var skip_pos=jQuery.inArray('来源', field_desc);
+	var skip_pos=[];
+	if(skip_comp){
+		for (var i in skip_comp) skip_pos.push(jQuery.inArray(skip_comp[i], field_desc));
+	}
+	//var skip_pos=jQuery.inArray('来源', field_desc);
 	for(var i=0;i<max;i++){//assign values into str[] from wardrobe
 		for (var j in wname){
 			if(wname[j][i]){
 				str[j][i]=wname[j][i][0];
 				for (var p=1;p<field_desc.length;p++){
-					if(p==skip_pos){continue;}
-					if(p==1&&wname[j][i][p]=='上衣') {str[j][i]+='/上装';}
-					else {str[j][i]+='/'+wname[j][i][p];}
+					if(jQuery.inArray(p, skip_pos)>=0) continue;
+					if(p==1&&wname[j][i][p]=='上衣') str[j][i]+='/上装';
+					else str[j][i]+='/'+wname[j][i][p];
 				}
 			}else{
 				str[j][i]='';
@@ -74,7 +88,7 @@ function go_comp(){
 	out+=tr(td('<hr>'));
 	for(var j=0;j<wname.length;j++){
 		for(var i=j+1;i<wname.length;i++){//compare [j] with [i]
-			if(j==i){continue;}
+			if(j==i)  continue;
 			out+=tr(td("Extra records in "+wowner[j]+"'s wardrobe VS "+wowner[i]+"'s:"));
 			out+=tr(td(compare(str[j],str[i],'<br/>')));
 			out+=tr(td('<hr>'));
@@ -254,7 +268,7 @@ function arrowKey() {
 }
 
 function go_static(){
-	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop'];
+	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild'];
 	var info = '<form id="static" action="">';
 	for (var i in radio){
 		info += '<label><input type="radio" name="radio_static" id="static_'+radio[i]+'" value="'+radio[i]+'" '+(i==0?'checked':'')+'>'+radio[i]+'</label><label>';
@@ -311,7 +325,7 @@ function static_generate(){
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
 					var price = contentBy(contents[i],'price')[0];
 					var price_type = contentBy(contents[i],'price_type')[0];
-					var currency = (price_type==0 ? '金币' : '钻石');
+					var currency = convert_priceType(price_type);
 					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'"+currency+"'],\n";
 					break;
 				case 'arena':
@@ -330,7 +344,11 @@ function static_generate(){
 						if (tar.name&&src.name) out += "['"+tar.mainType+"','"+tar.id+"','"+src.name+"',"+num_arr[j]+"],\n";
 					}
 					break;
-					
+				case 'guild':
+					var tar = convert_uid(contentsName[i]);
+					var price = contentBy(contents[i],'price')[0];
+					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'联盟币'],\n";
+					break;
 			}
 		}
 		$("#static_output").val(out);
@@ -364,6 +382,8 @@ function contentBy(txt,varname){
 }
 
 function convert_uid(uid){
+	if (uid=='81327') uid='31327';
+	
 	var mainId = uid.substr(0,1);
 	var id = (uid.substr(1,1)==0 ? uid.substr(2,3) : uid.substr(1,4));
 	var mainType = convert_type(mainId);
@@ -417,6 +437,20 @@ function convert_dye(tid){
 		case '3002' : return ['经典网格','20'];
 		case '3003' : return ['清新条纹','20'];
 		case '3004' : return ['高级花纹','20'];
+	}
+}
+
+function convert_priceType(tid){
+	switch(tid){
+		case '0' : return '金币';
+		case '1' : return '钻石';
+		case '3' : return '水晶鞋';
+		case '6' : return '蔷薇';
+		case '5' : return '翡翠';
+		case '9' : return '沙漏';
+		case '17' : return '惊雀铃';
+		case '28' : return '琉璃';
+		default : return '?';
 	}
 }
 
