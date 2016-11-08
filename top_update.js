@@ -330,16 +330,12 @@ function outputByCate(total){
 			for(var j in total[i][2]){
 				var cate=total[i][2][j][0];
 				var diff_score=total[i][2][j][1]; 
-				if(cate=='上下装') {
-					var new_res='';
+				var new_res=total[i][2][j][2][0][0].name;
+				if(cate.indexOf('+')>0){
 					for(var k in total[i][2][j][2]){
-						if(total[i][2][j][2][k][0].type.type=='上装') {new_res+=total[i][2][j][2][k][0].name;break;}
+						if(k>0&&total[i][2][j][2][k][0].type.type!=total[i][2][j][2][k-1][0].type.type) {new_res+='<br>'+total[i][2][j][2][k][0].name;break;}
 					}
-					new_res+='<br>';
-					for(var k in total[i][2][j][2]){
-						if(total[i][2][j][2][k][0].type.type=='下装') {new_res+=total[i][2][j][2][k][0].name;break;}
-					}
-				}else {var new_res=total[i][2][j][2][0][0].name;}
+				}
 				var tooltip='';
 				for (var k in total[i][2][j][2]){
 					tooltip+=total[i][2][j][2][k][1]+total[i][2][j][2][k][0].name+'\\n';

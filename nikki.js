@@ -44,6 +44,9 @@ function onChangeCriteria() {
 		if (!weight) {
 			weight = 1;
 		}
+		if (uiFilter["balance"]) {
+			criteria.balance = true;
+		}
 		if (uiFilter["highscore"]) {
 			var highscore2 = $('#' + f + "1d778.active").length ? 1.778 : 1;
 			var highscore1 = $('#' + f + "1d27.active").length ? 1.27 : 1;
