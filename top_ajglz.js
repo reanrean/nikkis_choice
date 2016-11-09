@@ -240,7 +240,10 @@ function calctop(calcopts){
 				if ($('#hideNores').is(":checked")) indexes+='<br>注：本页只显示顶配/高配部件。'
 				$('#ajglz_out').val(header()+indexes+middle()+topsearch_info_all+footer());
 				var date2=new Date();
-				$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
+				$('#topsearch_note').html('计算完成：'+ ($('#ajglz_title').val() ? $('#ajglz_title').val() : $('#ajglz_title').attr('placeholder')) +'，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
+				if (calcopts && calcopts == 'all') { //mod; generate content without recalc
+					$('#cartContent').hide();
+				}
 			}
 		}
 }
@@ -610,4 +613,5 @@ function genModule(){
 		}
 	}
 	if(modules_top_filename[modes]) $('#ajglz_filename').val(modules_top_filename[modes]);
+	$('#cartContent').show();
 }
