@@ -24,7 +24,7 @@
 			var skip_new=(window.location.href.toUpperCase().indexOf('?OLD')>0) ? 1 : 0 ;
 			for (var i in wardrobe_orig) {
 				var tmp=wardrobe[i];
-				if(skip_new) {if($.inArray(tmp[17],lastVersion)>=0) {continue;};}
+				if(skip_new) {if(tmp[17]==lastVersion) continue;}
 				ret.push(tmp);
 			}
 			return ret;

@@ -3,11 +3,7 @@ $(document).ready(function () {
 });
 
 function init_top_update(){
-	var ver='';
-	for(var v in lastVersion){
-		ver+=lastVersion[v];
-	}
-	$('#textBox').html(ver);
+	$('#textBox').html(lastVersion);
 	$('#staffModeOn').hide();
 	init_passcode();
 	$('#showCnt').val(3);
@@ -27,11 +23,7 @@ var dp=10;
 var lastVersion_id=function() {
 	var ret = [];
 	for (var i in clothes) {
-		for (var v in lastVersion){
-			if(clothes[i].version==lastVersion[v]){
-				ret.push(i);
-			}
-		}
+		if(clothes[i].version==lastVersion) ret.push(i);
 	}
 	return ret;
 }();

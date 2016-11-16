@@ -42,7 +42,7 @@ function row(piece, isShoppingCart) {
 	if (isShoppingCart) $lineTop.append(td(piece.id?shoppingCart.contains(piece):'', 'cnt'));
 	$lineTop.append(td(piece.sumScore, 'score'));
 	if (isShoppingCart) {
-		$lineTop.append(td(piece.name, ($.inArray(piece.version,lastVersion)>=0? 'new' : '' )));
+		$lineTop.append(td(piece.name, (piece.version==lastVersion? 'new' : '' )));
 	} else {
 		$lineTop.append(clothesNameTd(piece));
 	}
