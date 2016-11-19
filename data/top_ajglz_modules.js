@@ -389,6 +389,7 @@ var modules_top_filename={
 '活动·夏沫海歌':'HD-XiaMoHaiGe.html',
 '往期活动':'HD-WangQiHuoDong.html',
 '往期活动(节日)':'HD-WangQiHuoDong_JieRi.html',
+'往期活动(登录)':'HD-WangQiHuoDong_DengLu.html',
 '往期充值套':'HD-WangQiChongZhi.html',
 '仙履屋':'DH-XianLvWu.html',
 '联盟小铺':'DH-LianMengXiaoPu.html',
