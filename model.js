@@ -109,11 +109,22 @@ Clothes = function(csv) {
       var isf = 1 ;
       if(Flist && Flist[filters.levelName]){
         if (Flist[filters.levelName][this.name]){
-          if ($.inArray(this.type.type, Flist[filters.levelName]["type"])<0){
-            isf = 0.1;
+          if (Flist[filters.levelName][this.name] == "F"){
+            isf = 0.1; //in blacklist
           }
         }else if($.inArray(this.type.type, Flist[filters.levelName]["type"])>-1){
-            isf = 0.1;
+            //not in whitelist, check whether in tag list
+            if(!Flist[filters.levelName]["tag"]) isf = 0.1; 
+            else if(!this.tags) isf = 0.1; 
+            else{
+              var isf_tag=0;
+              for(var t in this.tags){
+                if($.inArray(this.tags[t], Flist[filters.levelName]["tag"])>-1){
+                  isf_tag=1; break;
+                }
+              }
+              if(!isf_tag) isf = 0.1; 
+          } 
         }
       }
       var s = 0;
@@ -586,71 +597,3 @@ function save(){
   }
   return myClothes;
 }
-
-function numtoclo(numb){
-	if (numb.toString().length!=5) return;
-	var mainType=''; var id='';
-	switch(numb.toString().substr(0,1)){
-		case '1': mainType='发型'; break;
-		case '2': mainType='连衣裙'; break;
-		case '3': mainType='外套'; break;
-		case '4': mainType='上装'; break;
-		case '5': mainType='下装'; break;
-		case '6': mainType='袜子'; break;
-		case '7': mainType='鞋子'; break;
-		case '8': mainType='饰品'; break;
-		case '9': mainType='妆容'; break;
-	}
-	switch(numb.toString().substr(1,1)){
-		case '0': id=numb.toString().substr(2,3); break;
-		default: id=numb.toString().substr(1,4); break;
-	}
-	return clothesSet[mainType][id];
-}
-
-var Flist=function() {
-	if (!FlistManual) return Flist;
-	var ret = {};
-	if(flistExtra) for (var theme in flistExtra){
-		ret[theme]=flistExtra[theme];
-	}
-	if(flistWhite) for (var theme in flistWhite){
-		var retTheme={}; var retType=[];
-		for (var i in flistWhite[theme]){
-			var cloTarget=numtoclo(flistWhite[theme][i]);
-			if (!cloTarget) continue;
-			var cloName=cloTarget.name;
-			retTheme[cloName]='A';
-			if ($.inArray(cloTarget.type.type, retType)<0) retType.push(cloTarget.type.type);
-		}
-		if ($.inArray("连衣裙", retType)>=0 || $.inArray("上装", retType)>=0 || $.inArray("下装", retType)>=0) {
-			if ($.inArray("连衣裙", retType)<0) retType.push("连衣裙");
-			if ($.inArray("上装", retType)<0) retType.push("上装");
-			if ($.inArray("下装", retType)<0) retType.push("下装");
-		}
-		retTheme["type"]=retType;
-		ret[theme]=retTheme;
-	}
-	if(flistBlack) for (var theme in flistBlack){
-		if (flistWhite[theme]) {
-			for (var i in flistBlack[theme]){
-				var cloTarget=numtoclo(flistBlack[theme][i]);
-				if (!cloTarget) continue;
-				if ($.inArray(cloTarget.type.type, ret[theme]["type"])<0){
-					var cloName=cloTarget.name;
-					ret[theme][cloName]='F';
-				}
-			}
-		}else{
-			var retTheme={};
-			for (var i in flistBlack[theme]){
-				var cloTarget=numtoclo(flistBlack[theme][i]);
-				if (!cloTarget) continue;
-				var cloName=cloTarget.name;
-				retTheme[cloName]='F';
-			}
-			ret[theme]=retTheme;
-		}
-	}
-	return ret;
-}();
