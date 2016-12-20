@@ -506,6 +506,7 @@ function header(){
 	h+='<body>';
 	h+='<div class="myframe">';
 	h+='<p class="title1">';
+	h+='顶配分析-';
 	h+=$('#ajglz_title').val() ? $('#ajglz_title').val() : $('#ajglz_title').attr('placeholder');
 	h+='</p>';
 	h+='<hr class="mhr"/>';
@@ -596,7 +597,7 @@ function genModule(){
 		if (modules_top[m][0]==modes) title.push(modules_top[m][1]);
 	}
 	title=getDistinct(title);
-	if(title.length>0) $('#ajglz_title').val('顶配分析-'+modes);
+	if(title.length>0) $('#ajglz_title').val(modes);
 	for (var t in title){
 		if(t>0) addCartNum();
 		for (var m in modules_top){
