@@ -349,7 +349,7 @@ function static_generate(){
 					var price = contentBy(contents[i],'price')[0];
 					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'联盟币'],\n";
 					break;
-				case 'designer';
+				case 'designer':
 					out += 'to be developed...';
 					break;
 			}
