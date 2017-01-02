@@ -350,7 +350,7 @@ function static_generate(){
 					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'联盟币'],\n";
 					break;
 				case 'designer';
-					out += to be developed...
+					out += 'to be developed...';
 					break;
 			}
 		}
