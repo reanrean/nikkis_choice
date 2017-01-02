@@ -268,7 +268,7 @@ function arrowKey() {
 }
 
 function go_static(){
-	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild'];
+	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','designer'];
 	var info = '<form id="static" action="">';
 	for (var i in radio){
 		info += '<label><input type="radio" name="radio_static" id="static_'+radio[i]+'" value="'+radio[i]+'" '+(i==0?'checked':'')+'>'+radio[i]+'</label><label>';
@@ -348,6 +348,9 @@ function static_generate(){
 					var tar = convert_uid(contentsName[i]);
 					var price = contentBy(contents[i],'price')[0];
 					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'联盟币'],\n";
+					break;
+				case 'designer';
+					out += to be developed...
 					break;
 			}
 		}
