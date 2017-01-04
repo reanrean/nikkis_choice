@@ -827,14 +827,23 @@ function calctop_byall(){
 	$('#topsearch_info').html(out);
 }
 
-function retTopTd(arr,crit,id,cartNumIfMult){
+function retTopTd(arr,crit,id,cartNumIfMult,manualF){
 	var ret='';
 	var cnt=0;
 	if (!cartNumIfMult) cartNumIfMult=0;
+	if (!manualF) manualF='';
+	var fid=clotonum(id);
+	//alert(fid);
 	
 	if(arr==inTop){
 		for (var s in inTop){
 			if(inTop[s][0].indexOf(crit)==0) {
+				//check with manualF
+				var manualF_curr=getTextContent(manualF,inTop[s][0]); console.log(inTop[s][0] + ':' + manualF_curr);
+				if (jQuery.inArray(fid, manualF_curr.split(','))>=0){
+					if ($('#manual_flist_result')) $('#manual_flist_result').append(clothes[id].name+':'+inTop[s][0]+'<br>');
+					continue;
+				}
 				if (crit=='竞技场') ret+=(cnt>0?', ':'')+addTooltip(nobr(inTop[s][0].substr(inTop[s][0].indexOf(': ')+2,2)+(inTop[s][1]?'':'(并列)')),inTop[s][2]);
 				else ret+=(cnt>0?', ':'')+addTooltip(nobr(inTop[s][0].substr(inTop[s][0].indexOf(': ')+2)+(inTop[s][1]?'':'(并列)')),inTop[s][2]);
 				cnt++;
@@ -854,6 +863,12 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 	}else{
 		for (var s in inSec){
 			if(inSec[s][0].indexOf(crit)==0) {
+				//check with manualF
+				var manualF_curr=getTextContent(manualF,inSec[s][0]); console.log(inSec[s][0] + ':' + manualF_curr);
+				if (jQuery.inArray(fid, manualF_curr.split(','))>=0){
+					if ($('#manual_flist_result')) $('#manual_flist_result').append(clothes[id].name+' '+inSec[s][0]+' F<br>');
+					continue;
+				}
 				if (crit=='竞技场') ret+=(cnt>0?', ':'')+addTooltip(nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2)+'(第'+inSec[s][1]+')'),inSec[s][2]);
 				else ret+=(cnt>0?', ':'')+addTooltip(nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2)+'(第'+inSec[s][1]+')'),inSec[s][2]);
 				cnt++;
@@ -1586,4 +1601,31 @@ function setFilters(level) {
 			bonusToTag(parseInt(i) + 1, level.bonus[i]);
 		}
 	}
+}
+
+function clotonum(i){
+	var mainType='';
+	switch(clothes[i].type.mainType){
+		case '发型': mainType='1'; break;
+		case '连衣裙': mainType='2'; break;
+		case '外套': mainType='3'; break;
+		case '上装': mainType='4'; break;
+		case '下装': mainType='5'; break;
+		case '袜子': mainType='6'; break;
+		case '鞋子': mainType='7'; break;
+		case '饰品': mainType='8'; break;
+		case '妆容': mainType='9'; break;
+		case '萤光之灵': mainType='A'; break;
+	}
+	if (parseInt(clothes[i].id) >= 1000) return mainType + clothes[i].id;
+	else return mainType + '0' + clothes[i].id;
+}
+
+function getTextContent(txt,key){
+	var key1 = "'"+key+"'";
+	if (txt.indexOf(key1) >= 0) {
+		var tmp1 = txt.split(key1)[1]; 
+		if (tmp1.indexOf('[') >= 0) return tmp1.split('[')[1].split(']')[0].replace(/ /g,'');
+	}
+	return '';
 }
