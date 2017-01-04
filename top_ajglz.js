@@ -29,7 +29,7 @@ function verify(){
 	$("#passcode").val('');
 	if (userInput==pass){
 		$("#p_passcode").hide();
-		$("#p_content").show();
+		$(".p_content").show();
 	}
 }
 
@@ -73,16 +73,16 @@ function chooseCurCart(n){
 }
 
 function searchMode(){
-	if($('#searchMode').html()=='来源'){
-		$('#searchMode').html('名称');
-		$('#searchMode').removeClass('btn-info');
-		$('#searchMode').addClass('btn-success');
-		$('#textBox').attr('placeholder','套装/名称/类别');
-	}else{
+	if($('#searchMode').html()=='名称'){
 		$('#searchMode').html('来源');
 		$('#searchMode').removeClass('btn-success');
 		$('#searchMode').addClass('btn-info');
 		$('#textBox').attr('placeholder','来源/类别');
+	}else{
+		$('#searchMode').html('名称');
+		$('#searchMode').removeClass('btn-info');
+		$('#searchMode').addClass('btn-success');
+		$('#textBox').attr('placeholder','套装/名称/类别');
 	}
 }
 
@@ -351,6 +351,10 @@ function calctop_byall(cartList_num){
 	else var showSource=0;
 	if($('#showMerc').is(":checked")) var showMerc=1;
 	else var showMerc=0;
+	if($('#check_manual_flist').is(":checked")) var manual_flist=$('#manual_flist').val().replace(/"/g,"'");
+	else var manual_flist='';
+	$('#manual_flist_result').html('');
+	
 	var out='<table class="calcByAll'+((showMerc||showSource)?' calcSrc':'')+'">';
 	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('顶配')+(showJJC?td('竞技场'):'')+(showAlly?td('联盟'+(limitMode?'(极限)':'')):'')+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
 	var out_cont='';
@@ -385,17 +389,17 @@ function calctop_byall(cartList_num){
 			}
 			if(inTop.length>0){
 				cell+=td('顶配');
-				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id,cartList_num)):'');
-				cell+=(showAlly?td(retTopTd(inTop,'联盟',id,cartList_num)):'');
-				cell+=(showNormal?td(retTopTd(inTop,'关卡',id,cartList_num)):'');
+				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id,cartList_num,manual_flist)):'');
+				cell+=(showAlly?td(retTopTd(inTop,'联盟',id,cartList_num,manual_flist)):'');
+				cell+=(showNormal?td(retTopTd(inTop,'关卡',id,cartList_num,manual_flist)):'');
 				out_cont+=tr(cell,'class="top"');
 			}
 			if(inSec.length>0){
 				if(inTop.length>0) cell='';
 				cell+=td('高配');
-				cell+=(showJJC?td(retTopTd(inSec,'竞技场',id,cartList_num)):'');
-				cell+=(showAlly?td(retTopTd(inSec,'联盟',id,cartList_num)):'');
-				cell+=(showNormal?td(retTopTd(inSec,'关卡',id,cartList_num)):'');
+				cell+=(showJJC?td(retTopTd(inSec,'竞技场',id,cartList_num,manual_flist)):'');
+				cell+=(showAlly?td(retTopTd(inSec,'联盟',id,cartList_num,manual_flist)):'');
+				cell+=(showNormal?td(retTopTd(inSec,'关卡',id,cartList_num,manual_flist)):'');
 				out_cont+=tr(cell);
 			}
 			if(inTop.length==0 && inSec.length==0 && !($('#hideNores').is(":checked"))){
@@ -550,6 +554,16 @@ function cloneKey(obj){
 	}else return obj;
 }
 
+function cloneKeyObj(obj){
+	if (obj instanceof Object) {
+		var o = {};
+		for (var i in obj){
+			o[i] = cloneKeyObj(obj[i]);
+		}
+		return o;
+	}else return obj;
+}
+
 function getLength(obj){
 	var l=0;
 	for (var i in obj) {if (obj[i]) l++;}
@@ -615,4 +629,8 @@ function genModule(){
 	}
 	if(modules_top_filename[modes]) $('#ajglz_filename').val(modules_top_filename[modes]);
 	$('#cartContent').show();
+}
+
+function toggle_manual_flist(){
+	$('#p_fcontent').toggle();
 }
