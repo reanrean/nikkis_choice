@@ -839,7 +839,7 @@ function retTopTd(arr,crit,id,cartNumIfMult,manualF){
 		for (var s in inTop){
 			if(inTop[s][0].indexOf(crit)==0) {
 				//check with manualF
-				var manualF_curr=getTextContent(manualF,inTop[s][0]); console.log(inTop[s][0] + ':' + manualF_curr);
+				var manualF_curr=getTextContent(manualF,inTop[s][0]);
 				if (jQuery.inArray(fid, manualF_curr.split(','))>=0){
 					if ($('#manual_flist_result')) $('#manual_flist_result').append(clothes[id].name+':'+inTop[s][0]+'<br>');
 					continue;
