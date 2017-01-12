@@ -24,6 +24,7 @@ var setList=[];
 var storeTop=[];
 var limitMode=0;
 var manflist='';
+var manfresult={};
 var replaceSrc=['店·钻石'];
 
 function searchById(){
@@ -1231,7 +1232,8 @@ function getTopCloByCate(filters,rescnt,type){
 		var result_new = [];
 		for (var i in result){
 			if (jQuery.inArray(clotonum(result[i][0]), manflist_curr)>=0){
-				if ($('#manual_flist_result')) $('#manual_flist_result').append(result[i][0].name+':'+theme_name+' F<br>');
+				if (!manfresult[result[i][0].name]) manfresult[result[i][0].name] = {};
+				manfresult[result[i][0].name][theme_name] = 'F';
 			}else result_new.push(result[i]);
 		}
 		return result_new;
