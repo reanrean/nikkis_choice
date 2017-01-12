@@ -172,6 +172,10 @@ function calcall(){ // calc all categories
 	$("#showCnt").val(parseInt($("#showCnt").val()));
 	if (isNaN(parseInt($("#maxHide").val())) || $("#maxHide").val()<1) $("#maxHide").val(1);
 	$("#maxHide").val(parseInt($("#maxHide").val()));
+	if($('#check_manual_flist').is(":checked")) manflist=$('#manual_flist').val().replace(/"/g,"'");
+	else manflist='';
+	
+	manfresult = {};
 	
 	storeTopByCate(category);
 	storeTop_Normal = cloneKey(storeTop);
@@ -188,67 +192,68 @@ function calctop(calcopts){
 	$("#showCnt").val(parseInt($("#showCnt").val()));
 	if (isNaN(parseInt($("#maxHide").val())) || $("#maxHide").val()<1) $("#maxHide").val(1);
 	$("#maxHide").val(parseInt($("#maxHide").val()));
-	if($('#check_manual_flist').is(":checked")) manflist=$('#manual_flist').val().replace(/"/g,"'");
-	else manflist='';
 	
 	if (!($('#showJJC').is(":checked")||$('#showAlly').is(":checked")||$('#showNormal').is(":checked"))){
 		$('#alert_msg').html('至少选一种关卡_(:з」∠)_');
 	}else{
-			var err=0;
-			for(var l=0;l<cartNum;l++){
-				if(cartList[l].length==0) {err=1; break;}
+		var err=0;
+		for(var l=0;l<cartNum;l++){
+			if(cartList[l].length==0) {err=1; break;}
+		}
+		if (err) $('#alert_msg').html('有选取列表为空_(:з」∠)_');
+		else{
+			$('#alert_msg').html('');
+			$('#topsearch_info').html('');
+			$('#topsearch_note').html('');
+			var indexes='本页内容：';
+			var topsearch_info_all='';
+			limitMode=0;
+			if (calcopts && calcopts == 'all') { //mod; generate content without recalc
+				if (getLength(storeTop_Normal)>0) storeTop = cloneKey(storeTop_Normal);
+				else {
+					$('#ajglz_out').val('');
+					$('#topsearch_note').html('请先全部计算_(:з」∠)_');
+					return;
+				}
+			} else { //calc for only the given categories in cartCates
+				if($('#check_manual_flist').is(":checked")) manflist=$('#manual_flist').val().replace(/"/g,"'");
+				else manflist='';
+				manfresult = {};
+				storeTopByCate_all();
 			}
-			if (err){
-				$('#alert_msg').html('有选取列表为空_(:з」∠)_');
-			}else{
-				$('#manual_flist_result').html('');
-				$('#alert_msg').html('');
-				$('#topsearch_info').html('');
-				$('#topsearch_note').html('');
-				var indexes='本页内容：';
-				var topsearch_info_all='';
-				limitMode=0;
-				if (calcopts && calcopts == 'all') { //mod; generate content without recalc
-					if (getLength(storeTop_Normal)>0) storeTop = cloneKey(storeTop_Normal);
-					else {
-						$('#ajglz_out').val('');
-						$('#topsearch_note').html('请先全部计算_(:з」∠)_');
-						return;
-					}
+			var topsearch_info_n=[];
+			for(var l=0;l<cartNum;l++){
+				var listname=($('#cartName'+(l+1)).val() ? $('#cartName'+(l+1)).val() : $('#cartName'+(l+1)).attr('placeholder'));
+				var topsearch_info='<a id="'+(l+1)+'"></a>';
+				topsearch_info+=('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>');
+				topsearch_info_n.push(topsearch_info);
+				indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
+			}
+			limitMode=1;
+			if (calcopts && calcopts == 'all') { //mod; generate content without recalc
+				if (getLength(storeTop_Limit)>0) storeTop = cloneKey(storeTop_Limit);
+				else {
+					$('#ajglz_out').val('');
+					$('#topsearch_note').html('请先全部计算_(:з」∠)_');
+					return;
 				}
-				else storeTopByCate_all();
-				var topsearch_info_n=[];
-				for(var l=0;l<cartNum;l++){
-					var listname=($('#cartName'+(l+1)).val() ? $('#cartName'+(l+1)).val() : $('#cartName'+(l+1)).attr('placeholder'));
-					var topsearch_info='<a id="'+(l+1)+'"></a>';
-					topsearch_info+=('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>');
-					topsearch_info_n.push(topsearch_info);
-					indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
-				}
-				limitMode=1;
-				if (calcopts && calcopts == 'all') { //mod; generate content without recalc
-					if (getLength(storeTop_Limit)>0) storeTop = cloneKey(storeTop_Limit);
-					else {
-						$('#ajglz_out').val('');
-						$('#topsearch_note').html('请先全部计算_(:з」∠)_');
-						return;
-					}
-				}
-				else storeTopByCate_all();
-				for(var l=0;l<cartNum;l++){
-					topsearch_info_all+=topsearch_info_n[l];
-					topsearch_info_all+='<span class="limit">'+calctop_byall(l).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>';
-					topsearch_info_all+='<span class="prop">'+propanal_byall(l).replace(/\n/g,'\\n')+'</span>';
-				}
-				if ($('#hideNores').is(":checked")) indexes+='<br>注：本页只显示顶配/高配部件。'
-				$('#ajglz_out').val(header()+indexes+middle()+topsearch_info_all+footer());
-				var date2=new Date();
-				$('#topsearch_note').html('计算完成：'+ ($('#ajglz_title').val() ? $('#ajglz_title').val() : $('#ajglz_title').attr('placeholder')) +'，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
-				if (calcopts && calcopts == 'all') { //mod; generate content without recalc
-					$('#cartContent').hide();
-				}
+			}
+			else storeTopByCate_all(); //calc for only the given categories in cartCates
+			for(var l=0;l<cartNum;l++){
+				topsearch_info_all+=topsearch_info_n[l];
+				topsearch_info_all+='<span class="limit">'+calctop_byall(l).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>';
+				topsearch_info_all+='<span class="prop">'+propanal_byall(l).replace(/\n/g,'\\n')+'</span>';
+			}
+			if ($('#hideNores').is(":checked")) indexes+='<br>注：本页只显示顶配/高配部件。'
+			$('#ajglz_out').val(header()+indexes+middle()+topsearch_info_all+footer());
+			
+			var date2=new Date();
+			$('#topsearch_note').html('计算完成：'+ ($('#ajglz_title').val() ? $('#ajglz_title').val() : $('#ajglz_title').attr('placeholder')) +'，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
+			if (calcopts && calcopts == 'all') { //mod; generate content without recalc
+				$('#cartContent').hide();
 			}
 		}
+	}
 }
 
 function propanal_byall(cartList_num){
@@ -404,6 +409,12 @@ function calctop_byall(cartList_num){
 			}
 			if(inTop.length==0 && inSec.length==0 && !($('#hideNores').is(":checked"))){
 				out_cont+=tr(cell+td('-')+(showJJC?td(''):'')+(showAlly?td(''):'')+(showNormal?td(''):''));
+			}
+			
+			//place manual f result
+			if (!limitMode && manfresult[clothes[id].name]){
+				for (var f in manfresult[clothes[id].name]) 
+					$('#manual_flist_result').append(clothes[id].name + ' ' + f + ' F<br>');
 			}
 		}
 	}
