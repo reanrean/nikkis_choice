@@ -359,9 +359,11 @@ function calctop_byall(cartList_num){
 	else var showSource=0;
 	if($('#showMerc').is(":checked")) var showMerc=1;
 	else var showMerc=0;
+	if($('#rmguildhs').is(":checked")) var rmguildhs=1;
+	else var rmguildhs=0;
 	
 	var out='<table class="calcByAll'+((showMerc||showSource)?' calcSrc':'')+'">';
-	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('顶配')+(showJJC?td('竞技场'):'')+(showAlly?td('联盟'+(limitMode?'(极限)':'')):'')+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
+	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('顶配')+(showJJC?td('竞技场'):'')+(showAlly?td('联盟'+(limitMode&&!rmguildhs?'(极限)':'')):'')+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
 	var out_cont='';
 	for (var c in category){//sort by category
 		for (var i in cartList[cartList_num]){
@@ -644,4 +646,24 @@ function genModule(){
 
 function toggle_manual_flist(){
 	$('#p_fcontent').toggle();
+}
+
+function toggle_rmguildhs(){
+	if($('#rmguildhs').is(":checked")) backup_guild_hs();
+	else restore_guild_hs();
+}
+
+function backup_guild_hs(){
+	tasksAdd_bk = cloneKeyObj(tasksAdd);
+	tasksAdd = function() {
+		var ret = {};
+		for (var i in tasksAdd){
+			if (i.substr(0,4) != '联盟委托') ret[i] = tasksAdd[i];
+		}
+		return ret;
+	}();
+}
+
+function restore_guild_hs(){
+	if(tasksAdd_bk) tasksAdd = cloneKeyObj(tasksAdd_bk);
 }
