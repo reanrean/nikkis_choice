@@ -1231,7 +1231,7 @@ function getTopCloByCate(filters,rescnt,type){
 		var manflist_curr=getTextContent(manflist,theme_name).split(',');
 		var result_new = [];
 		for (var i in result){
-			if (jQuery.inArray(clotonum(result[i][0]), manflist_curr)>=0){
+			if (jQuery.inArray(result[i][0].longid, manflist_curr)>=0){
 				if (!manfresult[result[i][0].name]) manfresult[result[i][0].name] = {};
 				manfresult[result[i][0].name][theme_name] = 'F';
 			}else result_new.push(result[i]);
@@ -1603,24 +1603,6 @@ function setFilters(level) {
 			bonusToTag(parseInt(i) + 1, level.bonus[i]);
 		}
 	}
-}
-
-function clotonum(c){
-	var mainType='';
-	switch(c.type.mainType){
-		case '发型': mainType='1'; break;
-		case '连衣裙': mainType='2'; break;
-		case '外套': mainType='3'; break;
-		case '上装': mainType='4'; break;
-		case '下装': mainType='5'; break;
-		case '袜子': mainType='6'; break;
-		case '鞋子': mainType='7'; break;
-		case '饰品': mainType='8'; break;
-		case '妆容': mainType='9'; break;
-		case '萤光之灵': mainType='A'; break;
-	}
-	if (parseInt(c.id) >= 1000) return mainType + c.id;
-	else return mainType + '0' + c.id;
 }
 
 function getTextContent(txt,key){
