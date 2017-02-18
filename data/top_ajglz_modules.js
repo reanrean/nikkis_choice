@@ -534,4 +534,6 @@ var modules_top_filename={
 '涵光殿':'XD-HanGuangDian.html',
 '福袋2016':'CZ-FuDai2016.html',
 '福袋2017':'CZ-FuDai2017.html',
+'V1-V10':'CZ-VIP_1.html',
+'V11-V15':'CZ-VIP_2.html',
 };
