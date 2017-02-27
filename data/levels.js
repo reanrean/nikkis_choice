@@ -448,8 +448,8 @@ function addBonusInfo(base, weight, tag) {
  *  - Special rules
  */
  var levelBonus = {
-'协战: 中性风': [addBonusInfo('A', 1, "中性风")],
-'协战: 晚礼服': [addBonusInfo('B', 1, "晚礼服")],
+'奥兰多-中性风': [addBonusInfo('A', 1, "中性风")],
+'奥兰多-晚礼服': [addBonusInfo('B', 1, "晚礼服")],
 '清秀佳人':[addBonusInfo('F',117.7,'中式现代')],
 '绝色无双':[addBonusInfo('F',117.7,'中式现代')],
 '联盟委托: 1-1':[addBonusInfo('F',170.7,'居家服'),addBonusInfo('F',170.7,'睡衣')],
