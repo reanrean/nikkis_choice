@@ -97,6 +97,14 @@ function searchById(txt,mode){
 		var out='<table border="1">';
 		out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
 		
+		//按编号查找
+		if(searchById.indexOf(',')>0){
+			var searchArr=searchById.replace(/[^0-9a-z,]/gi,'').split(',');
+			for (var i in clothes) 
+				if (jQuery.inArray(clothes[i].longid, searchArr)>=0) currentList.push(i);
+		}
+		else
+		
 		if(searchMode=='来源'){
 			for (var i in clothes){
 				if (searchById=='*'){
