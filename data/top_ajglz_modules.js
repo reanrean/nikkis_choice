@@ -493,6 +493,7 @@ var modules_top_filename={
 '联盟小铺':'DH-LianMengXiaoPu.html',
 '梦幻工坊':'DH-MengHuanGongFang.html',
 '水晶花园':'DH-ShuiJingHuaYuan.html',
+'联邦商贸':'DH-LianBangShangMao.html',
 '商店·钻石':'DH-ShangDianZuanShi.html',
 '商店·金币':'DH-ShangDianJinBi.html',
 '翡翠阁':'DH-FeiCuiGe.html',
