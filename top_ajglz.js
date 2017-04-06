@@ -542,7 +542,7 @@ function header(){
 	h+='<span class="title3">更新人员：</span>';
 	h+=$('#ajglz_staff').val() ? $('#ajglz_staff').val() : $('#ajglz_staff').attr('placeholder');
 	if($('#ajglz_title').val().indexOf('最新活动')>=0) 
-		h+='<br><span class="title3">说明：</span>如果看到内容是上一个活动的，说明最新的顶配分析还没出来，请耐心等待。<br>';
+		h+='<br><span class="title3">说明：</span>新品通常未排F，仅供参考；如果看到内容是上一个活动的，说明最新的顶配分析还没更新，请耐心等待。<br>';
 	h+='</p>';
 	h+='<hr class="mhr"/>';
 	h+='<p class="normal">';
