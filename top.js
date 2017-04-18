@@ -76,7 +76,7 @@ function searchSet(setName){
 	var out='<table border="1">';
 	out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
 	for (var i in clothes){
-		if(clothes[i].set==setName||clothes[i].source.indexOf('套装成就：'+setName)>-1){
+		if(clothes[i].set==setName||clothes[i].source.indexOf('套装·'+setName)>-1){
 			currentList.push(i);
 		}
 	}
@@ -154,7 +154,7 @@ function appendCurrent(){
 				line+=td(clothes[currentList[i]].set);
 				var srcs=conv_source(clothes[currentList[i]].source,'进',clothes[currentList[i]].type.mainType);
 					srcs=conv_source(srcs,'定',clothes[currentList[i]].type.mainType);
-				if (srcs.indexOf('套装成就：')==0) srcs='套装成就';
+				if (srcs.indexOf('套装·')==0) srcs='套装';
 				line+=td(srcs);
 				line+=td(ahref('[×]','delCurrent('+currentList[i]+')'));
 			out+=tr(line);
@@ -666,7 +666,7 @@ function propanal_byall(){
 				if(showSource){
 					var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
 						srcs=conv_source(srcs,'定',clothes[id].type.mainType);
-					if (srcs.indexOf('套装成就：')==0) srcs='套装成就';
+					if (srcs.indexOf('套装·')==0) srcs='套装';
 					cell_3rd=srcs;
 				}
 				if(showMerc){
@@ -789,7 +789,7 @@ function calctop_byall(){
 				if(showSource){
 					var srcs=conv_source(clothes[id].source,'进',clothes[id].type.mainType);
 						srcs=conv_source(srcs,'定',clothes[id].type.mainType);
-					if (srcs.indexOf('套装成就：')==0) srcs='套装成就';
+					if (srcs.indexOf('套装·')==0) srcs='套装';
 					cell_3rd=srcs;
 				}
 				if(showMerc){
