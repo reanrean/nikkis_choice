@@ -1,4 +1,8 @@
 function showStrategy(){
+	if(uiFilter["toulan"]){
+		showStrategy_lan();
+		return;
+	}
 	var rescnt=stgy_rescnt;
 
 	var $strategy = $("<div/>").addClass("strategy_info_div");
@@ -308,13 +312,12 @@ function isGrey(c,result){
 function initOnekey(){
 	$("#onekey").click(function() {
 		showStrategy();
-		if ($('#StrategyInfo').css('display') == 'none'){
-			$("#StrategyInfo").show();
-			$("#onekey").html('收起攻略');
-		}else{
-			$("#StrategyInfo").hide();
-			$("#onekey").html('一键攻略');
-		}
+		$("#StrategyInfo").toggle();
+		
+		if ($("#onekey").text().indexOf('收起')>=0){
+			if(uiFilter["toulan"]) $("#onekey").text("偷懒攻略");
+			else $("#onekey").text("一键攻略");	
+		} else $("#onekey").text("收起攻略");	
 	});
 }
 

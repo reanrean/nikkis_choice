@@ -148,6 +148,11 @@ function onChangeUiFilter() {
 		uiFilter[$(this).val()] = true;
 	});
 
+	if (!$("#StrategyInfo").is(':visible')){
+		if(uiFilter["toulan"]) $("#onekey").text("偷懒攻略");
+		else $("#onekey").text("一键攻略");	
+	}
+	
 	if (currentCategory) {
 		if (CATEGORY_HIERARCHY[currentCategory].length > 1) {
 			$('input[name=category-' + currentCategory + ']:checked').each(function () {
