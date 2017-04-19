@@ -273,10 +273,10 @@ function showStrategy_lan(){
 		else if (i.indexOf('套装·')<0) cate = '【' + i + '】';
 		else cate = i;
 		var categoryContent = $("<p/>");
-		categoryContent.append(pspan((ii+1)+'. '+cate+"　", "clothes_category"));
+		categoryContent.append(pspan((ii+1)+'. '+cate+" ", "clothes_category"));
 		if (i.indexOf('套装·')!=0) {
-			for (var j in lazyKeywords[i]){
-				categoryContent.append(pspan(lazyKeywords[i][j].name+' | ',"clothes"));
+			for (var c in category){ //sort by category
+				if (lazyKeywords[i][category[c]]) categoryContent.append(pspan(lazyKeywords[i][category[c]].name+' | ',"clothes"));
 			}
 		}
 		categoryContent.append(pspan('（'+lazySetScore[ii]+'分）',"clothes"));
