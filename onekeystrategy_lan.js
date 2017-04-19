@@ -72,7 +72,7 @@ function showStrategy_lan(){
 			lazySet[cl.type.type] = cl;
 			lazyKeywords[suitArray[0]['name']][cl.type.type] = cl;
 		}
-		lazySetScore.push(suitArray[0]['score']);
+		lazySetScore.push(getLazySetScore(lazySet));
 		step += 1;
 	}
 	
