@@ -225,13 +225,13 @@ function showStrategy_lan(){
 	for (var i in repelCates){
 		if ($.inArray(repelCates[i][0],whiteTodo)>=0) {//check others, if no others, remove [0]
 			var rm = true;
-			for (var k in repelCates){
+			for (var k in repelCates[i]){
 				if (k==0) continue;
 				if ($.inArray(repelCates[i][k],whiteTodo)>=0) rm = false;
 			}
 			if (rm) removeFromArray(repelCates[i][0],whiteTodo);
 		}
-		for (var j in repelCates) {//check [0], if no [0] can remove it
+		for (var j in repelCates[i]) {//check [0], if no [0] can remove it
 			if (j==0) continue;
 			if ($.inArray(repelCates[i][0],whiteTodo)<0) removeFromArray(repelCates[i][j],whiteTodo);
 		} 
