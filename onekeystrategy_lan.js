@@ -216,7 +216,7 @@ function showStrategy_lan(){
 	//if other parts in lazySet isF, alert to take down
 	var takeDown = [];
 	for (var i in lazySet){
-		if ($.inArray(i,whiteType)) continue;
+		if ($.inArray(i,whiteType)>=0) continue;
 		else if (lazySet[i].isF) takeDown.push(listCateName(lazySet[i]));
 	}
 	
