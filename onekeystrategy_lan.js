@@ -120,7 +120,6 @@ function showStrategy_lan(){
 						wordSet[str]['clothes'][type] = clothes[i];
 						wordSet[str]['typeScore'][type] = sumScore;
 					}else if (sumScore > wordSet[str]['typeScore'][type]){
-						var scoreDiff = sumScore - wordSet[str]['typeScore'][type];
 						wordSet[str]['clothes'][type] = clothes[i];
 						wordSet[str]['typeScore'][type] = sumScore;
 					}
@@ -165,7 +164,6 @@ function showStrategy_lan(){
 					tagSet[tagCate]['clothes'][type] = clothes[i];
 					tagSet[tagCate]['typeScore'][type] = sumScore;
 				}else if (sumScore > tagSet[tagCate]['typeScore'][type]){
-					var scoreDiff = sumScore - tagSet[tagCate]['typeScore'][type];
 					tagSet[tagCate]['clothes'][type] = clothes[i];
 					tagSet[tagCate]['typeScore'][type] = sumScore;
 				}
@@ -246,7 +244,7 @@ function showStrategy_lan(){
 	var $title = p($("#theme").val() == "custom" ? "....." : $("#theme").val(),"title");
 	$strategy.append($title);
 	
-	var $author = p("偷懒攻略·"+(filters['missing']?'全':'个人')+"衣柜版@小黑配装器", "author");
+	var $author = p("偷懒攻略·"+(filters['missing']?'全':'个人')+"衣柜版@Rean测试版", "author");
 	$strategy.append($author);
 	
 	var $criteria_title = p("属性-权重: ", "criteria_title");
