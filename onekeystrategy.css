@@ -49,8 +49,16 @@
 	color: #CC66FF;
 }
 
+.stgy_clothes_hover:hover{
+	background-color:#DDD;
+}
+
 .stgy_grey{
 	opacity: 0.6;
+}
+
+.stgy_greyBackGround{
+	background-color:#DDD;
 }
 
 .stgy_author_sign_div{
