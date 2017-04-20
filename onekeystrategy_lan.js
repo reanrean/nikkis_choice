@@ -265,7 +265,7 @@ function showStrategy_lan(){
 	var $title = p($("#theme").val() == "custom" ? "....." : $("#theme").val(),"title");
 	$strategy.append($title);
 	
-	var $author = p("偷懒攻略·"+(filters['missing']?'全':'个人')+"衣柜版@小黑配装器", "author");
+	var $author = p("偷懒攻略·"+(filters['missing']?'全':'个人')+"衣柜版@Rean测试版", "author");
 	$strategy.append($author);
 	
 	var $criteria_title = p("属性-权重: ", "criteria_title");
