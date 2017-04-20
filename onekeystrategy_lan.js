@@ -50,12 +50,11 @@ function showStrategy_lan(){
 	suitArray.sort(function(a,b){return  b["score"] - a["score"];});
 	
 	//put suitArray[0] to lazySet
-	if (suitArray.length > 0){
+	if (suitArray.length){
 		lazyKeywords[suitArray[0]['name']] = {};
 		for (var i in suitArray[0]['clothes']){
 			var cl = suitArray[0]['clothes'][i];
 			lazySet[cl.type.type] = cl;
-			lazyKeywords[suitArray[0]['name']][cl.type.type] = cl;
 		}
 		lazySetScore.push(getLazySetScore(lazySet));
 		step += 1;
@@ -167,21 +166,36 @@ function showStrategy_lan(){
 		wordArray.sort(function(a,b){return  b["score"]==a["score"] ? a["count"]-b["count"] : b["score"]-a["score"];});
 		
 		//put wordArray[0] to lazySet
-		if (wordArray.length > 0){
+		if (wordArray.length){
 			lazyKeywords[wordArray[0]['name']] = {};
 			for (var i in wordArray[0]['clothes']){
 				var cl = wordArray[0]['clothes'][i];
 				var type = cl.type.type;
 				lazyKeywords[wordArray[0]['name']][type] = cl;
-				for (var j in repelCates){ //check repelCates before push into lazySet
-					if (type==repelCates[j][0]) {
-						for (k=1; k<repelCates[j].length; k++) if (lazySet[repelCates[j][k]]) delete lazySet[repelCates[j][k]];
-					}else if ($.inArray(type,repelCates[j])>0) {
-						if (lazySet[repelCates[j][0]]) delete lazySet[repelCates[j][0]];
-					}
-				}
 				lazySet[type] = cl;
 			}
+			
+			//remove repelCates in lazySet
+			for (var j in repelCates){
+				var sumFirst = [0,0]; //count, score
+				var sumOthers = [0,0];
+				for (var k in repelCates[j]){
+					if (lazySet[repelCates[j][k]]){
+						var score = isAccSumScore(lazySet[repelCates[j][k]]);
+						if (k==0) { sumFirst[0]++; sumFirst[1] += score;}
+						else { sumOthers[0]++; sumOthers[1] += score; }
+					}
+				}
+				if (sumFirst[0]==0 || sumOthers[0]==0) continue;
+				if (sumFirst[1] < sumOthers[1]) {
+					if (lazySet[repelCates[j][0]]) delete lazySet[repelCates[j][0]];
+					if (lazyKeywords[wordArray[0]['name']][repelCates[j][0]]) delete lazyKeywords[wordArray[0]['name']][repelCates[j][0]];
+				}else for (k=1; k<repelCates[j].length; k++) {
+					if (lazySet[repelCates[j][k]]) delete lazySet[repelCates[j][k]];
+					if (lazyKeywords[wordArray[0]['name']][repelCates[j][k]]) delete lazyKeywords[wordArray[0]['name']][repelCates[j][k]];
+				}
+			}
+			
 			lazySetScore.push(getLazySetScore(lazySet));
 		}
 	}
@@ -210,7 +224,15 @@ function showStrategy_lan(){
 		for (var j in repelCates[i]) {//check [0], if no [0] can remove it
 			if (j==0) continue;
 			if ($.inArray(repelCates[i][0],whiteTodo)<0) removeFromArray(repelCates[i][j],whiteTodo);
-		} 
+		}
+		var whiteTodoTmp = [];//group repelCates tgt
+		for (var l in repelCates[i]){
+			if ($.inArray(repelCates[i][l],whiteTodo)>=0) {
+				whiteTodoTmp.push(repelCates[i][l]);
+				removeFromArray(repelCates[i][l],whiteTodo);
+			}
+		}
+		if (whiteTodoTmp.length) whiteTodo.push(whiteTodoTmp.join('/'));
 	}
 	
 	//if other parts in lazySet isF, alert to take down
@@ -266,7 +288,7 @@ function showStrategy_lan(){
 				if (lazyKeywords[i][category[c]]) {
 					if (i.indexOf('+')>0) {
 						var type = category[c].substr(Math.max(category[c].indexOf('-'),category[c].indexOf('·'))+1);
-						categoryContent.append(pspan_id('['+type+']'+lazyKeywords[i][category[c]].name,"clothes",lazyKeywords[i][category[c]].longid));
+						categoryContent.append(pspan_id('('+type+')'+lazyKeywords[i][category[c]].name,"clothes",lazyKeywords[i][category[c]].longid));
 					}else categoryContent.append(pspan_id(lazyKeywords[i][category[c]].name,"clothes",lazyKeywords[i][category[c]].longid));
 					categoryContent.append(pspan(' | ',"nm"));
 				}
@@ -289,9 +311,9 @@ function showStrategy_lan(){
 		$strategy.append(categoryContentExtra);
 	}
 	
-	if (whiteTodo.length > 0)
-		$strategy.append(p(whiteTodo.join(' | '),"clothes_category",'需完成【过关必做】: ','hint_tiele'));
-	if (takeDown.length > 0)
+	if (whiteTodo.length)
+		$strategy.append(p(whiteTodo.join(' | '),"clothes_category",'需制作【过关必做】: ','hint_tiele'));
+	if (takeDown.length)
 		$strategy.append(p(takeDown.join(' | '),"nm",'取消F品: ','hint_tiele'));
 	
 	$author_sign = $("<div/>").addClass("stgy_author_sign_div");
@@ -319,17 +341,17 @@ function rmRepelsAndCalcScore(resultobj){
 	for (var str in resultobj){
 		resultobj[str]['score'] = 0;
 		for (var j in repelCates){
-			var sumFirst=0;
-			var sumOthers=0;
+			var sumFirst = [0,0]; //count, score
+			var sumOthers = [0,0];
 			for (var k in repelCates[j]){
 				if (resultobj[str]['typeScore'][repelCates[j][k]]){
 					var score = resultobj[str]['typeScore'][repelCates[j][k]];
-					if (k==0) sumFirst += score;
-					else sumOthers += score;
+					if (k==0) { sumFirst[0]++; sumFirst[1] += score;}
+					else { sumOthers[0]++; sumOthers[1] += score; }
 				}
 			}
-			if (sumFirst==0 || sumOthers==0) continue;
-			if (sumFirst < sumOthers) {
+			if (sumFirst[0]==0 || sumOthers[0]==0) continue;
+			if (sumFirst[1] < sumOthers[1]) {
 				if (resultobj[str]['typeScore'][repelCates[j][0]]){
 					delete resultobj[str]['clothes'][repelCates[j][0]];
 					delete resultobj[str]['typeScore'][repelCates[j][0]];
@@ -384,7 +406,7 @@ function pspan_id(text, cls, id){
 
 function initOnekey_lan(){
 	$("#stgy_add_lackClothes").click(function() {
-		var tmp = $("#stgy_add_lackClothes").data('tmp');
+		var tmp = $("#stgy_add_lackClothes").attr('data-tmp');
 		$("#stgy_add_lackClothes").attr('data-tmp',$("#stgy_add_lackClothes").text());
 		$("#stgy_add_lackClothes").text(tmp);
 		$("#stgy_add_lackClothes").toggleClass("stgy_greyBackGround");

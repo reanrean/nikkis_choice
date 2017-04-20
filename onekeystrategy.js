@@ -1,4 +1,6 @@
 function showStrategy(){
+	if (!$("#StrategyInfo").is(':visible')) return;
+	
 	if(uiFilter["toulan"]){
 		showStrategy_lan();
 		return;
@@ -311,8 +313,8 @@ function isGrey(c,result){
 
 function initOnekey(){
 	$("#onekey").click(function() {
-		showStrategy();
 		$("#StrategyInfo").toggle();
+		showStrategy();
 		
 		if ($("#onekey").text().indexOf('收起')>=0){
 			if(uiFilter["toulan"]) $("#onekey").text("偷懒攻略");
