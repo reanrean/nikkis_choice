@@ -1,4 +1,6 @@
-var limitRet = 20; //maximum return when search by keywords
+var limitRet = 15; //maximum return when search by keywords
+var lanSteps = 5;
+var lackClothes = []; //array of longid
 
 function showStrategy_lan(){
 	//to handle as full wardrobe when no clothes owned
@@ -6,30 +8,10 @@ function showStrategy_lan(){
 	
 	var themeName = $("#theme").val();
 	var filters = clone(criteria);
-	filters.own = true;
-	if (!ownCnt) filters['missing'] = true;
-	for (var i in CATEGORY_HIERARCHY) {
-		if(i == "袜子"){
-			filters[CATEGORY_HIERARCHY[i][0]] = true;	
-			filters[CATEGORY_HIERARCHY[i][1]] = true;	
-		}
-		if(i != "饰品"){
-			filters[CATEGORY_HIERARCHY[i]] = true;	
-		}
-		else{
-			for (var j in CATEGORY_HIERARCHY[i]) {
-				filters[CATEGORY_HIERARCHY[i][j]] = true;
-			}			
-		}
-	}
-	for (var i in skipCategory) {
-		filters[skipCategory[i]] = false;
-	}
 	
 	var result = {};
-	
 	for (var i in clothes) {//calc each clothes, put to result[type], and sort
-		if (matches(clothes[i], {}, filters)) {
+		if (chkOwn_lan(clothes[i], ownCnt)) {
 			clothes[i].calc(filters);
 			if (clothes[i].isF) continue;
 			if (!result[clothes[i].type.type]) result[clothes[i].type.type] = [];
@@ -39,7 +21,6 @@ function showStrategy_lan(){
 	for (var i in result) result[i].sort(function(a,b){return  isAccSumScore(b) - isAccSumScore(a);});
 	
 	var lazySet = {}; var lazySetScore = []; var lazyKeywords = {};
-	
 	var step = 0; //if have a set to build, step+=1;
 	
 	//get a set list that user have
@@ -50,7 +31,7 @@ function showStrategy_lan(){
 		if (!clothes[i].set) continue;
 		var setName = clothes[i].set;
 		if ($.inArray(setName,allSets)<0) allSets.push(setName);
-		if (!chkOwn_lan(clothes[i],ownCnt) && $.inArray(setName,missingSets)<0) missingSets.push(setName);
+		if ((!chkOwn_lan(clothes[i],ownCnt) || $.inArray(setName,lackClothes)>=0) && $.inArray(setName,missingSets)<0) missingSets.push(setName);
 		
 		var type = clothes[i].type.type;
 		var sumScore = (!chkOwn_lan(clothes[i],ownCnt)) && clothes[i].isF ? 0 : isAccSumScore(clothes[i]);
@@ -112,7 +93,7 @@ function showStrategy_lan(){
 					}
 					wordSet[str]['count'] += 1;
 					
-					if (!matches(clothes[i], {}, filters)) continue;
+					if (!chkOwn_lan(clothes[i], ownCnt)) continue;
 					if (clothes[i].isF) continue;
 					var sumScore = isAccSumScore(clothes[i]);
 					
@@ -137,7 +118,7 @@ function showStrategy_lan(){
 		//tagCate
 		var tagSet = {};
 		for (var i in clothes){
-			if (!matches(clothes[i], {}, filters)) continue;
+			if (!chkOwn_lan(clothes[i], ownCnt)) continue;
 			if (clothes[i].isF) continue;
 			var mainType = clothes[i].type.mainType;
 			var type = clothes[i].type.type;
@@ -172,17 +153,18 @@ function showStrategy_lan(){
 			}
 		}
 		for (var i in tagSet){//remove keywords with too many returns
+			tagSet[i]['count'] = 0;
 			for (var j in tagSet[i]['typeCount']){
 				if (tagSet[i]['typeCount'][j] > limitRet){
 					delete tagSet[i]['clothes'][j];
 					delete tagSet[i]['typeScore'][j];
-				}
+				}else tagSet[i]['count'] += tagSet[i]['typeCount'][j];
 			}
 		}
 		tagSet = rmRepelsAndCalcScore(tagSet);
 		for (var i in tagSet) wordArray.push(tagSet[i]);
 		
-		wordArray.sort(function(a,b){return  b["score"] - a["score"];});
+		wordArray.sort(function(a,b){return  b["score"]==a["score"] ? a["count"]-b["count"] : b["score"]-a["score"];});
 		
 		//put wordArray[0] to lazySet
 		if (wordArray.length > 0){
@@ -244,7 +226,7 @@ function showStrategy_lan(){
 	var $title = p($("#theme").val() == "custom" ? "....." : $("#theme").val(),"title");
 	$strategy.append($title);
 	
-	var $author = p("偷懒攻略·"+(filters['missing']?'全':'个人')+"衣柜版@Rean测试版", "author");
+	var $author = p("偷懒攻略·"+(ownCnt||lackClothes.length?'个人':'全')+"衣柜版@Rean测试版", "author");
 	$strategy.append($author);
 	
 	var $criteria_title = p("属性-权重: ", "criteria_title");
@@ -254,54 +236,63 @@ function showStrategy_lan(){
 	var $tag = p(getstrTag(filters), "tag");
 	$strategy.append($tag);
 	
-	$strategy.append('<p>');
-	var $clotheslist_title = pspan("偷懒步骤: ", "clotheslist_title");
-	$strategy.append($clotheslist_title);
-	$strategy.append(pspan("(搜索"+lanSteps+"次)", "clothes"));
-	$strategy.append('<button class="btn btn-xs btn-default" onclick="add_lanSteps()">＋</button><button class="btn btn-xs btn-default" onclick="min_lanSteps()">－</button>');
-	$strategy.append('<p>');
+	var $option = p("选项: ", "criteria_title");
+	$strategy.append($option);
+	
+	var $optionContent1 = p("展示"+lanSteps+"个步骤", "nm");
+	$optionContent1.append('<button class="btn btn-xs btn-default" onclick="add_lan('+"'lanSteps'"+')">＋</button>');
+	$optionContent1.append('<button class="btn btn-xs btn-default" onclick="min_lan('+"'lanSteps'"+')">－</button>');
+	$strategy.append($optionContent1);
+	var $optionContent2 = p("每步≤"+limitRet+"件衣服", "nm");
+	$optionContent2.append('<button class="btn btn-xs btn-default" onclick="add_lan('+"'limitRet'"+')">＋</button>');
+	$optionContent2.append('<button class="btn btn-xs btn-default" onclick="min_lan('+"'limitRet'"+')">－</button>');
+	$strategy.append($optionContent2);
+	
+	var clotheslist_title = $("<p/>");
+	clotheslist_title.append(pspan("偷懒步骤: ", "clotheslist_title"));
+	if (!ownCnt) clotheslist_title.append('<span id="stgy_save_lackClothes"><a id="stgy_add_lackClothes" data-tmp="点击尚缺衣服以删除" href="#" onclick="return false;">没有这些衣服?</a> <a id="stgy_reset_lackClothes" href="#" onclick="return false;" style="display:none;">还原</a></span>');
+	$strategy.append(clotheslist_title);
 	
 	var ii = 0; 
 	for (var i in lazyKeywords){
-		if (i.indexOf('+')>0) var cate = 'tag搜索：【' + i + '】';
-		else if (i.indexOf('套装·')<0) var cate = '【' + i + '】';
-		else var cate = i;
 		var categoryContent = $("<p/>");
-		categoryContent.append(pspan((ii+1)+'. '+cate+" ", "clothes_category"));
+		
+		if (i.indexOf('套装·')>=0) categoryContent.append(pspan_id((ii+1)+'. '+i+" ", "clothes_category stgy_clothes",i.replace('套装·','')));
+		else if (i.indexOf('+')>0) categoryContent.append(pspan((ii+1)+'. tag搜索【' + i + '】'+" ", "clothes_category"));
+		else categoryContent.append(pspan((ii+1)+'. 【' + i + '】'+" ", "clothes_category"));
+		 
 		if (i.indexOf('套装·')!=0) {
 			for (var c in category){ //sort by category
 				if (lazyKeywords[i][category[c]]) {
 					if (i.indexOf('+')>0) {
 						var type = category[c].substr(Math.max(category[c].indexOf('-'),category[c].indexOf('·'))+1);
-						categoryContent.append(pspan('['+type+']'+lazyKeywords[i][category[c]].name+' | ',"clothes"));
-					}else categoryContent.append(pspan(lazyKeywords[i][category[c]].name+' | ',"clothes"));
+						categoryContent.append(pspan_id('['+type+']'+lazyKeywords[i][category[c]].name,"clothes",lazyKeywords[i][category[c]].longid));
+					}else categoryContent.append(pspan_id(lazyKeywords[i][category[c]].name,"clothes",lazyKeywords[i][category[c]].longid));
+					categoryContent.append(pspan(' | ',"nm"));
 				}
 			}
 		}
-		categoryContent.append(pspan('（'+lazySetScore[ii]+'分）',"clothes"));
+		categoryContent.append(pspan('（'+lazySetScore[ii]+'分）',"nm"));
 		$strategy.append(categoryContent);
 		ii++;
 	}
 	
 	if (!($.isEmptyObject(whiteExtra))){
-		var categoryContent = $("<p/>");
-		categoryContent.append(pspan('加【过关必做】', "clothes_category"));
+		var categoryContentExtra = $("<p/>");
+		categoryContentExtra.append(pspan('加【过关必做】', "clothes_category"));
 		for (var i in whiteExtra){
 			lazySet[i] = whiteExtra[i];
-			categoryContent.append(pspan(listCateName(whiteExtra[i])+' | ',"clothes"));
+			categoryContentExtra.append(pspan(listCateName(whiteExtra[i])+' | ',"nm"));
 			
 		}
-		categoryContent.append(pspan('（'+getLazySetScore(lazySet)+'分）',"clothes"));
-		$strategy.append(categoryContent);
+		categoryContentExtra.append(pspan('（'+getLazySetScore(lazySet)+'分）',"nm"));
+		$strategy.append(categoryContentExtra);
 	}
-	
-	/*var lazySum = getLazySetScore(lazySet);
-	$strategy.append(p(lazySum,"clothes",'总分估算: ','criteria_title'));*/
 	
 	if (whiteTodo.length > 0)
 		$strategy.append(p(whiteTodo.join(' | '),"clothes_category",'需完成【过关必做】: ','hint_tiele'));
 	if (takeDown.length > 0)
-		$strategy.append(p(takeDown.join(' | '),"clothes",'取消F品: ','hint_tiele'));
+		$strategy.append(p(takeDown.join(' | '),"nm",'取消F品: ','hint_tiele'));
 	
 	$author_sign = $("<div/>").addClass("stgy_author_sign_div");
 	var d = new Date();
@@ -309,6 +300,7 @@ function showStrategy_lan(){
 	$strategy.append($author_sign);
 	
 	$("#StrategyInfo").empty().append($strategy);
+	if (!ownCnt) initOnekey_lan();
 }
 
 function getLazySetScore(obj){
@@ -369,17 +361,47 @@ function isAccSumScore(c){ //use the most conservative scoring
 	return c.type.mainType == "饰品" ? Math.round(accSumScore(c,accCateNum)) : c.sumScore;
 }
 
-function chkOwn_lan(c,ownCnt){
-	if (!ownCnt) return true;
-	else return c.own;
+function chkOwn_lan(c, ownCnt) {
+	if (ownCnt) return c.own;
+	else if ($.inArray(c.longid, lackClothes)>=0) return false;
+	else return true;
 }
 
-var lanSteps = 5;
-function add_lanSteps(){
-	lanSteps+=1;
+function add_lan(str){
+	eval(str + '+=1');
 	showStrategy_lan();
 }
-function min_lanSteps(){
-	lanSteps=Math.max(1,lanSteps-1);
+
+function min_lan(str){
+	eval(str+'=Math.max(1,'+str+'-1)');
 	showStrategy_lan();
+}
+
+function pspan_id(text, cls, id){
+	var $p = $("<span/>").text(text).addClass("stgy_" + cls).attr('id',id);
+	return $p;
+}
+
+function initOnekey_lan(){
+	$("#stgy_add_lackClothes").click(function() {
+		var tmp = $("#stgy_add_lackClothes").data('tmp');
+		$("#stgy_add_lackClothes").attr('data-tmp',$("#stgy_add_lackClothes").text());
+		$("#stgy_add_lackClothes").text(tmp);
+		$("#stgy_add_lackClothes").toggleClass("stgy_greyBackGround");
+		$("#stgy_reset_lackClothes").toggle();
+		$(".stgy_clothes").toggleClass("stgy_clothes_hover");
+	});
+	$("#stgy_reset_lackClothes").click(function() {
+		lackClothes = [];
+		showStrategy_lan();
+	});
+	$(".stgy_clothes").click(function() {
+		if (!$(".stgy_clothes").hasClass("stgy_clothes_hover")) return;
+		lackClothes.push($(this).attr('id'));
+		var stgy_save_lackClothes = $("#stgy_save_lackClothes").html();
+		showStrategy_lan();
+		$("#stgy_save_lackClothes").html(stgy_save_lackClothes);
+		$(".stgy_clothes").addClass("stgy_clothes_hover");
+		initOnekey_lan();
+	});
 }
