@@ -1,4 +1,4 @@
-var limitRet=20; //maximum return when search by keywords
+var limitRet = 20; //maximum return when search by keywords
 
 function showStrategy_lan(){
 	//to handle as full wardrobe when no clothes owned
@@ -60,13 +60,11 @@ function showStrategy_lan(){
 			suitSet[setName]['name'] = '套装·'+setName;
 			suitSet[setName]['clothes'] = {};
 			suitSet[setName]['typeScore'] = {};
-			suitSet[setName]['score'] = 0;
 		}
 		suitSet[setName]['clothes'][type] = clothes[i];
 		suitSet[setName]['typeScore'][type] = sumScore;
-		suitSet[setName]['score'] += sumScore;
 	}
-	suitSet = removeRepelCates(suitSet); //to be conservative
+	suitSet = rmRepelsAndCalcScore(suitSet); 
 	for (var i in suitSet) if ($.inArray(i,missingSets)<0) suitArray.push(suitSet[i]);
 	suitArray.sort(function(a,b){return  b["score"] - a["score"];});
 	
@@ -105,7 +103,6 @@ function showStrategy_lan(){
 						wordSet[str]['name'] = str;
 						wordSet[str]['clothes'] = {};
 						wordSet[str]['typeScore'] = {};
-						wordSet[str]['score'] = 0;
 						wordSet[str]['count'] = 0;
 						if (Object.keys(existScore).length) { //if any set selected, initialise typeScore
 							for (var t in existScore){
@@ -122,12 +119,10 @@ function showStrategy_lan(){
 					if (wordSet[str]['typeScore'][type] == null){
 						wordSet[str]['clothes'][type] = clothes[i];
 						wordSet[str]['typeScore'][type] = sumScore;
-						wordSet[str]['score'] += sumScore;
 					}else if (sumScore > wordSet[str]['typeScore'][type]){
 						var scoreDiff = sumScore - wordSet[str]['typeScore'][type];
 						wordSet[str]['clothes'][type] = clothes[i];
 						wordSet[str]['typeScore'][type] = sumScore;
-						wordSet[str]['score'] += scoreDiff;
 					}
 					
 				}
@@ -137,7 +132,7 @@ function showStrategy_lan(){
 			if (i.indexOf("·")>=0 || wordSet[i]['count'] > limitRet) 
 				delete wordSet[i];
 		}
-		wordSet = removeRepelCates(wordSet);
+		wordSet = rmRepelsAndCalcScore(wordSet);
 		for (var i in wordSet) wordArray.push(wordSet[i]);
 		
 		//tagCate
@@ -159,8 +154,7 @@ function showStrategy_lan(){
 					tagSet[tagCate]['name'] = tagCate;
 					tagSet[tagCate]['clothes'] = {};
 					tagSet[tagCate]['typeScore'] = {};
-					tagSet[tagCate]['score'] = 0;
-					tagSet[tagCate]['count'] = 0;
+					tagSet[tagCate]['typeCount'] = {};
 					if (Object.keys(existScore).length) { //if any set selected, initialise typeScore
 						for (var t in existScore){
 							tagSet[tagCate]['typeScore'][t] = existScore[t];
@@ -170,18 +164,24 @@ function showStrategy_lan(){
 				if (tagSet[tagCate]['typeScore'][type] == null){
 					tagSet[tagCate]['clothes'][type] = clothes[i];
 					tagSet[tagCate]['typeScore'][type] = sumScore;
-					tagSet[tagCate]['score'] += sumScore;
-					tagSet[tagCate]['count'] += 1;
 				}else if (sumScore > tagSet[tagCate]['typeScore'][type]){
 					var scoreDiff = sumScore - tagSet[tagCate]['typeScore'][type];
 					tagSet[tagCate]['clothes'][type] = clothes[i];
 					tagSet[tagCate]['typeScore'][type] = sumScore;
-					tagSet[tagCate]['score'] += scoreDiff;
-					tagSet[tagCate]['count'] += 1;
+				}
+				if (tagSet[tagCate]['typeCount'][type] == null) tagSet[tagCate]['typeCount'][type] = 0;
+				tagSet[tagCate]['typeCount'][type] += 1;
+			}
+		}
+		for (var i in tagSet){//remove keywords with too many returns
+			for (var j in tagSet[i]['typeCount']){
+				if (tagSet[i]['typeCount'][j] > limitRet){
+					delete tagSet[i]['clothes'][j];
+					delete tagSet[i]['typeScore'][j];
 				}
 			}
 		}
-		tagSet = removeRepelCates(tagSet);
+		tagSet = rmRepelsAndCalcScore(tagSet);
 		for (var i in tagSet) wordArray.push(tagSet[i]);
 		
 		wordArray.sort(function(a,b){return  b["score"] - a["score"];});
@@ -202,25 +202,6 @@ function showStrategy_lan(){
 				}
 				lazySet[type] = cl;
 			}
-		
-			//remove repelCates in lazySet
-			/*for (var j in repelCates){
-				var sumFirst=0;
-				var sumOthers=0;
-				for (var k in repelCates[j]){
-					if (lazySet[repelCates[j][k]]){
-						var score = isAccSumScore(lazySet[repelCates[j][k]]);
-						if (k==0) sumFirst += score;
-						else sumOthers += score;
-					}
-				}
-				if (sumFirst==0 || sumOthers==0) continue;
-				if (sumFirst < sumOthers) {
-					if (lazySet[repelCates[j][0]]) delete lazySet[repelCates[j][0]];
-				}else for (k=1; k<repelCates[j].length; k++) {
-					if (lazySet[repelCates[j][k]]) delete lazySet[repelCates[j][k]];
-				}
-			}*/
 			lazySetScore.push(getLazySetScore(lazySet));
 		}
 	}
@@ -265,7 +246,7 @@ function showStrategy_lan(){
 	var $title = p($("#theme").val() == "custom" ? "....." : $("#theme").val(),"title");
 	$strategy.append($title);
 	
-	var $author = p("偷懒攻略·"+(filters['missing']?'全':'个人')+"衣柜版@Rean测试版", "author");
+	var $author = p("偷懒攻略·"+(filters['missing']?'全':'个人')+"衣柜版@小黑配装器", "author");
 	$strategy.append($author);
 	
 	var $criteria_title = p("属性-权重: ", "criteria_title");
@@ -285,13 +266,18 @@ function showStrategy_lan(){
 	var ii = 0; 
 	for (var i in lazyKeywords){
 		if (i.indexOf('+')>0) var cate = 'tag搜索：【' + i + '】';
-		else if (i.indexOf('套装·')<0) cate = '【' + i + '】';
-		else cate = i;
+		else if (i.indexOf('套装·')<0) var cate = '【' + i + '】';
+		else var cate = i;
 		var categoryContent = $("<p/>");
 		categoryContent.append(pspan((ii+1)+'. '+cate+" ", "clothes_category"));
 		if (i.indexOf('套装·')!=0) {
 			for (var c in category){ //sort by category
-				if (lazyKeywords[i][category[c]]) categoryContent.append(pspan(lazyKeywords[i][category[c]].name+' | ',"clothes"));
+				if (lazyKeywords[i][category[c]]) {
+					if (i.indexOf('+')>0) {
+						var type = category[c].substr(Math.max(category[c].indexOf('-'),category[c].indexOf('·'))+1);
+						categoryContent.append(pspan('['+type+']'+lazyKeywords[i][category[c]].name+' | ',"clothes"));
+					}else categoryContent.append(pspan(lazyKeywords[i][category[c]].name+' | ',"clothes"));
+				}
 			}
 		}
 		categoryContent.append(pspan('（'+lazySetScore[ii]+'分）',"clothes"));
@@ -328,20 +314,20 @@ function showStrategy_lan(){
 }
 
 function getLazySetScore(obj){
-	//see how much accesories it has
-	var lazySetAccNum = 0;
+	var lazySetAccNum = 0; //see how much accesories it has
 	for (var i in obj){
 		if (i.indexOf('饰品')==0) lazySetAccNum ++;
 	}
-	var sumScore = 0;
+	var sumScore = 0; //calc
 	for (var i in obj){
 		sumScore += i.indexOf('饰品')==0 ? accSumScore(obj[i],lazySetAccNum) : obj[i].sumScore;
 	}
 	return Math.round(sumScore);
 }
 
-function removeRepelCates(resultobj){
+function rmRepelsAndCalcScore(resultobj){
 	for (var str in resultobj){
+		resultobj[str]['score'] = 0;
 		for (var j in repelCates){
 			var sumFirst=0;
 			var sumOthers=0;
@@ -355,18 +341,18 @@ function removeRepelCates(resultobj){
 			if (sumFirst==0 || sumOthers==0) continue;
 			if (sumFirst < sumOthers) {
 				if (resultobj[str]['typeScore'][repelCates[j][0]]){
-					resultobj[str]['score'] -= resultobj[str]['typeScore'][repelCates[j][0]];
 					delete resultobj[str]['clothes'][repelCates[j][0]];
 					delete resultobj[str]['typeScore'][repelCates[j][0]];
 				}
 			}else for (k=1; k<repelCates[j].length; k++) {
 				if (resultobj[str]['typeScore'][repelCates[j][k]]){
-					resultobj[str]['score'] -= resultobj[str]['typeScore'][repelCates[j][k]];
 					delete resultobj[str]['clothes'][repelCates[j][k]];
 					delete resultobj[str]['typeScore'][repelCates[j][k]];
 				}
 			}
 		}
+		for (var j in resultobj[str]['typeScore'])
+			resultobj[str]['score'] += resultobj[str]['typeScore'][j];
 	}
 	return resultobj;
 }
