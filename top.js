@@ -701,7 +701,7 @@ function propanal_byall(){
 					var tagTxt=rmtagstr(tagj)+'：'+out_tagCnt[tagj][0];
 					cellRank+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
 				}
-				cellContent+=td(cellRank,(cellRank.indexOf('0个<')>-1?'class="inTop"':' '));
+				cellContent+=td(cellRank,(cellRank.indexOf('：0个')>-1?'class="inTop"':' '));
 			}else cellContent+=td('-');
 			//属性被覆盖
 			var cellRank='';
@@ -713,7 +713,7 @@ function propanal_byall(){
 					cellRank+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
 				}
 			}
-			cellContent+=td(cellRank,(cellRank.indexOf('0个<')>-1?'class="inTop"':' '));
+			cellContent+=td(cellRank,(cellRank.indexOf('：0个')>-1||cellRank=='0个'?'class="inTop"':' '));
 			
 			if ($.inArray(clothes[id].type.type, skipCategory)>=0) {cellContent=td('-')+td('-')+td('-'); isTop=0; isSec=0;} //skip
 			if (!$('#hideNores').is(":checked")||isSec||isTop){
