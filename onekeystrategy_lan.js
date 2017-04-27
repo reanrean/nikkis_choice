@@ -1,170 +1,201 @@
 var limitRet = 15; //maximum return when search by keywords
 var lanSteps = 5;
 var lackClothes = []; //array of longid
+var allScores = {};
+var suitSet = {};
+var wordSet = {};
+var tagSet = {};
+var lazyKeywords = {};
+var lazySetScore = [];
+var lanOwn;
 
-function showStrategy_lan(){
-	//to handle as full wardrobe when no clothes owned
-	var ownCnt=loadFromStorage().size>0 ? 1 : 0;
-	
-	var themeName = $("#theme").val();
-	var filters = clone(criteria);
-	
-	var result = {};
-	for (var i in clothes) {//calc each clothes, put to result[type], and sort
-		if (chkOwn_lan(clothes[i], ownCnt)) {
-			clothes[i].calc(filters);
-			if (clothes[i].isF) continue;
-			if (!result[clothes[i].type.type]) result[clothes[i].type.type] = [];
-			result[clothes[i].type.type].push(clothes[i]);
-		}
-	}
-	for (var i in result) result[i].sort(function(a,b){return  isAccSumScore(b) - isAccSumScore(a);});
-	
-	var lazySet = {}; var lazySetScore = []; var lazyKeywords = {};
-	var step = 0; //if have a set to build, step+=1;
-	
-	//get a set list that user have
+function lanStrategy_init(){
+	//gen all suitSet that user have
 	//note: if apply to seal100x, need to exclude those with "染","套"
-	var allSets = []; var missingSets = []; 
-	var suitSet = {}; var suitArray = [];
 	for (var i in clothes) {
 		if (!clothes[i].set) continue;
 		var setName = clothes[i].set;
-		if ($.inArray(setName,allSets)<0) allSets.push(setName);
-		if ((!chkOwn_lan(clothes[i],ownCnt) || $.inArray(setName,lackClothes)>=0) && $.inArray(setName,missingSets)<0) missingSets.push(setName);
-		
 		var type = clothes[i].type.type;
-		var sumScore = (!chkOwn_lan(clothes[i],ownCnt)) && clothes[i].isF ? 0 : isAccSumScore(clothes[i]);
 		
 		if (suitSet[setName] == null){
 			suitSet[setName] = {};
 			suitSet[setName]['name'] = '套装·'+setName;
 			suitSet[setName]['clothes'] = {};
-			suitSet[setName]['typeScore'] = {};
+			suitSet[setName]['acc'] = {};
+			suitSet[setName]['missing'] = false;
 		}
-		suitSet[setName]['clothes'][type] = clothes[i];
-		suitSet[setName]['typeScore'][type] = sumScore;
-	}
-	suitSet = rmRepelsAndCalcScore(suitSet); 
-	for (var i in suitSet) if ($.inArray(i,missingSets)<0) suitArray.push(suitSet[i]);
-	suitArray.sort(function(a,b){return  b["score"] - a["score"];});
-	
-	//put suitArray[0] to lazySet
-	if (suitArray.length){
-		lazyKeywords[suitArray[0]['name']] = {};
-		for (var i in suitArray[0]['clothes']){
-			var cl = suitArray[0]['clothes'][i];
-			lazySet[cl.type.type] = cl;
-		}
-		lazySetScore.push(getLazySetScore(lazySet));
-		step += 1;
+		if (!lanOwnChk(clothes[i],lanOwn)) suitSet[setName]['missing'] = true;
+		if (isAcc(clothes[i])) {
+			if (!suitSet[setName]['acc'][type]) suitSet[setName]['acc'][type] = {};
+			suitSet[setName]['acc'][type]['0'] = clothes[i];
+		}else suitSet[setName]['clothes'][type] = clothes[i];
 	}
 	
+	//gen all wordSet
+	wordSet = {};
+	for (var i in clothes){
+		var name = clothes[i].name;
+		var type = clothes[i].type.type;
+		var matchStr = [];
+		for (j=0; j<name.length; j++){ //get name string
+			for (k=1; k<=2; k++){
+				if (j > name.length-k) continue;
+				var str = name.substr(j, k);
+				if ($.inArray(str,matchStr)<0) matchStr.push(str);
+				else continue;
+				if (wordSet[str] == null){
+					wordSet[str] = {};
+					wordSet[str]['name'] = str;
+					wordSet[str]['clothes'] = {};
+					wordSet[str]['acc'] = {};
+					wordSet[str]['rawScore'] = {};
+					wordSet[str]['rawSumScore'] = 0;
+					wordSet[str]['count'] = 0;
+				}
+				wordSet[str]['count'] += 1;
+				
+				if (!lanOwnChk(clothes[i], lanOwn)) continue;
+				if (clothes[i].isF) continue;
+				var sumScore = Math.round(clothes[i].sumScore);
+				var tmpScore = Math.round(clothes[i].tmpScore);
+				var bonus = Math.round(clothes[i].bonusScore).toString();
+				if (isAcc_c(type)){
+					if (wordSet[str]['acc'][type] == null) 
+						wordSet[str]['acc'][type] = {};
+					if (wordSet[str]['acc'][type][bonus] == null) 
+						wordSet[str]['acc'][type][bonus] = clothes[i];
+					else if (tmpScore > wordSet[str]['acc'][type][bonus].tmpScore) 
+						wordSet[str]['acc'][type][bonus] = clothes[i];
+				}else{
+					if (wordSet[str]['clothes'][type] == null) 
+						wordSet[str]['clothes'][type] = clothes[i];
+					else if (sumScore > wordSet[str]['clothes'][type].sumScore) 
+						wordSet[str]['clothes'][type] = clothes[i];
+				}
+				if (wordSet[str]['rawScore'][type] == null) {
+					wordSet[str]['rawScore'][type] = sumScore;
+					wordSet[str]['rawSumScore'] += sumScore;
+				}else if (sumScore > wordSet[str]['rawScore'][type]) {
+					wordSet[str]['rawSumScore'] += (sumScore - wordSet[str]['rawScore'][type]);
+					wordSet[str]['rawScore'][type] = sumScore;
+				}
+			}
+		}
+	}
+	for (var i in wordSet){//remove keywords with too many returns or no scores
+		if (i.indexOf("·")>=0 || wordSet[i]['count'] > limitRet || wordSet[i]['rawSumScore']<1) 
+			delete wordSet[i];
+	}
+	
+	//gen all tagCate
+	tagSet = {};
+	for (var i in clothes){
+		if (!lanOwnChk(clothes[i], lanOwn)) continue;
+		if (clothes[i].isF) continue;
+		var mainType = clothes[i].type.mainType;
+		if (mainType!='袜子'&&mainType!='饰品') continue; //skip unrelated
+		var type = clothes[i].type.type;
+		var tags = clothes[i].tags;
+		for (var j in tags){
+			if (!tags[j]) continue;
+			//if (tags[j].indexOf('+')>=0) continue; //skip 萤光之灵
+			var subtype = mainType=='袜子' ? mainType : type.split('·')[0];
+			tagCate = [subtype,tags[j]].join(' + ');
+			if (tagSet[tagCate] == null){
+				tagSet[tagCate] = {};
+				tagSet[tagCate]['name'] = tagCate;
+				tagSet[tagCate]['clothes'] = {};
+				tagSet[tagCate]['acc'] = {};
+				tagSet[tagCate]['typeCount'] = {};
+			}
+			var sumScore = Math.round(clothes[i].sumScore);
+			var tmpScore = Math.round(clothes[i].tmpScore);
+			var bonus = Math.round(clothes[i].bonusScore).toString();
+			if (isAcc_c(type)){
+				if (tagSet[tagCate]['acc'][type] == null) 
+					tagSet[tagCate]['acc'][type] = {};
+				if (tagSet[tagCate]['acc'][type][bonus] == null) 
+					tagSet[tagCate]['acc'][type][bonus] = clothes[i];
+				else if (tmpScore > tagSet[tagCate]['acc'][type][bonus].tmpScore) 
+					tagSet[tagCate]['acc'][type][bonus] = clothes[i];
+			}else{
+				if (tagSet[tagCate]['clothes'][type] == null) 
+					tagSet[tagCate]['clothes'][type] = clothes[i];
+				else if (sumScore > tagSet[tagCate]['clothes'][type].sumScore) 
+					tagSet[tagCate]['clothes'][type] = clothes[i];
+			}
+			
+			if (tagSet[tagCate]['typeCount'][type] == null) tagSet[tagCate]['typeCount'][type] = 0;
+			tagSet[tagCate]['typeCount'][type] += 1;
+		}
+	}
+	for (var i in tagSet){//remove keywords with too many returns
+		for (var j in tagSet[i]['typeCount']){
+			if (j=='袜子-袜套') tagSet[i]['typeCount'][j] += tagSet[i]['typeCount']['袜子-袜子'];
+			else if (j=='袜子-袜子') tagSet[i]['typeCount'][j] += tagSet[i]['typeCount']['袜子-袜套'];
+			if (tagSet[i]['typeCount'][j] > limitRet){
+				delete tagSet[i]['clothes'][j];
+				delete tagSet[i]['acc'][j];
+			}
+		}
+	}
+}
+
+function lanStrategy(){
+	//handle as full wardrobe when no clothes owned
+	lanOwn = loadFromStorage().size>0 ? 1 : 0; 
+	
+	//calculate all clothes
+	allScores = {};
+	for (var i in clothes) {//calc each clothes, put to allScores[type], and sort
+		if (lanOwnChk(clothes[i], lanOwn)) {
+			clothes[i].calc(criteria);
+			if (clothes[i].isF) continue;
+			if (!allScores[clothes[i].type.type]) allScores[clothes[i].type.type] = [];
+			allScores[clothes[i].type.type].push(clothes[i]);
+		}
+	}
+	for (var i in allScores) allScores[i].sort(function(a,b){return isAccSumScore(b) - isAccSumScore(a);});
+	
+	lanStrategy_init();
+	lanStrategy_recalc(1);
+}
+
+function lanStrategy_recalc(n){
+	var step = n - 1;
+	var lazySet = {}; 
+	lazySetScore.splice(step,9999);
+	var ii = 0;
+	for (var i in lazyKeywords){
+		if (ii>=step) delete lazyKeywords[i];
+		else for (var type in lazyKeywords[i]) lazySet[type] = lazyKeywords[i][type];
+		ii++;
+	}
+	if (step==0){
+		var evalSuitSet = evalSets(suitSet); 
+		var suitArray = [];
+		for (var i in evalSuitSet) if (!evalSuitSet[i]['missing']&&$.inArray(i,lackClothes)<0) suitArray.push(evalSuitSet[i]);
+		suitArray.sort(function(a,b){return  b["score"] - a["score"];});
+		if (suitArray.length){//put suitArray[0] to lazySet
+			lazyKeywords[suitArray[0]['name']] = {};
+			for (var i in suitArray[0]['clothes']){
+				var cl = suitArray[0]['clothes'][i];
+				var type = cl.type.type;
+				lazyKeywords[suitArray[0]['name']][type] = cl;
+				lazySet[type] = cl;
+			}
+			lazySetScore.push(getLazySetScore(lazySet));
+			step += 1;
+		}
+	}
 	for (var step=step; step<lanSteps; step++){
 		//loop to search keywords with value add, put into lazySet
 		var wordArray = [];
-		var existScore = {};
-		for (var i in lazySet) existScore[i] = isAccSumScore(lazySet[i]);
-		
-		//keywords
-		var wordSet = {};
-		for (var i in clothes){
-			var name = clothes[i].name;
-			var type = clothes[i].type.type;
-			var matchStr = [];
-			for (j=0; j<name.length; j++){ //get name string
-				for (k=1; k<=2; k++){
-					if (j > name.length-k) continue;
-					var str = name.substr(j, k);
-					if ($.inArray(str,matchStr)<0) matchStr.push(str);
-					else continue;
-					if (wordSet[str] == null){
-						wordSet[str] = {};
-						wordSet[str]['name'] = str;
-						wordSet[str]['clothes'] = {};
-						wordSet[str]['typeScore'] = {};
-						wordSet[str]['count'] = 0;
-						if (Object.keys(existScore).length) { //if any set selected, initialise typeScore
-							for (var t in existScore){
-								wordSet[str]['typeScore'][t] = existScore[t];
-							}
-						}
-					}
-					wordSet[str]['count'] += 1;
-					
-					if (!chkOwn_lan(clothes[i], ownCnt)) continue;
-					if (clothes[i].isF) continue;
-					var sumScore = isAccSumScore(clothes[i]);
-					
-					if (wordSet[str]['typeScore'][type] == null){
-						wordSet[str]['clothes'][type] = clothes[i];
-						wordSet[str]['typeScore'][type] = sumScore;
-					}else if (sumScore > wordSet[str]['typeScore'][type]){
-						wordSet[str]['clothes'][type] = clothes[i];
-						wordSet[str]['typeScore'][type] = sumScore;
-					}
-					
-				}
-			}
-		}
-		for (var i in wordSet){//remove keywords with too many returns
-			if (i.indexOf("·")>=0 || wordSet[i]['count'] > limitRet) 
-				delete wordSet[i];
-		}
-		wordSet = rmRepelsAndCalcScore(wordSet);
-		for (var i in wordSet) wordArray.push(wordSet[i]);
-		
-		//tagCate
-		var tagSet = {};
-		for (var i in clothes){
-			if (!chkOwn_lan(clothes[i], ownCnt)) continue;
-			if (clothes[i].isF) continue;
-			var mainType = clothes[i].type.mainType;
-			var type = clothes[i].type.type;
-			var tags = clothes[i].tags;
-			for (var j in tags){
-				if (!tags[j]) continue;
-				if (tags[j].indexOf('+')>=0) continue;
-				var subtype = mainType=='袜子' ? mainType : type.split('·')[0];
-				tagCate = [subtype,tags[j]].join(' + ');
-				var sumScore = isAccSumScore(clothes[i]);
-				if (tagSet[tagCate] == null){
-					tagSet[tagCate] = {};
-					tagSet[tagCate]['name'] = tagCate;
-					tagSet[tagCate]['clothes'] = {};
-					tagSet[tagCate]['typeScore'] = {};
-					tagSet[tagCate]['typeCount'] = {};
-					if (Object.keys(existScore).length) { //if any set selected, initialise typeScore
-						for (var t in existScore){
-							tagSet[tagCate]['typeScore'][t] = existScore[t];
-						}
-					}
-				}
-				if (tagSet[tagCate]['typeScore'][type] == null){
-					tagSet[tagCate]['clothes'][type] = clothes[i];
-					tagSet[tagCate]['typeScore'][type] = sumScore;
-				}else if (sumScore > tagSet[tagCate]['typeScore'][type]){
-					tagSet[tagCate]['clothes'][type] = clothes[i];
-					tagSet[tagCate]['typeScore'][type] = sumScore;
-				}
-				if (tagSet[tagCate]['typeCount'][type] == null) tagSet[tagCate]['typeCount'][type] = 0;
-				tagSet[tagCate]['typeCount'][type] += 1;
-			}
-		}
-		for (var i in tagSet){//remove keywords with too many returns
-			tagSet[i]['count'] = 0;
-			for (var j in tagSet[i]['typeCount']){
-				if (tagSet[i]['typeCount'][j] > limitRet){
-					delete tagSet[i]['clothes'][j];
-					delete tagSet[i]['typeScore'][j];
-				}else tagSet[i]['count'] += tagSet[i]['typeCount'][j];
-			}
-		}
-		tagSet = rmRepelsAndCalcScore(tagSet);
-		for (var i in tagSet) wordArray.push(tagSet[i]);
-		
+		var evalWordSet = evalSets(wordSet,lazySet);
+		for (var i in evalWordSet) wordArray.push(evalWordSet[i]);
+		var evalTagSet = evalSets(tagSet,lazySet);
+		for (var i in evalTagSet) wordArray.push(evalTagSet[i]);
 		wordArray.sort(function(a,b){return  b["score"]==a["score"] ? a["count"]-b["count"] : b["score"]-a["score"];});
-		
 		//put wordArray[0] to lazySet
 		if (wordArray.length){
 			lazyKeywords[wordArray[0]['name']] = {};
@@ -174,31 +205,14 @@ function showStrategy_lan(){
 				lazyKeywords[wordArray[0]['name']][type] = cl;
 				lazySet[type] = cl;
 			}
-			
-			//remove repelCates in lazySet
-			for (var j in repelCates){
-				var sumFirst = [0,0]; //count, score
-				var sumOthers = [0,0];
-				for (var k in repelCates[j]){
-					if (lazySet[repelCates[j][k]]){
-						var score = isAccSumScore(lazySet[repelCates[j][k]]);
-						if (k==0) { sumFirst[0]++; sumFirst[1] += score;}
-						else { sumOthers[0]++; sumOthers[1] += score; }
-					}
-				}
-				if (sumFirst[0]==0 || sumOthers[0]==0) continue;
-				if (sumFirst[1] < sumOthers[1]) {
-					if (lazySet[repelCates[j][0]]) delete lazySet[repelCates[j][0]];
-					if (lazyKeywords[wordArray[0]['name']][repelCates[j][0]]) delete lazyKeywords[wordArray[0]['name']][repelCates[j][0]];
-				}else for (k=1; k<repelCates[j].length; k++) {
-					if (lazySet[repelCates[j][k]]) delete lazySet[repelCates[j][k]];
-					if (lazyKeywords[wordArray[0]['name']][repelCates[j][k]]) delete lazyKeywords[wordArray[0]['name']][repelCates[j][k]];
-				}
-			}
-			
 			lazySetScore.push(getLazySetScore(lazySet));
 		}
 	}
+	lanStrategy_print(lazySet);
+}
+
+function lanStrategy_print(lazySet){	
+	var themeName = $("#theme").val();
 	
 	//check whether missing whitelist category at last
 	var whiteType = []; var whiteExtra = {}; var whiteTodo = [];
@@ -206,7 +220,7 @@ function showStrategy_lan(){
 		whiteType = Flist[themeName]["type"];
 		for (var i in whiteType){
 			if (lazySet[whiteType[i]]&&!lazySet[whiteType[i]].isF) continue; //lazySet already contains
-			else if (result[whiteType[i]]) whiteExtra[result[whiteType[i]][0].type.type] = result[whiteType[i]][0]; //own, alert name
+			else if (allScores[whiteType[i]]) whiteExtra[allScores[whiteType[i]][0].type.type] = allScores[whiteType[i]][0]; //own, alert name
 			else whiteTodo.push(whiteType[i]); //not own, alert to create
 		}
 	}
@@ -248,41 +262,44 @@ function showStrategy_lan(){
 	var $title = p($("#theme").val() == "custom" ? "....." : $("#theme").val(),"title");
 	$strategy.append($title);
 	
-	var $author = p("偷懒攻略·"+(ownCnt||lackClothes.length?'个人':'全')+"衣柜版@Rean测试版", "author");
+	var $author = p("偷懒攻略·"+(lanOwn||lackClothes.length?'个人':'全')+"衣柜版@Rean测试版", "author");
 	$strategy.append($author);
 	
 	var $criteria_title = p("属性-权重: ", "criteria_title");
 	$strategy.append($criteria_title);
-	var $criteria = p(getStrCriteria(filters),"criteria");
+	var $criteria = p(getStrCriteria(criteria),"criteria");
 	$strategy.append($criteria);
-	var $tag = p(getstrTag(filters), "tag");
+	var $tag = p(getstrTag(criteria), "tag");
 	$strategy.append($tag);
 	
 	var $option = p("选项: ", "criteria_title");
 	$strategy.append($option);
 	
-	var $optionContent1 = p("展示"+lanSteps+"个步骤", "nm");
-	$optionContent1.append('<button class="btn btn-xs btn-default" onclick="add_lan('+"'lanSteps'"+')">＋</button>');
-	$optionContent1.append('<button class="btn btn-xs btn-default" onclick="min_lan('+"'lanSteps'"+')">－</button>');
+	var $optionContent1 = $("<p/>");
+	$optionContent1.append("展示<span id='lanSteps'>"+lanSteps+"</span>个步骤");
+	$optionContent1.append('<button class="btn btn-xs btn-default" onclick="add_lanSteps()">＋</button>');
+	$optionContent1.append('<button class="btn btn-xs btn-default" onclick="min_lanSteps()">－</button>');
 	$strategy.append($optionContent1);
-	var $optionContent2 = p("每步≤"+limitRet+"件衣服", "nm");
-	$optionContent2.append('<button class="btn btn-xs btn-default" onclick="add_lan('+"'limitRet'"+')">＋</button>');
-	$optionContent2.append('<button class="btn btn-xs btn-default" onclick="min_lan('+"'limitRet'"+')">－</button>');
+	var $optionContent2 = $("<p/>");
+	$optionContent2.append("每步≤<span id='limitRet'>"+limitRet+"</span>件衣服");
+	$optionContent2.append('<button class="btn btn-xs btn-default" onclick="add_limitRet()">＋</button>');
+	$optionContent2.append('<button class="btn btn-xs btn-default" onclick="min_limitRet()">－</button>');
 	$strategy.append($optionContent2);
 	
 	var clotheslist_title = $("<p/>");
 	clotheslist_title.append(pspan("偷懒步骤: ", "clotheslist_title"));
-	if (!ownCnt) clotheslist_title.append('<span id="stgy_save_lackClothes"><a id="stgy_add_lackClothes" data-tmp="点击尚缺衣服以删除" href="#" onclick="return false;">没有这些衣服?</a> <a id="stgy_reset_lackClothes" href="#" onclick="return false;" style="display:none;">还原</a></span>');
+	if (!lanOwn) clotheslist_title.append('<span id="stgy_save_lackClothes"><a id="stgy_add_lackClothes" data-tmp="点击尚缺衣服以删除" href="#" onclick="return false;">没有这些衣服?</a> <a id="stgy_reset_lackClothes" href="#" onclick="return false;" style="display:none;">还原</a></span>');
 	$strategy.append(clotheslist_title);
 	
-	var ii = 0; 
+	var ii = 1; 
 	for (var i in lazyKeywords){
 		var categoryContent = $("<p/>");
+		categoryContent.attr('id','step-'+ii);
 		
-		if (i.indexOf('套装·')>=0) categoryContent.append(pspan_id((ii+1)+'. '+i+" ", "clothes_category stgy_clothes",i.replace('套装·','')));
-		else if (i.indexOf('+')>0) categoryContent.append(pspan((ii+1)+'. tag搜索【' + i + '】'+" ", "clothes_category"));
-		else categoryContent.append(pspan((ii+1)+'. 【' + i + '】'+" ", "clothes_category"));
-		 
+		if (i.indexOf('套装·')>=0) categoryContent.append(pspan_id(ii+'. '+i+" ", "clothes_category stgy_clothes",i.replace('套装·','')));
+		else if (i.indexOf('+')>0) categoryContent.append(pspan(ii+'. tag搜索【' + i + '】'+" ", "clothes_category"));
+		else categoryContent.append(pspan(ii+'. 【' + i + '】'+" ", "clothes_category"));
+		
 		if (i.indexOf('套装·')!=0) {
 			for (var c in category){ //sort by category
 				if (lazyKeywords[i][category[c]]) {
@@ -294,7 +311,7 @@ function showStrategy_lan(){
 				}
 			}
 		}
-		categoryContent.append(pspan('（'+lazySetScore[ii]+'分）',"nm"));
+		categoryContent.append(pspan('（'+lazySetScore[ii-1]+'分）',"nm"));
 		$strategy.append(categoryContent);
 		ii++;
 	}
@@ -322,7 +339,7 @@ function showStrategy_lan(){
 	$strategy.append($author_sign);
 	
 	$("#StrategyInfo").empty().append($strategy);
-	if (!ownCnt) initOnekey_lan();
+	if (!lanOwn) initOnekey_lan();
 }
 
 function getLazySetScore(obj){
@@ -332,41 +349,99 @@ function getLazySetScore(obj){
 	}
 	var sumScore = 0; //calc
 	for (var i in obj){
-		sumScore += i.indexOf('饰品')==0 ? accSumScore(obj[i],lazySetAccNum) : obj[i].sumScore;
+		sumScore += isAccSumScore(obj[i], lazySetAccNum);
 	}
 	return Math.round(sumScore);
 }
 
-function rmRepelsAndCalcScore(resultobj){
-	for (var str in resultobj){
-		resultobj[str]['score'] = 0;
+function evalSets(resultObj,existObj){
+	if (existObj) {
+		for (var i in existObj){
+			if (!low) var low = existObj[i].sumScore;
+			else if (low>existObj[i].sumScore) low  = existObj[i].sumScore;
+		}
+	}
+	
+	for (var str in resultObj){
+		//delete those with low scores
+		if (resultObj[str]['rawSumScore']&&low&&resultObj[str]['rawSumScore']<=low){
+			delete resultObj[str];
+			continue;
+		}
+		
+		//get accCount
+		var accCount = 0;
+		resultObj[str]['typeScore'] = {};//init typeScore base on obj types
+		if (existObj) for (var i in existObj) {
+			resultObj[str]['typeScore'][i] = 0;
+			if (isAcc_c(i)) accCount++;
+		}
+		if(resultObj[str]['acc']) {
+			for (var i in resultObj[str]['acc']){
+				delete resultObj[str]['clothes'][i]; //delete result remain in last run
+				if (resultObj[str]['typeScore'][i]==null) {
+					resultObj[str]['typeScore'][i] = 0;
+					accCount++;
+				}
+			}
+		}
+		resultObj[str]['accCount'] = accCount;
+		
+		for (var i in resultObj[str]['clothes']){
+			if (resultObj[str]['typeScore'][i]==null) resultObj[str]['typeScore'][i] = 0;
+		}
+		
+		//calc acc scores and put to 'clothes'
+		if(resultObj[str]['acc']) {
+			for (var type in resultObj[str]['acc']){
+				var maxScore = 0;
+				for (var bonus in resultObj[str]['acc'][type]){
+					var cl = resultObj[str]['acc'][type][bonus];
+					var score = isAccSumScore(cl,accCount);
+					if (score > maxScore) resultObj[str]['clothes'][type] = cl;
+					maxScore = score;
+				}
+			}
+		}
+		
+		//compare with existObj and get typeScore
+		for (var type in resultObj[str]['typeScore']){
+			if (existObj&&existObj[type]) resultObj[str]['typeScore'][type] = isAccSumScore(existObj[type],accCount);
+			if (!resultObj[str]['clothes'][type]) continue;
+			var score = isAccSumScore(resultObj[str]['clothes'][type],accCount);
+			if (score<=resultObj[str]['typeScore'][type]) delete resultObj[str]['clothes'][type];
+			else resultObj[str]['typeScore'][type] = score;
+		}
+		
+		//remove repelCates and calc score
+		resultObj[str]['score'] = 0;
 		for (var j in repelCates){
 			var sumFirst = [0,0]; //count, score
 			var sumOthers = [0,0];
 			for (var k in repelCates[j]){
-				if (resultobj[str]['typeScore'][repelCates[j][k]]){
-					var score = resultobj[str]['typeScore'][repelCates[j][k]];
+				if (resultObj[str]['typeScore'][repelCates[j][k]]){
+					var score = resultObj[str]['typeScore'][repelCates[j][k]];
 					if (k==0) { sumFirst[0]++; sumFirst[1] += score;}
 					else { sumOthers[0]++; sumOthers[1] += score; }
 				}
 			}
 			if (sumFirst[0]==0 || sumOthers[0]==0) continue;
 			if (sumFirst[1] < sumOthers[1]) {
-				if (resultobj[str]['typeScore'][repelCates[j][0]]){
-					delete resultobj[str]['clothes'][repelCates[j][0]];
-					delete resultobj[str]['typeScore'][repelCates[j][0]];
+				if (resultObj[str]['typeScore'][repelCates[j][0]]){
+					delete resultObj[str]['clothes'][repelCates[j][0]];
+					delete resultObj[str]['typeScore'][repelCates[j][0]];
 				}
 			}else for (k=1; k<repelCates[j].length; k++) {
-				if (resultobj[str]['typeScore'][repelCates[j][k]]){
-					delete resultobj[str]['clothes'][repelCates[j][k]];
-					delete resultobj[str]['typeScore'][repelCates[j][k]];
+				if (resultObj[str]['typeScore'][repelCates[j][k]]){
+					delete resultObj[str]['clothes'][repelCates[j][k]];
+					delete resultObj[str]['typeScore'][repelCates[j][k]];
 				}
 			}
 		}
-		for (var j in resultobj[str]['typeScore'])
-			resultobj[str]['score'] += resultobj[str]['typeScore'][j];
+		for (var j in resultObj[str]['typeScore'])
+			resultObj[str]['score'] += resultObj[str]['typeScore'][j];
 	}
-	return resultobj;
+	return resultObj;
 }
 
 function listCateName(c){
@@ -379,24 +454,56 @@ function removeFromArray(e,arr){
 	return arr;
 }
 
-function isAccSumScore(c){ //use the most conservative scoring
-	return c.type.mainType == "饰品" ? Math.round(accSumScore(c,accCateNum)) : c.sumScore;
+function isAcc(c){
+	return c.type.mainType == "饰品";
 }
 
-function chkOwn_lan(c, ownCnt) {
-	if (ownCnt) return c.own;
+function isAcc_c(type){
+	return type.indexOf("饰品")==0;
+}
+
+function isAccSumScore(c,num){
+	return c.isF ? 0 : (isAcc(c) ? Math.round(accSumScore(c,num?num:accCateNum)) : c.sumScore);
+}
+
+function lanOwnChk(c, lanOwn) {
+	if (lanOwn) return c.own;
 	else if ($.inArray(c.longid, lackClothes)>=0) return false;
 	else return true;
 }
 
-function add_lan(str){
-	eval(str + '+=1');
-	showStrategy_lan();
+function add_lanSteps(){
+	lanSteps++;
+	lanStrategy_recalc(lanSteps);
+}
+function min_lanSteps(){
+	lanSteps=Math.max(1,lanSteps-1);
+	lanStrategy_recalc(lanSteps+1);
+}
+function add_limitRet(){
+	limitRet++;
+	lanStrategy();
+}
+function min_limitRet(){
+	limitRet=Math.max(1,limitRet-1);
+	var recalc = false;
+	for (var i in lazyKeywords){
+		if (cntKeywordsReturns(i)>limitRet) recalc = true;
+	}
+	if (recalc) lanStrategy();
+	else $('#limitRet').text(limitRet);
 }
 
-function min_lan(str){
-	eval(str+'=Math.max(1,'+str+'-1)');
-	showStrategy_lan();
+function cntKeywordsReturns(kw){
+	if (kw.indexOf('套装·')>=0) return 0;
+	else if (kw.indexOf('+')>0) {
+		var max = 0;
+		for (var type in tagSet[kw]['typeCount']){
+			if (tagSet[kw]['typeCount'][type]>max) max = tagSet[kw]['typeCount'][type];
+		}
+		return max;
+	}
+	else return wordSet[kw]['count'];
 }
 
 function pspan_id(text, cls, id){
@@ -415,13 +522,15 @@ function initOnekey_lan(){
 	});
 	$("#stgy_reset_lackClothes").click(function() {
 		lackClothes = [];
-		showStrategy_lan();
+		lanStrategy();
 	});
 	$(".stgy_clothes").click(function() {
 		if (!$(".stgy_clothes").hasClass("stgy_clothes_hover")) return;
 		lackClothes.push($(this).attr('id'));
 		var stgy_save_lackClothes = $("#stgy_save_lackClothes").html();
-		showStrategy_lan();
+		var step = parseInt($(this).closest('p').attr('id').replace('step-',''));
+		lanStrategy_init();
+		lanStrategy_recalc(step);
 		$("#stgy_save_lackClothes").html(stgy_save_lackClothes);
 		$(".stgy_clothes").addClass("stgy_clothes_hover");
 		initOnekey_lan();

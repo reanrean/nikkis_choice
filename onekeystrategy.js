@@ -2,7 +2,7 @@ function showStrategy(){
 	if (!$("#StrategyInfo").is(':visible')) return;
 	
 	if(uiFilter["toulan"]){
-		showStrategy_lan();
+		lanStrategy();
 		return;
 	}
 	var rescnt=stgy_rescnt;
