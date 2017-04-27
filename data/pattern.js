@@ -4769,7 +4769,8 @@ var pattern_extra=[
 ];
 
 var patternPrice=[
-//mainType,id,price,haveDiscount,version  ['发型','026',90,0,],
+//mainType,id,price,haveDiscount,version
+  ['发型','026',90,0,],
   ['发型','043',56,0,],
   ['发型','109',28,0,],
   ['发型','123',50,0,],
