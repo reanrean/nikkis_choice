@@ -178,8 +178,8 @@ function lanStrategy_recalc(n){
 		suitArray.sort(function(a,b){return  b["score"] - a["score"];});
 		if (suitArray.length){//put suitArray[0] to lazySet
 			lazyKeywords[suitArray[0]['name']] = {};
-			for (var i in suitArray[0]['clothes']){
-				var cl = suitArray[0]['clothes'][i];
+			for (var i in suitArray[0]['result']){
+				var cl = suitArray[0]['result'][i];
 				var type = cl.type.type;
 				lazyKeywords[suitArray[0]['name']][type] = cl;
 				lazySet[type] = cl;
@@ -196,13 +196,19 @@ function lanStrategy_recalc(n){
 		var evalTagSet = evalSets(tagSet,lazySet);
 		for (var i in evalTagSet) wordArray.push(evalTagSet[i]);
 		wordArray.sort(function(a,b){return  b["score"]==a["score"] ? a["count"]-b["count"] : b["score"]-a["score"];});
-		//put wordArray[0] to lazySet
-		if (wordArray.length){
+		if (wordArray.length){//put wordArray[0] to lazySet
 			lazyKeywords[wordArray[0]['name']] = {};
-			for (var i in wordArray[0]['clothes']){
-				var cl = wordArray[0]['clothes'][i];
+			for (var i in wordArray[0]['result']){
+				var cl = wordArray[0]['result'][i];
 				var type = cl.type.type;
 				lazyKeywords[wordArray[0]['name']][type] = cl;
+				for (var j in repelCates){ //check repelCates before push into lazySet
+					if (type==repelCates[j][0]) {
+						for (k=1; k<repelCates[j].length; k++) if (lazySet[repelCates[j][k]]) delete lazySet[repelCates[j][k]];
+					}else if ($.inArray(type,repelCates[j])>0) {
+						if (lazySet[repelCates[j][0]]) delete lazySet[repelCates[j][0]];
+					}
+				}
 				lazySet[type] = cl;
 			}
 			lazySetScore.push(getLazySetScore(lazySet));
@@ -211,7 +217,7 @@ function lanStrategy_recalc(n){
 	lanStrategy_print(lazySet);
 }
 
-function lanStrategy_print(lazySet){	
+function lanStrategy_print(lazySet){
 	var themeName = $("#theme").val();
 	
 	//check whether missing whitelist category at last
@@ -219,9 +225,20 @@ function lanStrategy_print(lazySet){
 	if (Flist&&Flist[themeName]&&Flist[themeName]["type"]){
 		whiteType = Flist[themeName]["type"];
 		for (var i in whiteType){
-			if (lazySet[whiteType[i]]&&!lazySet[whiteType[i]].isF) continue; //lazySet already contains
-			else if (allScores[whiteType[i]]) whiteExtra[allScores[whiteType[i]][0].type.type] = allScores[whiteType[i]][0]; //own, alert name
-			else whiteTodo.push(whiteType[i]); //not own, alert to create
+			var type = type;
+			if (lazySet[type]&&!lazySet[type].isF) continue; //lazySet already contains
+			else if (allScores[type]) {//own, alert name
+				var ownType = false;
+				for (var j in allScores[type]){
+					if (lanOwnChk(allScores[type][j], lanOwn)){
+						whiteExtra[allScores[type][j].type.type] = allScores[type][j]; 
+						ownType = true;
+						break;
+					}
+				}
+				if (!ownType) whiteTodo.push(type); //not own, alert to create
+			}
+			else whiteTodo.push(type); //not own, alert to create
 		}
 	}
 	
@@ -371,34 +388,33 @@ function evalSets(resultObj,existObj){
 		
 		//get accCount
 		var accCount = 0;
-		resultObj[str]['typeScore'] = {};//init typeScore base on obj types
+		resultObj[str]['typeScore'] = {}; //init typeScore base on obj types
+		resultObj[str]['result'] = {}; //delete result remain in last run
 		if (existObj) for (var i in existObj) {
 			resultObj[str]['typeScore'][i] = 0;
 			if (isAcc_c(i)) accCount++;
 		}
-		if(resultObj[str]['acc']) {
-			for (var i in resultObj[str]['acc']){
-				delete resultObj[str]['clothes'][i]; //delete result remain in last run
-				if (resultObj[str]['typeScore'][i]==null) {
-					resultObj[str]['typeScore'][i] = 0;
-					accCount++;
-				}
+		for (var i in resultObj[str]['acc']){
+			if (resultObj[str]['typeScore'][i]==null) {
+				resultObj[str]['typeScore'][i] = 0;
+				accCount++;
 			}
 		}
 		resultObj[str]['accCount'] = accCount;
 		
 		for (var i in resultObj[str]['clothes']){
 			if (resultObj[str]['typeScore'][i]==null) resultObj[str]['typeScore'][i] = 0;
+			resultObj[str]['result'][i] = resultObj[str]['clothes'][i]; 
 		}
 		
-		//calc acc scores and put to 'clothes'
+		//calc acc scores and put to 'result'
 		if(resultObj[str]['acc']) {
 			for (var type in resultObj[str]['acc']){
 				var maxScore = 0;
 				for (var bonus in resultObj[str]['acc'][type]){
 					var cl = resultObj[str]['acc'][type][bonus];
 					var score = isAccSumScore(cl,accCount);
-					if (score > maxScore) resultObj[str]['clothes'][type] = cl;
+					if (score > maxScore) resultObj[str]['result'][type] = cl;
 					maxScore = score;
 				}
 			}
@@ -407,9 +423,9 @@ function evalSets(resultObj,existObj){
 		//compare with existObj and get typeScore
 		for (var type in resultObj[str]['typeScore']){
 			if (existObj&&existObj[type]) resultObj[str]['typeScore'][type] = isAccSumScore(existObj[type],accCount);
-			if (!resultObj[str]['clothes'][type]) continue;
-			var score = isAccSumScore(resultObj[str]['clothes'][type],accCount);
-			if (score<=resultObj[str]['typeScore'][type]) delete resultObj[str]['clothes'][type];
+			if (!resultObj[str]['result'][type]) continue;
+			var score = isAccSumScore(resultObj[str]['result'][type],accCount);
+			if (score<=resultObj[str]['typeScore'][type]) delete resultObj[str]['result'][type];
 			else resultObj[str]['typeScore'][type] = score;
 		}
 		
@@ -428,12 +444,12 @@ function evalSets(resultObj,existObj){
 			if (sumFirst[0]==0 || sumOthers[0]==0) continue;
 			if (sumFirst[1] < sumOthers[1]) {
 				if (resultObj[str]['typeScore'][repelCates[j][0]]){
-					delete resultObj[str]['clothes'][repelCates[j][0]];
+					delete resultObj[str]['result'][repelCates[j][0]];
 					delete resultObj[str]['typeScore'][repelCates[j][0]];
 				}
 			}else for (k=1; k<repelCates[j].length; k++) {
 				if (resultObj[str]['typeScore'][repelCates[j][k]]){
-					delete resultObj[str]['clothes'][repelCates[j][k]];
+					delete resultObj[str]['result'][repelCates[j][k]];
 					delete resultObj[str]['typeScore'][repelCates[j][k]];
 				}
 			}
