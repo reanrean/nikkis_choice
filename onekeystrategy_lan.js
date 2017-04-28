@@ -12,6 +12,7 @@ var lanOwn;
 function lanStrategy_init(){
 	//gen all suitSet that user have
 	//note: if apply to seal100x, need to exclude those with "染","套"
+	suitSet = {};
 	for (var i in clothes) {
 		if (!clothes[i].set) continue;
 		var setName = clothes[i].set;
