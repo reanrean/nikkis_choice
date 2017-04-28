@@ -225,7 +225,7 @@ function lanStrategy_print(lazySet){
 	if (Flist&&Flist[themeName]&&Flist[themeName]["type"]){
 		whiteType = Flist[themeName]["type"];
 		for (var i in whiteType){
-			var type = type;
+			var type = whiteType[i];
 			if (lazySet[type]&&!lazySet[type].isF) continue; //lazySet already contains
 			else if (allScores[type]) {//own, alert name
 				var ownType = false;
