@@ -330,7 +330,7 @@ function propanal_byall(cartList_num){
 					var tagTxt=rmtagstr(tagj)+':'+out_tagCnt[tagj][0];
 					cellRank+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
 				}
-				cell+=td(cellRank,(cellRank.indexOf('0个<')>-1?'class="top"':''));
+				cell+=td(cellRank,(cellRank.indexOf(':0个')>-1?'class="top"':''));
 			}else {cell+=td('-');}
 			//属性被覆盖
 			var cellRank='';
@@ -342,7 +342,7 @@ function propanal_byall(cartList_num){
 					cellRank+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
 				}
 			}
-			cell+=td(cellRank,(cellRank.indexOf('0个<')>-1?'class="top"':''));
+			cell+=td(cellRank,(cellRank.indexOf(':0个')>-1||cellRank=='0个'?'class="top"':''));
 			
 			if ($.inArray(clothes[id].type.type, skipCategory)>=0) {cellContent=td('-')+td('-')+td('-'); isTop=0; isSec=0;} //skip
 			
