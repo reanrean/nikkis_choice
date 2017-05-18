@@ -496,8 +496,6 @@ var modules_top=[
 var modules_top_checkbox={
 '萤光之灵':['showSource'],
 '非套装部件':['hideNores'],
-'往期活动':['hideNores'],
-'往期活动(节日)':['hideNores'],
 '商店·钻石':['showSource','showMerc','hideNores'],
 '商店·金币':['showSource','showMerc','hideNores'],
 '仙履屋':['showSource','showMerc'],
