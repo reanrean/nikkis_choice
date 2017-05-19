@@ -568,6 +568,7 @@ var modules_top_filename={
 '节日盛典(2)':'TZ-JieRiShengDian_2.html',
 '十二月剧团':'TZ-ShiErYue.html',
 '梦恋奇迹':'TZ-MengLian.html',
+'故事套装':'TZ-GuShi.html',
 '非套装部件':'TZ-FeiTaoZhuangBuJian.html',
 '第一章掉落':'DL-1.html',
 '第二章掉落':'DL-2.html',
