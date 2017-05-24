@@ -157,7 +157,7 @@ function go_src(){
 			if (ss[s].indexOf('少')>-1) {ss[s]='*少';}
 			if (ss[s].indexOf('定')>-1) {ss[s]='*定';}
 			if (ss[s].indexOf('进')>-1) {ss[s]='*进';}
-			if (ss[s].indexOf('梦境：')>-1) {ss[s]='*梦境';}
+			if (ss[s].indexOf('梦境·')>-1) {ss[s]='*梦境';}
 			if (ss[s].indexOf('套装·')>-1) {ss[s]='*套装';}
 			if (jQuery.inArray(ss[s], src)<0) {src.push(ss[s]);}
 		}
