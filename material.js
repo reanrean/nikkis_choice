@@ -6,9 +6,9 @@ $(document).ready(function () {
 	show_inv();
 });
 
-var highlight=['星之海','韶颜倾城','格莱斯'];
-var highlight_style=['xzh','syqc','gls'];
-var src=['公','少','店·金币,店·钻石,店','设计图','重构','迷,幻,飘渺,昼夜,云禅,流光庭园','兑,联盟·小铺,联盟·工坊','']; //note:'重构'&'联盟·小铺' are hardcoded in function
+var highlight=['星之海','韶颜倾城','格莱斯','冰风战歌'];//note: need to revise logic
+var highlight_style=['xzh','syqc','gls','bfzg'];
+var src=['公','少','店·金币,店·钻石,店','设计图','重构','抽·,礼盒·','兑·,联盟·','']; //note:'重构'&'联盟·小铺' are hardcoded in function
 var src_desc=['公主级掉落','少女级掉落','商店购买','设计图','元素重构','谜之屋','兑换','其它']; //note:'谜之屋','兑换' is hardcoded in function
 var maxc=1;
 var reqCnt=[];
