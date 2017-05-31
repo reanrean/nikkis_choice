@@ -147,7 +147,6 @@ function clothesNameTd(piece) {
 function clothesNameTd_search(piece) {
 	var cls = "name table-td search";
 	cls += piece.own ? ' own' : '';
-
 	var $clothesNameA = $("<a>").attr("href", "#").addClass("button");
 	$clothesNameA.text(piece.name);
 	$clothesNameA.click(function () {
@@ -162,6 +161,72 @@ function clothesNameTd_search(piece) {
 	});
 	var $clothesNameTd = $("<div>");
 	$clothesNameTd.attr("id", "clickable-" + (piece.type.mainType + piece.id));
+	$clothesNameTd.addClass(cls);
+	$clothesNameTd.append($clothesNameA);
+	return $clothesNameTd;
+}
+
+function clothesNameDeriv_search(setName) {
+	var cls = "name table-td search";
+	var $clothesNameA = $("<a>").attr("href", "#").addClass("button");
+	$clothesNameA.text('+进/染');
+	$clothesNameA.click(function () {
+		var setContent = [];
+		for (var i in clothes){
+			if(clothes[i].set==setName) setContent.push(i);
+		}
+		//search orig
+		for (var i in setContent){
+			var orig = setContent[i];
+			while(orig != -1) {
+				if($.inArray(orig, setContent)<0) setContent.push(orig);
+				orig = function() {
+					var srcs = clothes[orig].source.split('/');
+					for (var s in srcs){
+						if (srcs[s].indexOf('定')==0||srcs[s].indexOf('进')==0){
+							var orig_num = srcs[s].substr(1);
+							for (var c in clothes){
+								if(clothes[c].type.mainType==clothes[orig].type.mainType&&clothes[c].id==orig_num) return c;
+							}
+						}
+					}
+					return -1;
+				}();
+			}
+		}
+		//search deriv
+		do{
+			var origLen = setContent.length;
+			var retCont = clone(setContent);
+			for (var i in retCont){
+				var orig_num=clothes[retCont[i]].id;
+				for (var c in clothes){
+					if (clothes[c].source.indexOf(orig_num)>0&&clothes[c].type.mainType==clothes[retCont[i]].type.mainType){
+						var srcs=clothes[c].source.split('/');
+						for (var s in srcs){
+							if (srcs[s]=='定'+orig_num||srcs[s]=='进'+orig_num){
+								if($.inArray(c, retCont)<0) retCont.push(c);
+								break;
+							}
+						}
+					}
+				}
+				
+			}
+			retLen = retCont.length;
+			setContent = retCont;
+		}while(origLen != retLen);
+		//ui
+		setContent.sort();
+		switchCate(0);
+		$('#searchResultList').append(button_search(setName+'+进/染','searchCate'));
+		for (var i in setContent){
+			$('#searchResultList').append(clothesNameTd_search(clothes[setContent[i]]));
+		}
+		return false;
+	});
+	var $clothesNameTd = $("<div>");
+	$clothesNameTd.attr("id", "clickable-" + setName);
 	$clothesNameTd.addClass(cls);
 	$clothesNameTd.append($clothesNameA);
 	return $clothesNameTd;
