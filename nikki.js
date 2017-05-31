@@ -1,5 +1,3 @@
-// Ivan's Workshop
-
 var CATEGORY_HIERARCHY = function () {
 	var ret = {};
 	for (var i in category) {
@@ -657,13 +655,14 @@ function searchResult(){
 		if (outSet.length>0) {
 			outSet=getDistinct(outSet);
 			$('#searchResultList').append(button_search('套装','searchCate'));
-			for (var i in outSet) {$('#searchResultList').append(button_search(outSet[i],'','searchResultSet'));}
+			for (var i in outSet) $('#searchResultList').append(button_search(outSet[i],'','searchResultSet'));
 			$(".searchResultSet").click(function () {
 				switchCate(0);
 				var setName=$(this).attr('id').replace('search-','');
 				$('#searchResultList').append(button_search(setName,'searchCate'));
+				$('#searchResultList').append(clothesNameDeriv_search(setName));
 				for (var i in clothes){
-					if(clothes[i].set==setName) {$('#searchResultList').append(clothesNameTd_search(clothes[i]));}
+					if(clothes[i].set==setName) $('#searchResultList').append(clothesNameTd_search(clothes[i]));
 				}
 			});
 		}
@@ -827,8 +826,8 @@ function initEvent() {
 		return false;
 	});
 	$("#searchResultMode").click(function(){
-		if ($(this).hasClass("active")) {$(this).removeClass("active");$(this).html('衣柜');}
-		else {$(this).addClass("active");$(this).html('购物车');}
+		if ($(this).hasClass("active")) {$(this).removeClass("active");$(this).html('+衣柜');}
+		else {$(this).addClass("active");$(this).html('+购物车');}
 	});
 	$('#searchResultInput').keydown(function(e) {
 		if (e.keyCode==13) {
