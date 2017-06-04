@@ -169,11 +169,21 @@ function clothesNameTd_search(piece) {
 function clothesNameDeriv_search(setName) {
 	var cls = "name table-td search";
 	var $clothesNameA = $("<a>").attr("href", "#").addClass("button");
-	$clothesNameA.text('+进/染');
+	$clothesNameA.text('+进/染/套');
 	$clothesNameA.click(function () {
 		var setContent = [];
 		for (var i in clothes){
 			if(clothes[i].set==setName) setContent.push(i);
+			//search setBonus
+			else if (clothes[i].source.indexOf(setName)>0){
+				var srcs=clothes[i].source.split('/');
+				for (var s in srcs){
+					if (srcs[s]=='套装·'+setName){
+						if($.inArray(i, setContent)<0) setContent.push(i);
+						break;
+					}
+				}
+			}
 		}
 		//search orig
 		for (var i in setContent){
@@ -219,7 +229,7 @@ function clothesNameDeriv_search(setName) {
 		//ui
 		setContent.sort();
 		switchCate(0);
-		$('#searchResultList').append(button_search(setName+'+进/染','searchCate'));
+		$('#searchResultList').append(button_search(setName+'+进/染/套','searchCate'));
 		for (var i in setContent){
 			$('#searchResultList').append(clothesNameTd_search(clothes[setContent[i]]));
 		}
