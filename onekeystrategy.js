@@ -243,12 +243,15 @@ function getstrClothes_mod(result,rescnt){
 }
 
 function removeNum(str){
-	if(str.indexOf("定")>=0 || str.indexOf("进")>=0)
-		str = str.replace(/[0-9]/g,"");
-	str = str.replace("联盟小铺", "盟");
+	if(str.indexOf("定")>=0 || str.indexOf("进")>=0) str = str.replace(/[0-9]/g,"");
+	str = str.replace(/联盟·.*/, "联盟");
 	str = str.replace("设计图", "设");
+	str = str.replace(/活动·.*/, "活动");
+	//str = str.replace(/梦境·.*/, "梦境");
+	str = str.replace(/充值·.*/, "充值");
+	str = str.replace(/赠送·.*/, "赠送");
+	str = str.replace("店·", "");
 	str = str.replace("元素重构", "重构");
-	str = str.replace("评选赛商店", "评选赛");
 	return str;
 }
 
