@@ -59,7 +59,7 @@ var tasksAdd={
 '联盟委托: 9-2':['cute','pure'],
 '联盟委托: 9-3':['pure','active'],
 '联盟委托: 9-4':['simple','active'],
-'联盟委托: 9-5':['simple','pure'],
+'联盟委托: 9-5':['pure','simple'],
 '联盟委托: 9-6':['cute','pure'],
 '联盟委托: 9-7':['simple','active'],
 '关卡: 1-1':['pure','active'],
