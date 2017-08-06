@@ -289,6 +289,7 @@ function static_generate(){
 		var contents = contentOf(static_input)[0];
 		var contentsName = contentOf(static_input)[1];
 		var out = '';
+		var errmsg = '';
 		for (var i in contents){
 			switch(staticMode){
 				case 'merge' :
@@ -298,6 +299,7 @@ function static_generate(){
 					for (var j in src_arr){
 						var src = convert_uid(src_arr[j]);
 						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num_arr[j]+"','设'],\n";
+						if (tar.name&&!src.name) errmsg += " " + src_arr[j];
 					}
 					break;
 				case 'evolve':
@@ -305,6 +307,8 @@ function static_generate(){
 					var src = convert_uid(contentBy(contents[i],'src')[0]);
 					var num = contentBy(contents[i],'num')[0];
 					if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num+"','进'],\n";
+					if (tar.name&&!src.name) errmsg += " " + tar_arr[j];
+					if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
 					break;
 				case 'cvtSeries':
 					var src = convert_uid(contentBy(contents[i],'')[0]);
@@ -313,6 +317,8 @@ function static_generate(){
 					for (var j in tar_arr){
 						var tar = convert_uid(tar_arr[j]);
 						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','1','染'],\n";
+						if (tar.name&&!src.name) errmsg += " " + tar_arr[j];
+						if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
 					}
 					break;
 				case 'convert':
@@ -320,6 +326,8 @@ function static_generate(){
 					var dye = convert_dye(contentBy(contents[i],'item')[0]);
 					var num = contentBy(contents[i],'num')[0];
 					if (tar.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+dye[0]+"','"+dye[1]+"','"+num+"'],\n";
+					if (tar.name&&!src.name) errmsg += " " + tar_arr[j];
+					if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
 					break;
 				case 'shop':
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
@@ -355,6 +363,7 @@ function static_generate(){
 			}
 		}
 		$("#static_output").val(out);
+		if (errmsg) alert('尚缺:'+errmsg);
 	}
 }
 
