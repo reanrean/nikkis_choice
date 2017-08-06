@@ -307,8 +307,8 @@ function static_generate(){
 					var src = convert_uid(contentBy(contents[i],'src')[0]);
 					var num = contentBy(contents[i],'num')[0];
 					if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num+"','进'],\n";
-					if (tar.name&&!src.name) errmsg += " " + tar_arr[j];
-					if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
+					if (tar.name&&!src.name) errmsg += " " + contentBy(contents[i],'src')[0];
+					if (src.name&&!tar.name) errmsg += " " + contentBy(contents[i],'id')[0];
 					break;
 				case 'cvtSeries':
 					var src = convert_uid(contentBy(contents[i],'')[0]);
@@ -317,7 +317,6 @@ function static_generate(){
 					for (var j in tar_arr){
 						var tar = convert_uid(tar_arr[j]);
 						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','1','染'],\n";
-						if (tar.name&&!src.name) errmsg += " " + tar_arr[j];
 						if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
 					}
 					break;
@@ -326,8 +325,6 @@ function static_generate(){
 					var dye = convert_dye(contentBy(contents[i],'item')[0]);
 					var num = contentBy(contents[i],'num')[0];
 					if (tar.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+dye[0]+"','"+dye[1]+"','"+num+"'],\n";
-					if (tar.name&&!src.name) errmsg += " " + tar_arr[j];
-					if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
 					break;
 				case 'shop':
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
@@ -362,8 +359,8 @@ function static_generate(){
 					break;
 			}
 		}
-		$("#static_output").val(out);
 		if (errmsg) alert('尚缺:'+errmsg);
+		$("#static_output").val(out);
 	}
 }
 
