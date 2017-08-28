@@ -439,7 +439,7 @@ function isBasicSet(id){
 		var total=0;
 		for (var i in clothes){
 			for (var t in targ){
-				if (clothes[i].source.indexOf(clothes[targ[t]].id)>0 
+				if ( (clothes[i].source.indexOf('进'+clothes[targ[t]].id)>=0 || clothes[i].source.indexOf('定'+clothes[targ[t]].id)>=0)
 				&& clothes[targ[t]].type.mainType==clothes[i].type.mainType 
 				&& $.inArray(i,targ)<0){
 					targ.push(i);
