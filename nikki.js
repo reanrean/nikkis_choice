@@ -550,6 +550,7 @@ function drawTheme() {
 	}
 	
 	var dropdown2 = $("#theme-fliter")[0];
+	if (!dropdown2) return;
 	var def2 = document.createElement('option');
 	def2.text = '筛选';
 	def2.value = 'custom';
