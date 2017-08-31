@@ -548,6 +548,35 @@ function drawTheme() {
 		option.value = theme;
 		dropdown.add(option);
 	}
+	
+	var dropdown2 = $("#theme-fliter")[0];
+	var def2 = document.createElement('option');
+	def2.text = '筛选';
+	def2.value = 'custom';
+	dropdown2.add(def2);
+	for (var index in themeFilter) {
+		var option = document.createElement('option');
+		option.text = themeFilter[index][0];
+		option.value = themeFilter[index][1];
+		dropdown2.add(option);
+	}
+}
+function reDrawTheme() {
+	var fliterStr = $("#theme-fliter").val();
+	var dropdown = $("#theme");
+	dropdown.empty();
+	var def = document.createElement('option');
+	def.text = '自定义关卡';
+	def.value = 'custom';
+	dropdown[0].add(def);
+	for (var theme in allThemes) {
+		var option = document.createElement('option');
+		option.text = theme;
+		option.value = theme;
+		if(theme.indexOf(fliterStr)>=0 || fliterStr == "custom"){
+			dropdown[0].add(option);			
+		}
+	}
 }
 
 function drawImport() {

@@ -109,7 +109,7 @@ legend {
 }
 /************************/
 .shaonvSkill{
-	color: red;
+	color: teal;
 	font-weight:bold;
 }
 .is_f{
@@ -129,7 +129,7 @@ legend {
 	font-weight:bold;
 }	
 .hintInfo{
-	color: teal;
+	color: red;
 	font-weight:bold;
 }
 span.badge{
