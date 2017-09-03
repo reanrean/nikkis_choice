@@ -159,6 +159,7 @@ function go_src(){
 			if (ss[s].indexOf('进')>-1) {ss[s]='*进';}
 			if (ss[s].indexOf('梦境·')>-1) {ss[s]='*梦境';}
 			if (ss[s].indexOf('套装·')>-1) {ss[s]='*套装';}
+			if (ss[s].indexOf('签到·')>-1) {ss[s]='*签到';}
 			if (jQuery.inArray(ss[s], src)<0) {src.push(ss[s]);}
 		}
 	}
