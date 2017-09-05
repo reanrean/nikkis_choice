@@ -176,13 +176,8 @@ function clothesNameDeriv_search(setName) {
 			if(clothes[i].set==setName) setContent.push(i);
 			//search setBonus
 			else if (clothes[i].source.indexOf(setName)>0){
-				var srcs=clothes[i].source.split('/');
-				for (var s in srcs){
-					if (srcs[s]=='套装·'+setName){
-						if($.inArray(i, setContent)<0) setContent.push(i);
-						break;
-					}
-				}
+				var srcs = clothes[i].source.split('/');
+				if($.inArray('套装·'+setName,srcs)>=0 && $.inArray(i, setContent)<0) setContent.push(i);
 			}
 		}
 		//search orig
@@ -191,13 +186,11 @@ function clothesNameDeriv_search(setName) {
 			while(orig != -1) {
 				if($.inArray(orig, setContent)<0) setContent.push(orig);
 				orig = function() {
-					var srcs = clothes[orig].source.split('/');
-					for (var s in srcs){
-						if (srcs[s].indexOf('定')==0||srcs[s].indexOf('进')==0){
-							var orig_num = srcs[s].substr(1);
-							for (var c in clothes){
-								if(clothes[c].type.mainType==clothes[orig].type.mainType&&clothes[c].id==orig_num) return c;
-							}
+					var src = clothes[orig].source;
+					if (src.indexOf('定')>=0 || src.indexOf('进')>=0){
+						var orig_num = src.replace(/[^(定|进)]*(定|进)([0-9]+)[^0-9]*/, "$2");
+						for (var c in clothes){
+							if(clothes[c].type.mainType==clothes[orig].type.mainType && clothes[c].id==orig_num) return c;
 						}
 					}
 					return -1;
@@ -209,19 +202,13 @@ function clothesNameDeriv_search(setName) {
 			var origLen = setContent.length;
 			var retCont = clone(setContent);
 			for (var i in retCont){
-				var orig_num=clothes[retCont[i]].id;
+				var orig_num = clothes[retCont[i]].id;
 				for (var c in clothes){
-					if (clothes[c].source.indexOf(orig_num)>0&&clothes[c].type.mainType==clothes[retCont[i]].type.mainType){
-						var srcs=clothes[c].source.split('/');
-						for (var s in srcs){
-							if (srcs[s]=='定'+orig_num||srcs[s]=='进'+orig_num){
-								if($.inArray(c, retCont)<0) retCont.push(c);
-								break;
-							}
-						}
+					if (clothes[c].source.indexOf(orig_num)>0 && clothes[c].type.mainType==clothes[retCont[i]].type.mainType){
+						var srcs = clothes[c].source.replace(/[^(定|进)]*(定|进)([0-9]+)[^0-9]*/, "$2");
+						if(orig_num == srcs && $.inArray(c, retCont)<0) retCont.push(c);
 					}
 				}
-				
 			}
 			retLen = retCont.length;
 			setContent = retCont;

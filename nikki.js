@@ -680,7 +680,7 @@ function searchResult(){
 	if (searchTxt){
 		var outSet=[];
 		for (var i in clothes){
-			if(clothes[i].set.indexOf(searchTxt)>=0) {outSet.push(clothes[i].set);}
+			if(clothes[i].set.indexOf(searchTxt)>=0) outSet.push(clothes[i].set);
 		}
 		if (outSet.length>0) {
 			outSet=getDistinct(outSet);
