@@ -517,6 +517,21 @@ function delCart(id,n){
 	refreshCart(n);
 }
 
+function previewHtml(){
+	var head = '<meta name="viewport" content="width=device-width, initial-scale=1"/><meta charset="UTF-8" />';
+	head += '<link rel="stylesheet" type="text/css" href="http://aojiaogongluezu.github.io/nikkiup2u3/css/style.css" />';
+	head += '<link rel="stylesheet" type="text/css" href="http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/dp-style.css" />';
+	var record=$("#ajglz_out").val().replace(/<head>(.*)<\/head>/, head);
+	var winRecord = window.open('');
+	winRecord.document.write(record);
+	
+	var script = document.createElement('script');//seems cannot load it, anyway
+	script.src = 'http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/dp.js';
+	script.type = 'text/javascript';
+	script.charset = 'UTF-8';
+	winRecord.document.head.appendChild(script);
+}
+
 function header(){
 	var appurl=$('#appurl').is(":checked") ? 1 : 0;
  var h='<!DOCTYPE html>';
