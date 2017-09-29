@@ -519,14 +519,14 @@ function delCart(id,n){
 
 function previewHtml(){
 	var head = '<meta name="viewport" content="width=device-width, initial-scale=1"/><meta charset="UTF-8" />';
-	head += '<link rel="stylesheet" type="text/css" href="http://aojiaogongluezu.github.io/nikkiup2u3/css/style.css" />';
-	head += '<link rel="stylesheet" type="text/css" href="http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/dp-style.css" />';
+	head += '<link rel="stylesheet" type="text/css" href="http://ajglz.coding.me/css/style.css" />';
+	head += '<link rel="stylesheet" type="text/css" href="http://ajglz.coding.me/html/3-DingPei/dp-style.css" />';
 	var record=$("#ajglz_out").val().replace(/<head>(.*)<\/head>/, head);
 	var winRecord = window.open('');
 	winRecord.document.write(record);
 	
 	var script = document.createElement('script');//seems cannot load it, anyway
-	script.src = 'http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/dp.js';
+	script.src = 'http://ajglz.coding.me/html/3-DingPei/dp.js';
 	script.type = 'text/javascript';
 	script.charset = 'UTF-8';
 	winRecord.document.head.appendChild(script);
@@ -539,9 +539,9 @@ function header(){
 	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
 	//h+='<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
 	h+='<meta charset="UTF-8" />';
-	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://aojiaogongluezu.github.io/nikkiup2u3/':'../../')+'css/style.css" />';
-	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/':'')+'dp-style.css" />';
-	h+='<script type="text/javascript" src="'+(appurl?'http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/':'')+'dp.js"></script>';
+	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/':'../../')+'css/style.css" />';
+	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp-style.css" />';
+	h+='<script type="text/javascript" src="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp.js"></script>';
 	h+='</head>';
 	h+='<body>';
 	h+='<div class="myframe">';
