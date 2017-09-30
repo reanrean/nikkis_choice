@@ -332,14 +332,16 @@ function static_generate(){
 					var price = contentBy(contents[i],'price')[0];
 					var price_type = contentBy(contents[i],'price_type')[0];
 					var currency = convert_priceType(price_type);
-					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'"+currency+"'],\n";
+					var isOld = contentBy(contents[i],'is_activity_goods')[0]==1 ? '1' : '0';
+					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'"+currency+"',"+isOld+"],\n";
 					break;
 				case 'arena':
 					var tar = convert_uid(contentsName[i]);
 					var price = contentBy(contents[i],'price')[0];
 					var noDisplay = contentBy(contents[i],'no_display');
-					var haveDiscount = contentBy(contents[i],'is_activity_goods')[0];
-					if (tar.name&&!noDisplay) out += "  ['"+tar.mainType+"','"+tar.id+"',"+price+","+haveDiscount+",],\n";
+					var haveDiscount = contentBy(contents[i],'is_old_product')[0]=='1' ? '0' : '1';
+					var isOld = contentBy(contents[i],'is_activity_goods')[0];
+					if (tar.name&&!noDisplay) out += "  ['"+tar.mainType+"','"+tar.id+"',"+price+","+haveDiscount+","+isOld+",],\n";
 					break;
 				case 'refactor':
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
