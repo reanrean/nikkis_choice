@@ -1,6 +1,7 @@
 var modules_top=[
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','踏云拂月',1,'踏云拂月',''],
 ['最新活动','毛茸茸绅士',1,'毛茸茸绅士',''],
 ['最新活动','梦中的旅行',1,'梦中的旅行',''],
 ['最新活动','星云回响',1,'星云回响',''],
