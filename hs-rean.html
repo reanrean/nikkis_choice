@@ -18,10 +18,10 @@
 		<script type='text/javascript' charset="UTF-8" src="tool.js"></script>
 		<script type='text/javascript' charset="UTF-8" src='data/wardrobe.js'></script>
 		<script type='text/javascript' charset="UTF-8">
-		var wardrobe_orig=wardrobe;
-		var wardrobe=function() {
+		var wardrobe_orig = wardrobe;
+		var wardrobe = function() {
 			var ret = [];
-			var skip_new=(window.location.href.toUpperCase().indexOf('?OLD')>0) ? 1 : 0 ;
+			var skip_new = (window.location.href.toUpperCase().indexOf('?OLD')>0) ? 1 : 0 ;
 			for (var i in wardrobe_orig) {
 				var tmp=wardrobe[i];
 				if(skip_new) {if(tmp[17]==lastVersion) continue;}
@@ -42,9 +42,11 @@
 		<script type='text/javascript' charset="UTF-8" src='ui.js'></script>
 		<script type='text/javascript' charset="UTF-8" src='nikki.js'></script>
 		<script type='text/javascript' charset="UTF-8">
-		var calcGlobalClothes=1;
+		var calcGlobalClothes = 1;
+		var output_contents = '';
 		function addBoost(boost1,boost2){
-			$('#output_row').append("'"+$("#theme").val()+"':['"+boost1+"','"+boost2+"'],"+"<br>");
+			//$('#output_row').append("'"+$("#theme").val()+"':['"+boost1+"','"+boost2+"'],"+"<br>");
+			output_contents += "'"+$("#theme").val()+"':['"+boost1+"','"+boost2+"'],"+"<br>";
 			if(window.location.href.toUpperCase().indexOf('?DEBUG')>0){
 				$(".1d27").removeClass("active");
 				$(".1d778").removeClass("active");
@@ -78,7 +80,8 @@
 				criteria['missing'] = true;
 				chooseAccessories(criteria);
 				for (var c in category){
-					if (shoppingCart.cart[category[c]]) $('#output_row').append(shoppingCart.cart[category[c]].name+shoppingCart.cart[category[c]].version);
+					if (shoppingCart.cart[category[c]]) //$('#output_row').append(shoppingCart.cart[category[c]].name+shoppingCart.cart[category[c]].version);
+						output_contents += shoppingCart.cart[category[c]].name+shoppingCart.cart[category[c]].version;
 				}
 			}
 		}
@@ -101,7 +104,12 @@
 				}
 			}
 			var date2=new Date();
-			$('#output_row').append('Done! Time used: '+((date2-date1)/1000).toFixed(2)+' secs<br>');
+			//$('#output_row').append('Done! Time used: '+((date2-date1)/1000).toFixed(2)+' secs<br>');
+			output_contents += 'Done! Time used: '+((date2-date1)/1000).toFixed(2)+' secs<br>';
+			output_hs();
+		}
+		function output_hs(){
+			$('#output_row').html(output_contents);
 		}
 		function initOnekey(){}
 		function showStrategy(){}
@@ -112,7 +120,7 @@
 		<div class='top'>
 			<div class="fliter">
 				<div id='filtersTop'>
-					<select id="theme" onChange="changeTheme()"></select>
+					<select id="theme" onChange="changeTheme();output_hs();"></select>
 					<div id='reanComment'>
 					<label><input type="checkbox" class="fliter" value="highscore"> >ω< </label>
 					Cnt:<span id="rean_cnt"></span><br>
