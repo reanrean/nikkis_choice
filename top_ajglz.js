@@ -290,7 +290,7 @@ function propanal_byall(cartList_num){
 			var isSec=result[6];
 			
 			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)));
-			cell+=td(clothes[id].type.type);
+			cell+=td(shortForm(clothes[id].type.type));
 			if(showSource||showMerc){
 				var cell_3rd='';
 				if(showSource){
@@ -381,7 +381,7 @@ function calctop_byall(cartList_num){
 			var rowspan=(inTop.length>0&&inSec.length>0)? 2:1;
 			
 			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)),(rowspan>1?'rowspan="'+rowspan+'"':''));
-			cell+=td(clothes[id].type.type,(rowspan>1?'rowspan="'+rowspan+'"':''));
+			cell+=td(shortForm(clothes[id].type.type),(rowspan>1?'rowspan="'+rowspan+'"':''));
 			if(showSource||showMerc){
 				var cell_3rd='';
 				if(showSource){
