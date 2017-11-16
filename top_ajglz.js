@@ -533,7 +533,7 @@ function previewHtml(){
 }
 
 function header(){
-	var appurl=$('#appurl').is(":checked") ? 1 : 0;
+	var appurl=$('#rmguildhs').is(":checked") ? 1 : 0;
  var h='<!DOCTYPE html>';
 	h+='<head>';
 	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
