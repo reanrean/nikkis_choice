@@ -1,4 +1,6 @@
-var modules_top=[
+var auto_skip = ['不使用','商店·钻石','商店·金币'];
+
+var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
 ['最新活动','雀舞笙歌',1,'雀舞笙歌',''],
@@ -610,7 +612,7 @@ var modules_top=[
 ['V11-V15','V15-蒸汽之翼',1,'蒸汽之翼',''],
 ];
 
-var modules_top_checkbox={
+var modules_top_checkbox = {
 '萤光之灵':['showSource'],
 '往期活动':['hideNores'],
 '非套装部件':['hideNores'],
@@ -669,7 +671,7 @@ var modules_top_checkbox={
 '涵光殿':['showSource'],
 };
 
-var modules_top_filename={
+var modules_top_filename = {
 '最新活动':'HD-ZuiXinHuoDong.html',
 '萤光之灵':'YingGuangZhiLing.html',
 '活动·梦恋奇迹':'HD-MengLianQiJi.html',
