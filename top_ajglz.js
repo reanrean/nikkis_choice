@@ -457,7 +457,7 @@ function isBasicSet(id){
 function download_top(){
 	var file_content=$('#ajglz_out').val();
 	var file_name=$('#ajglz_filename').val();
-	download(file_content, file_name, 'text/plain');
+	saveAs(file_content, file_name);
 }
 
 function clear_textarea(){
@@ -692,13 +692,26 @@ function restore_guild_hs(){
 	if(tasksAdd_bk) tasksAdd = cloneKeyObj(tasksAdd_bk);
 }
 
-function genall_1click(){//要先全部计算
+function genall_1click(){
+	if (!getLength(storeTop_Normal)>0) {
+		$('#ajglz_out').val('');
+		$('#topsearch_note').html('请先全部计算_(:з」∠)_');
+		return false;
+	}
+	
+	var zip = new JSZip();
 	$("#modes > option").each(function(){
 		var modeName = $(this).val();
 		if ($.inArray(modeName,auto_skip)<0) {
 			$("#modes").val(modeName).change();
-			calctop('all');//生成
-			download_top();//下载
+			calctop('all');
+			var file_content = $('#ajglz_out').val();
+			var file_name = $('#ajglz_filename').val();
+			zip.file(file_name, file_content);
 		}
+	});
+	zip.generateAsync({type:"blob"})
+	.then(function(content) {
+		saveAs(content, "3-DingPei.zip");
 	});
 }
