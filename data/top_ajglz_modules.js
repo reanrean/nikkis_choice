@@ -1,4 +1,4 @@
-var auto_skip = ['不使用','商店·钻石','商店·金币'];
+var auto_skip = ['不使用'];
 
 var modules_top = [
 //modulename, title, searchType, searchString, mode
