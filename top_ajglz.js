@@ -455,9 +455,10 @@ function isBasicSet(id){
 }
 
 function download_top(){
-	var file_content=$('#ajglz_out').val();
-	var file_name=$('#ajglz_filename').val();
-	saveAs(file_content, file_name);
+	var file_content = $('#ajglz_out').val();
+	var file_name = $('#ajglz_filename').val() ? $('#ajglz_filename').val() : '0.html';
+	var blob = new Blob([file_content], {type: "text/plain;charset=utf-8"});
+	saveAs(blob, file_name);
 }
 
 function clear_textarea(){
