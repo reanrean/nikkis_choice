@@ -534,7 +534,7 @@ function previewHtml(){
 
 function header(){
 	var appurl=$('#rmguildhs').is(":checked") ? 1 : 0;
- var h='<!DOCTYPE html>';
+	var h='<!DOCTYPE html>';
 	h+='<head>';
 	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
 	//h+='<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
@@ -542,6 +542,7 @@ function header(){
 	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/':'../../')+'css/style.css" />';
 	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp-style.css" />';
 	h+='<script type="text/javascript" src="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp.js"></script>';
+	h+=(appurl?'<style>label:first-child,#limitn,.norm{display:none;}.limit{display:inline;}</style>':'');
 	h+='</head>';
 	h+='<body>';
 	h+='<div class="myframe">';
@@ -689,4 +690,15 @@ function backup_guild_hs(){
 
 function restore_guild_hs(){
 	if(tasksAdd_bk) tasksAdd = cloneKeyObj(tasksAdd_bk);
+}
+
+function genall_1click(){//要先全部计算
+	$("#modes > option").each(function(){
+		var modeName = $(this).val();
+		if ($.inArray(modeName,auto_skip)<0) {
+			$("#modes").val(modeName).change();
+			calctop('all');//生成
+			download_top();//下载
+		}
+	});
 }
