@@ -7,7 +7,8 @@ var rows=0;
 var field_desc=['名字','分类','编号','心级',
 	'华丽','简约','优雅','活泼','成熟','可爱','性感','清纯','清凉','保暖',
 	'tag','来源','套装','版本'];
-var skip_comp=['来源'];
+//var skip_comp=['来源'];
+var skip_comp=[];
 
 function show(){
 	var pass='6394210ce21ac27fb5de7645824dff9be9ba0690';
