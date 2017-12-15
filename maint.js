@@ -270,7 +270,7 @@ function arrowKey() {
 }
 
 function go_static(){
-	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild'];
+	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve'];
 	var info = '<form id="static" action="">';
 	for (var i in radio){
 		info += '<label><input type="radio" name="radio_static" id="static_'+radio[i]+'" value="'+radio[i]+'" '+(i==0?'checked':'')+'>'+radio[i]+'</label><label>';
@@ -282,6 +282,13 @@ function go_static(){
 	
 	$("#info").html(info);
 	$("#extra").html('');
+	
+	//gen list of setCates
+	setCates = [];
+	for (var i in wardrobe){
+		var cate = /^.*·[染套基]$/.test(wardrobe[i][16]) ? '' : wardrobe[i][16];
+		if ($.inArray(cate,setCates)<0) setCates.push(cate);
+	}
 }
 
 function static_generate(){
@@ -291,6 +298,7 @@ function static_generate(){
 		var contents = contentOf(static_input)[0];
 		var contentsName = contentOf(static_input)[1];
 		var out = '';
+		var outArr = {};
 		var errmsg = '';
 		for (var i in contents){
 			switch(staticMode){
@@ -358,6 +366,41 @@ function static_generate(){
 					var price = contentBy(contents[i],'price')[0];
 					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'联盟币'],\n";
 					break;
+				case 'achieve':
+					var name = contentBy(contents[i],'name',1)[0].replace(/[\ \"]/g,'');
+					var genre = contentBy(contents[i],'genre')[0];
+					switch (genre){
+						case '7': var genreName = '节日盛典'; var seq = 8; break;
+						case '8': var genreName = '十二月剧团'; var seq = 9; break;
+						case '9': var genreName = '一路相随'; var seq = 10; break;
+						case '10': var genreName = '满天繁星'; var seq = 11; break;
+						case '11': var genreName = '苹果联邦'; var seq = 1; break;
+						case '12': var genreName = '莉莉斯王国'; var seq = 2; break;
+						case '13': var genreName = '云端帝国'; var seq = 3; break;
+						case '14': var genreName = '信鸽王国'; var seq = 4; break;
+						case '15': var genreName = '北地王国'; var seq = 5; break;
+						case '16': var genreName = '荒原共和国'; var seq = 6; break;
+						case '17': var genreName = '废墟孤岛'; var seq = 7; break;
+						case '18': var genreName = '梦恋奇迹'; var seq = 12; break;
+						case '19': var genreName = '故事套装'; var seq = 14; break;
+						case '20': var genreName = '御苑琼芳'; var seq = 13; break;
+						default: var genreName = '';
+					}
+					if (!genreName) continue;
+					if ($.inArray(name,setCates)<0) continue;
+					
+					if (!outArr[seq]) outArr[seq] = [];
+					outArr[seq].push("  ['" + genreName + "','" + name + "'],\n");
+					if (name=='白骨夫人'||name=='幽冥仙主') outArr[seq].push("  ['" + genreName + "','" + name + "·入夜'],\n");
+					if (i==Object.keys(contents).length-1){ //last record
+						for (var seq in outArr){
+							outArr[seq].reverse();
+							for (var l in outArr[seq]){
+								out += outArr[seq][l];
+							}
+						}
+					}
+					break;
 			}
 		}
 		if (errmsg) alert('尚缺:'+errmsg);
@@ -381,8 +424,8 @@ function contentOf(txt){
 	return [ret,name];
 }
 
-function contentBy(txt,varname){
-	txt=txt.replace(/[^0-9a-z\,_{}=]/gi,'');
+function contentBy(txt,varname,keepChars){
+	if (!keepChars) txt = txt.replace(/[^0-9a-z\,_{}=]/gi,'');
 	varname = varname+'=';
 	if (txt.indexOf(varname)<0) return false;
 	var txt_sp = txt.split(varname);
