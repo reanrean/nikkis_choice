@@ -39,10 +39,10 @@ Clothes = function(csv) {
     cool: realRating(csv[12], csv[13], theType),
     tags: csv[14].split('/'),
     source: csv[15].replace(/设·图/g,"设计图").replace(/设·/g,""),
-    set: csv[16].replace(/·[基染套]/g,""),
+    set: /^.*·[染套基]$/.test(csv[16]) ? '' : csv[16],
     setRef: csv[16],
     version: csv[17],
-    srcShort: csv[18]?csv[18]:csv[15],
+    srcShort: csv[18] ? csv[18] : csv[15],
     deps: [],
     exDep: '',
     toCsv: function() {
