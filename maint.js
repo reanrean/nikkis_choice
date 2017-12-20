@@ -284,11 +284,14 @@ function go_static(){
 	$("#extra").html('');
 	
 	//gen list of setCates
-	setCates = [];
-	for (var i in wardrobe){
-		var cate = /^.*·[染套基]$/.test(wardrobe[i][16]) ? '' : wardrobe[i][16];
-		if ($.inArray(cate,setCates)<0) setCates.push(cate);
-	}
+	setCates = function() {
+		var ret = [];
+		for (var i in wardrobe){
+			var cate = /^.*·[染套基]$/.test(wardrobe[i][16]) ? '' : wardrobe[i][16];
+			if ($.inArray(cate,ret)<0) ret.push(cate);
+		}
+		return ret;
+	}();
 }
 
 function static_generate(){
@@ -386,12 +389,11 @@ function static_generate(){
 						case '20': var genreName = '御苑琼芳'; var seq = 13; break;
 						default: var genreName = '';
 					}
-					if (!genreName) continue;
-					if ($.inArray(name,setCates)<0) continue;
-					
-					if (!outArr[seq]) outArr[seq] = [];
-					outArr[seq].push("  ['" + genreName + "','" + name + "'],\n");
-					if (name=='白骨夫人'||name=='幽冥仙主') outArr[seq].push("  ['" + genreName + "','" + name + "·入夜'],\n");
+					if (genreName && $.inArray(name,setCates)>=0){
+						if (!outArr[seq]) outArr[seq] = [];
+						outArr[seq].push("  ['" + genreName + "','" + name + "'],\n");
+						if (name=='白骨夫人'||name=='幽冥仙主') outArr[seq].push("  ['" + genreName + "','" + name + "·入夜'],\n");
+					}
 					if (i==Object.keys(contents).length-1){ //last record
 						for (var seq in outArr){
 							outArr[seq].reverse();
