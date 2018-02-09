@@ -342,7 +342,7 @@ function propanal_byall(cartList_num){
 					cellRank+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
 				}
 			}
-			cell+=td(cellRank,(cellRank.indexOf(':0个')>-1||cellRank=='0个'?'class="top"':''));
+			cell+=td(cellRank,(cellRank.indexOf(':0个')>-1||cellRank.indexOf('0个')==0?'class="top"':''));
 			
 			if ($.inArray(clothes[id].type.type, skipCategory)>=0) {cellContent=td('-')+td('-')+td('-'); isTop=0; isSec=0;} //skip
 			
