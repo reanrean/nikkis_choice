@@ -309,6 +309,7 @@ function static_generate(){
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
 					var src_arr = contentBy(contents[i],'cloth');
 					var num_arr = contentBy(contents[i],'num');
+					if (tar.name&&tar.src.indexOf('设·图')<0) console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·图');
 					for (var j in src_arr){
 						var src = convert_uid(src_arr[j]);
 						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num_arr[j]+"','设'],\n";
@@ -319,6 +320,7 @@ function static_generate(){
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
 					var src = convert_uid(contentBy(contents[i],'src')[0]);
 					var num = contentBy(contents[i],'num')[0];
+					if (tar.name&&tar.src.indexOf('设·进')<0) console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·进'+src.id);
 					if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num+"','进'],\n";
 					if (tar.name&&!src.name) errmsg += " " + contentBy(contents[i],'src')[0];
 					if (src.name&&!tar.name) errmsg += " " + contentBy(contents[i],'id')[0];
@@ -329,6 +331,7 @@ function static_generate(){
 					tar_arr = tar_arr.slice(1);
 					for (var j in tar_arr){
 						var tar = convert_uid(tar_arr[j]);
+						if (tar.name&&tar.src.indexOf('设·定')<0) console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·定'+src.id);
 						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','1','染'],\n";
 						if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
 					}
@@ -346,6 +349,7 @@ function static_generate(){
 					var currency = convert_priceType(price_type);
 					var isOld = contentBy(contents[i],'is_activity_goods')[0]==1 ? '1' : '0';
 					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'"+currency+"',"+isOld+"],\n";
+					if (tar.name&&tar.src.indexOf('店·')<0) console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 店·'+currency);
 					break;
 				case 'arena':
 					var tar = convert_uid(contentsName[i]);
@@ -438,6 +442,8 @@ function contentBy(txt,varname,keepChars){
 
 function convert_uid(uid){
 	if (uid=='81327') uid='31327';
+	if (uid=='82599') uid='62599';
+	if (uid=='83221') uid='73221';
 	
 	var mainId = uid.substr(0,1);
 	var id = (uid.substr(1,1)==0 ? uid.substr(2,3) : uid.substr(1,4));
@@ -447,6 +453,7 @@ function convert_uid(uid){
 		mainType: mainType,
 		id: id,
 		name: clothesSet[mainType][id],
+		src: clothesSrc[mainType][id],
 	}
 }
 
@@ -458,6 +465,18 @@ var clothesSet = function() {
       ret[t] = {};
     }
     ret[t][wardrobe[i][2]] = wardrobe[i][0];
+  }
+  return ret;
+}();
+
+var clothesSrc = function() {
+  var ret = {};
+  for (var i in wardrobe) {
+    var t = wardrobe[i][1].split('-')[0];
+    if (!ret[t]) {
+      ret[t] = {};
+    }
+    ret[t][wardrobe[i][2]] = wardrobe[i][15];
   }
   return ret;
 }();
