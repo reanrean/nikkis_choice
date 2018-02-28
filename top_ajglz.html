@@ -35,8 +35,21 @@
 	<script type='text/javascript' charset="UTF-8" src='data/top_ajglz_modules.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='sha1.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='download.js'></script>
+	<script type='text/javascript' charset="UTF-8">
+		function unhide(){
+			var pass='5e65d9d696058c4e452b2ab82666a14cbcec2c7a';
+			var userInput=$.sha1($("#unhide_pass").val());
+			$("#unhide_pass").val('');
+			if (userInput==pass){
+				$("#unhide").hide();
+				$("#hide").show();
+			}
+		}
+</script>
 </head>
 <body>
+<p id="unhide"><input type="password" id="unhide_pass" placeholder="旧版不用啦"/><a href="" onclick="unhide();return false;" class="monkey">&#x1f648;</a></p>
+<span id="hide" style="display:none">
 	<p>
 		<b>奇迹暖暖顶配页面生成器</b> for 傲娇攻略组(≥ω≤)<br/>
 		→<a href="top.html">非攻略组成员请左转原版</a>←<br/>
@@ -147,5 +160,6 @@ F表格式（示例）：
 		</div>
 	</div>
 	</span>
+</span>
 </body>
 </html>
