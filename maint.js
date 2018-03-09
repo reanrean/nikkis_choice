@@ -309,7 +309,11 @@ function static_generate(){
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
 					var src_arr = contentBy(contents[i],'cloth');
 					var num_arr = contentBy(contents[i],'num');
-					if (tar.name&&tar.src.indexOf('设·图')<0) console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·图');
+					if (tar.name&&tar.src[15].indexOf('设·图')<0) {
+						//console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·图');
+						ward = tar.src;
+						console.log("  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·图','"+ward[16]+"','"+ward[17]+"','图'],");
+					}
 					for (var j in src_arr){
 						var src = convert_uid(src_arr[j]);
 						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num_arr[j]+"','设'],\n";
@@ -320,7 +324,11 @@ function static_generate(){
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
 					var src = convert_uid(contentBy(contents[i],'src')[0]);
 					var num = contentBy(contents[i],'num')[0];
-					if (tar.name&&tar.src.indexOf('设·进')<0) console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·进'+src.id);
+					if (tar.name&&tar.src[15].indexOf('设·进')<0) {
+						//console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·进'+src.id);
+						ward = tar.src;
+						console.log("  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·进"+src.id+"','"+ward[16]+"','"+ward[17]+"','进·'],");
+					}
 					if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num+"','进'],\n";
 					if (tar.name&&!src.name) errmsg += " " + contentBy(contents[i],'src')[0];
 					if (src.name&&!tar.name) errmsg += " " + contentBy(contents[i],'id')[0];
@@ -331,7 +339,11 @@ function static_generate(){
 					tar_arr = tar_arr.slice(1);
 					for (var j in tar_arr){
 						var tar = convert_uid(tar_arr[j]);
-						if (tar.name&&tar.src.indexOf('设·定')<0) console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·定'+src.id);
+						if (tar.name&&tar.src[15].indexOf('设·定')<0) {
+							//console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·定'+src.id);
+							ward = tar.src;
+							console.log("  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·定"+src.id+"','"+ward[16]+"','"+ward[17]+"','定·'],");
+						}
 						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','1','染'],\n";
 						if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
 					}
@@ -349,7 +361,11 @@ function static_generate(){
 					var currency = convert_priceType(price_type);
 					var isOld = contentBy(contents[i],'is_activity_goods')[0]==1 ? '1' : '0';
 					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'"+currency+"',"+isOld+"],\n";
-					if (tar.name&&tar.src.indexOf('店·')<0) console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 店·'+currency);
+					if (tar.name&&tar.src[15].indexOf('店·')<0) {
+						//console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 店·'+currency);
+						ward = tar.src;
+						console.log("  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','店·"+currency+"','"+ward[16]+"','"+ward[17]+"','"+currency.charAt(0)+"'],");
+					}
 					break;
 				case 'arena':
 					var tar = convert_uid(contentsName[i]);
@@ -453,7 +469,7 @@ function convert_uid(uid){
 		mainType: mainType,
 		id: id,
 		name: clothesSet[mainType][id],
-		src: clothesSrc[mainType][id],
+		src: clothesSrc[mainType][id], //src=clothesSrc[mainType][id][15]
 	}
 }
 
@@ -476,7 +492,7 @@ var clothesSrc = function() {
     if (!ret[t]) {
       ret[t] = {};
     }
-    ret[t][wardrobe[i][2]] = wardrobe[i][15];
+    ret[t][wardrobe[i][2]] = wardrobe[i];
   }
   return ret;
 }();
