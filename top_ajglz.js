@@ -7,6 +7,7 @@ function init_top(){
 	init_passcode();
 	searchMode();
 	init_searchModule();
+	init_placeholder();
 }
 
 function init_passcode(){
@@ -14,6 +15,12 @@ function init_passcode(){
 		if (e.keyCode==13) {
 			$(this).blur();
 			verify();
+		}
+	});
+	$('#unhide_pass').keydown(function(e) {
+		if (e.keyCode==13) {
+			$(this).blur();
+			unhide();
 		}
 	});
 }
@@ -33,6 +40,16 @@ function verify(){
 	}
 }
 
+function unhide(){
+	var pass='5e65d9d696058c4e452b2ab82666a14cbcec2c7a';
+	var userInput=$.sha1($("#unhide_pass").val());
+	$("#unhide_pass").val('');
+	if (userInput==pass){
+		$("#unhide").hide();
+		$("#hide").show();
+	}
+}
+
 function addCartNum(){
 	cartNum++;
 	var line='<hr><p>';
@@ -44,7 +61,7 @@ function addCartNum(){
 	line+='</p>';
 	$('#cartContent').append(line);
 	currentCart=cartNum-1;
-	$('#currentCart').html($('#cartName'+(currentCart+1)).val() ? $('#cartName'+(currentCart+1)).val() : $('#cartName'+(currentCart+1)).attr('placeholder'));
+	$('#currentCart').html(valOrPh('cartName'+(currentCart+1)));
 	cartList[cartNum-1]=[];
 	$('#cartNum').html(cartNum);
 	
@@ -62,14 +79,14 @@ function delCartNum(){
 		$('#cartContent p:last').remove();
 		$('#cartContent hr:last').remove();
 		currentCart=cartNum-1;
-		$('#currentCart').html($('#cartName'+(currentCart+1)).val() ? $('#cartName'+(currentCart+1)).val() : $('#cartName'+(currentCart+1)).attr('placeholder'));
+		$('#currentCart').html(valOrPh('cartName'+(currentCart+1)));
 		$('#cartNum').html(cartNum);
 	}
 }
 
 function chooseCurCart(n){
 	currentCart=n-1;
-	$('#currentCart').html($('#cartName'+(currentCart+1)).val() ? $('#cartName'+(currentCart+1)).val() : $('#cartName'+(currentCart+1)).attr('placeholder'));
+	$('#currentCart').html(valOrPh('cartName'+(currentCart+1)));
 }
 
 function searchMode(){
@@ -231,7 +248,7 @@ function calctop(calcopts){
 			}
 			var topsearch_info_n=[];
 			for(var l=0;l<cartNum;l++){
-				var listname=($('#cartName'+(l+1)).val() ? $('#cartName'+(l+1)).val() : $('#cartName'+(l+1)).attr('placeholder'));
+				var listname=(valOrPh('cartName'+(l+1)));
 				var topsearch_info='<a id="'+(l+1)+'"></a>';
 				topsearch_info+=('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>');
 				topsearch_info_n.push(topsearch_info);
@@ -256,7 +273,7 @@ function calctop(calcopts){
 			$('#ajglz_out').val(header()+indexes+middle()+topsearch_info_all+footer());
 			
 			var date2=new Date();
-			$('#topsearch_note').html('计算完成：'+ ($('#ajglz_title').val() ? $('#ajglz_title').val() : $('#ajglz_title').attr('placeholder')) +'，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
+			$('#topsearch_note').html('计算完成：'+ valOrPh('ajglz_title') +'，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 			if (calcopts && calcopts == 'all') { //mod; generate content without recalc
 				$('#cartContent').hide();
 			}
@@ -526,11 +543,11 @@ function previewHtml(){
 	var winRecord = window.open('');
 	winRecord.document.write(record);
 	
-	var script = document.createElement('script');//seems cannot load it, anyway
+	/*var script = document.createElement('script');//seems cannot load it, anyway
 	script.src = 'http://ajglz.coding.me/html/3-DingPei/dp.js';
 	script.type = 'text/javascript';
 	script.charset = 'UTF-8';
-	winRecord.document.head.appendChild(script);
+	winRecord.document.head.appendChild(script);*/
 }
 
 function header(){
@@ -549,7 +566,7 @@ function header(){
 	h+='<div class="myframe">';
 	h+='<p class="title1">';
 	h+='顶配分析-';
-	h+=$('#ajglz_title').val() ? $('#ajglz_title').val() : $('#ajglz_title').attr('placeholder');
+	h+=valOrPh('ajglz_title');
 	h+='</p>';
 	h+='<hr class="mhr"/>';
 	h+='<p class="normal"><span class="title3">更新时间：</span>';
@@ -557,7 +574,7 @@ function header(){
 	h+=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
 	h+='<br>';
 	h+='<span class="title3">更新人员：</span>';
-	h+=$('#ajglz_staff').val() ? $('#ajglz_staff').val() : $('#ajglz_staff').attr('placeholder');
+	h+=valOrPh('ajglz_staff');
 	if($('#ajglz_title').val().indexOf('最新活动')>=0) 
 		h+='<br><span class="title3">说明：</span>新品通常未排F，仅供参考；如果看到内容是上一个活动的，说明最新的顶配分析还没更新，请耐心等待。<br>';
 	h+='</p>';
@@ -715,4 +732,70 @@ function genall_1click(){
 	.then(function(content) {
 		saveAs(content, "3-DingPei.zip");
 	});
+}
+
+function chgDpMode(num){
+	for (var i=1;i<=3;i++){
+		if (i==num) $('#DpMode'+i).show();
+		else $('#DpMode'+i).hide();
+	}
+}
+
+function init_placeholder(){
+	$('#newVer').attr('placeholder',lastVersion);
+}
+
+function valOrPh(id){
+	return $('#'+id).val() ? $('#'+id).val() : $('#'+id).attr('placeholder');
+}
+
+function CreateReplace() {
+	var strName;
+	var out=CreateRepHead('竞技场联盟新衣服替换', valOrPh('ajglz_staff2'));	
+	out+='<p class="normal">本页内容：<a href="#1">竞技场</a>&emsp;<a href="#2">联盟六(极限权重)</a>&emsp;<a href="#3">联盟六(标准权重)</a></p>\n';
+	out+='<!--child content start-->\n';
+	searchVersion(valOrPh('newVer'));
+	//addCart_All1(1);
+	//out+=calctop1(2, 5, strName);	
+	//out+=calctop1(3, 5, strName);	
+
+	out+='</div>\n</body>\n</html>\n';
+	$('#ajglz_out').val(out);
+	
+	//OpenHtml();
+}
+
+function searchVersion(ver){
+	currentList=[];
+	var largest = ver.replace(/V/g,'').split('.');
+	for (var i in clothes){
+		if (clothes[i].version == ver)
+			currentList.push(i);
+		else if (ver != lastVersion) {
+			var tmpArr = clothes[i].version.replace(/V/g,'').split('.');
+			if (greaterVer(tmpArr,largest)) {
+				currentList.push(i);
+			}
+		}
+	}
+	console.log(currentList);
+}
+
+function CreateRepHead(stitle, sname) {
+	var h='<!DOCTYPE html>\n<head>\n';
+	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>\n';
+	h+='<meta charset="UTF-8" />\n';
+	h+='<link rel="stylesheet" type="text/css" href="../../css/style.css" />';
+	//h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp-style.css" />';
+	//h+=(appurl?'<style>label:first-child,#limitn,.norm{display:none;}.limit{display:inline;}</style>':'');
+	h+='</head>\n<body>\n';
+	h+='<div class="myframe">\n';
+	h+='<p class="title1">'+stitle+'</p>\n';
+	h+='<hr class="mhr"/>\n';
+	var d=new Date();
+	h+='<p class="normal"><span class="title3">更新时间：</span>';
+	h+=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+	h+='<br>\n<span class="title3">更新人员：</span>'+sname+'<br>\n';
+	h+='<span class="title3">使用说明：</span>表格列出的是排名前五的衣服。<font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配，<font color=#8E4890>紫色</font>表示可能有<font color=#8E4890>连衣裙</font>>上下装或者<font color=#8E4890>上下装</font>>连衣裙的情况。</p>\n';
+	return h;
 }
