@@ -55,11 +55,11 @@
 	</p>
 	<fieldset>
 		<legend>选项（重新计算生效）</legend>
-		模板：<span id="searchModule"></span> <!--label><input type="checkbox" id="appurl" />非内嵌</label--><br>
+		模板：<span id="searchModule"></span> <label><input type="checkbox" id="rmguildhs" onclick="toggle_rmguildhs()" />for点点</label><br>
 		计算 <label><input type="checkbox" id="showJJC" checked />竞技场</label> <label><input type="checkbox" id="showAlly" checked />联盟</label> <label><input type="checkbox" id="showNormal" checked />主线</label><br>
 		计算<input type="text" id="showCnt" size="2" style="line-height:100%;"/>件高配信息<br>
 		结果大于<input type="text" id="maxHide" size="2" style="line-height:100%;"/>时折叠<br>
-		<label><input type="checkbox" id="check_manual_flist" onclick="toggle_manual_flist()" />手动F表</label> <label><input type="checkbox" id="rmguildhs" onclick="toggle_rmguildhs()" />for点点</label><br>
+		<span style="display:none"><label><input type="checkbox" id="check_manual_flist" onclick="toggle_manual_flist()" />手动F表</label> <br></span>
 		<span class="modable">
 		<label><input type="checkbox" id="hideNores" />只显示顶配/高配部件</label><br>
 		显示 <label><input type="checkbox" id="showSource" />来源</label> <label><input type="checkbox" id="showMerc" />兑换数量</label><br>
@@ -78,13 +78,13 @@
 	<p id='topsearch_info'></p>
 	</span>
 	
-	<span id="DpMode2">
+	<span id="DpMode2" style="display:none">
 	<p>版本追溯至：<input type="text" id="newVer" placeholder="V?.?.?"/>&emsp;更新人员：<input type="text" id="ajglz_staff2" placeholder="Rean翎"/></p>
 	<button onclick="CreateReplace()">竞技场联盟新衣服替换 </button> 
 	<button onclick="CreateJJC()">竞技场简表 </button>
 	</span>
 	
-	<span id="DpMode3">
+	<span id="DpMode3" style="display:none">
 	</span>
 	<hr>
 	<p id="p_passcode" style="display:none"><input type="password" id="passcode" placeholder="神秘代码"/><a href="" onclick="verify();return false;" class="monkey">&#x1f648;</a></p>
