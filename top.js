@@ -1064,11 +1064,11 @@ function calctop_bytheme(id,them){
 		if(clothes[id]==resultList[r][0]){
 			for (r2=0;r2<r;r2++){
 				if(resultList[r][1]==resultList[r2][1]){
-					var tmp_res=resultList[r];
+					var thisRes=resultList[r];
 					for (k=r;k>r2;k--){//lower others ranking
 						resultList[k] = resultList[k-1];					
 					}
-					resultList[r2]=tmp_res;
+					resultList[r2]=thisRes;
 					break;
 				}
 			}
@@ -1413,6 +1413,28 @@ function getMerc(id){
 		}
 	}
 	return;
+}
+
+$(document).ready(function () {
+	if (typeof(Storage) !== "undefined"&&localStorage.getItem("rean_buzz")){
+		if(localStorage.getItem("rean_buzz")>0) showBuzz();
+	}
+});
+function showBuzz(){
+	if ($('#buzz')){
+		if ($('#buzz').is(":visible")){
+			$('#buzz').hide();
+			$('#abuzz').html("&lt;碎碎念&gt;");
+			var hideBuzz=1;
+		}else{
+			$('#buzz').show();
+			$('#abuzz').html("&lt;收起&gt;");
+			var hideBuzz=0;
+		}
+		if (typeof(Storage) !== "undefined") {
+			localStorage.setItem("rean_buzz", hideBuzz);
+		}
+	}
 }
 
 //below is modified from material.js

@@ -55,33 +55,11 @@
 	<script type='text/javascript' charset="UTF-8" src='data/levels.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='data/levels-hs.js'></script>
 	<script type='text/javascript' charset="UTF-8" src='top.js'></script>
-	<script type='text/javascript' charset="UTF-8">
-	$(document).ready(function () {
-		if (typeof(Storage) !== "undefined"&&localStorage.getItem("rean_top_buzz")){
-			if(localStorage.getItem("rean_top_buzz")>0) {showBuzz();};
-		}
-	});
-	function showBuzz(){
-		if ($('#buzz').is(":visible")){
-			$('#buzz').hide();
-			$('#abuzz').html("&lt;碎碎念&gt;");
-			var hideBuzz=1;
-		}else{
-			$('#buzz').show();
-			$('#abuzz').html("&lt;收起&gt;");
-			var hideBuzz=0;
-		}
-		if (typeof(Storage) !== "undefined") {
-			localStorage.setItem("rean_top_buzz", hideBuzz);
-		}
-	}
-	</script>
 </head>
 <body>
 	<p>
 		<b>奇迹暖暖顶配查询器</b> by Rean@<a href="http://aojiaogongluezu.github.io">傲娇攻略组</a><br/>
-		&emsp;部分算法基于 <a href="http://seal100x.github.io/nikkiup2u3/">配装器 by 黑的升华</a><br/>
-		&emsp;微调  by 傲娇攻略组<span id="buzz"><br/>
+		&emsp;分数等同 <a href="http://seal100x.github.io/nikkiup2u3/">配装器 by 黑的升华</a><span id="buzz"><br/>
 		&emsp;碎碎念：为了方便大家使用，工具是开源的，但请考虑到我们编写算法和维护数据的付出，引用或抱走时请保留作者信息。</span>
 		<a href="" onclick="showBuzz();return false;" id="abuzz" class="nobr">&lt;收起&gt;</a><br/>
 	</p>
