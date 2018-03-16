@@ -29,6 +29,7 @@ var cartNum=0;
 var currentCart=0;
 var storeTop_Normal=[];
 var storeTop_Limit=[];
+var impCart = [];
 
 function verify(){
 	var pass='6394210ce21ac27fb5de7645824dff9be9ba0690';
@@ -186,7 +187,7 @@ function searchById(txt,mode){
 			$('#topsearch_info').html(out);
 			if (searchById!='*') out1+='　'+ahref('查找所有染色及进化',"searchSub(0,"+"'"+searchById+"')");
 		}
-		else {$("#topsearch_info").html('没有找到相关资料');}
+		else $("#topsearch_info").html('没有找到相关资料');
 		$("#topsearch_note").html(out1);
 	}
 }
@@ -235,12 +236,12 @@ function calctop(calcopts){
 			limitMode=0;
 			if (calcopts && calcopts == 'all') { //mod; generate content without recalc
 				if (getLength(storeTop_Normal)>0) storeTop = cloneKey(storeTop_Normal);
-				else {
+				else{
 					$('#ajglz_out').val('');
 					$('#topsearch_note').html('请先全部计算_(:з」∠)_');
 					return;
 				}
-			} else { //calc for only the given categories in cartCates
+			}else{ //calc for only the given categories in cartCates
 				if($('#check_manual_flist').is(":checked")) manflist=$('#manual_flist').val().replace(/"/g,"'");
 				else manflist='';
 				manfresult = {};
@@ -255,9 +256,9 @@ function calctop(calcopts){
 				indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
 			}
 			limitMode=1;
-			if (calcopts && calcopts == 'all') { //mod; generate content without recalc
+			if (calcopts && calcopts == 'all'){ //mod; generate content without recalc
 				if (getLength(storeTop_Limit)>0) storeTop = cloneKey(storeTop_Limit);
-				else {
+				else{
 					$('#ajglz_out').val('');
 					$('#topsearch_note').html('请先全部计算_(:з」∠)_');
 					return;
@@ -341,7 +342,7 @@ function propanal_byall(cartList_num){
 					cellRank+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
 				}
 				cell+=td(cellRank,(cellRank.indexOf(':0个')>-1?'class="top"':''));
-			}else {cell+=td('-');}
+			}else cell+=td('-');
 			//属性被覆盖
 			var cellRank='';
 			var replTxt=(withTag?'不计tag:':'')+out_repl[0];
@@ -510,14 +511,14 @@ function delCart(id,n){
 
 function previewHtml(){
 	var head = '<meta name="viewport" content="width=device-width, initial-scale=1"/><meta charset="UTF-8" />';
-	head += '<link rel="stylesheet" type="text/css" href="http://ajglz.coding.me/css/style.css" />';
-	head += '<link rel="stylesheet" type="text/css" href="http://ajglz.coding.me/html/3-DingPei/dp-style.css" />';
+	head += '<link rel="stylesheet" type="text/css" href="http://aojiaogongluezu.github.io/nikkiup2u3/css/style.css" />';
+	head += '<link rel="stylesheet" type="text/css" href="http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/dp-style.css" />';
 	var record=$("#ajglz_out").val().replace(/<head>(.*)<\/head>/, head);
 	var winRecord = window.open('');
 	winRecord.document.write(record);
 	
 	/*var script = document.createElement('script');//seems cannot load it, anyway
-	script.src = 'http://ajglz.coding.me/html/3-DingPei/dp.js';
+	script.src = 'http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/dp.js';
 	script.type = 'text/javascript';
 	script.charset = 'UTF-8';
 	winRecord.document.head.appendChild(script);*/
@@ -725,37 +726,46 @@ function init_placeholder(){
 }
 
 function CreateReplace() {
-	var out=CreateRepHead('竞技场联盟新衣服替换('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'));	
+	var out=CreateRepHead('竞技场联盟新衣服替换('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'));
+	out+='<span class="title3">使用说明：</span>表格列出的是排名前五的衣服。<font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配，<font color=#8E4890>紫色</font>表示可能有<font color=#8E4890>连衣裙</font>>上下装或者<font color=#8E4890>上下装</font>>连衣裙的情况。</p>\n';
 	out+='<p class="normal">本页内容：<a href="#1">竞技场</a>&emsp;<a href="#2">联盟六(极限权重)</a>&emsp;<a href="#3">联盟六(标准权重)</a></p>\n';
-	out+='<!--child content start-->\n';
-	searchVersion(valOrPh('newVer'));
+	impCart = searchVersion(valOrPh('newVer'));
 	out+=calctopRep(5);
 	out+=footer();
 	$('#ajglz_out').val(out);
 }
 
+function CreateJJC() {
+	var strName;
+	var out=CreateRepHead('竞技场简表(新衣服标注'+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'));	
+	out+='<span class="title3">使用说明：</span><font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配。</p>\n';
+	impCart = searchVersion(valOrPh('newVer'));
+	out+=calctopJJC(15, 5);
+	out+=footer();
+	$('#ajglz_out').val(out);
+}
+
 function searchVersion(ver){
-	cartList1=[];
+	ret=[];
 	var largest = ver.replace(/V/g,'').split('.');
 	for (var i in clothes){
 		if (clothes[i].version == ver)
-			cartList1.push(i);
+			ret.push(i);
 		else if (ver != lastVersion) {
 			var tmpArr = clothes[i].version.replace(/V/g,'').split('.');
 			if (greaterVer(tmpArr,largest)) {
-				cartList1.push(i);
+				ret.push(i);
 			}
 		}
 	}
+	return ret;
 }
 
 function CreateRepHead(stitle, sname) {
-	var h='<!DOCTYPE html>\n<head>\n';
-	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>\n';
-	h+='<meta charset="UTF-8" />\n';
+	var h='<!DOCTYPE html><head>';
+	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
+	h+='<meta charset="UTF-8" />';
 	h+='<link rel="stylesheet" type="text/css" href="../../css/style.css" />';
-	//h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp-style.css" />';
-	//h+=(appurl?'<style>label:first-child,#limitn,.norm{display:none;}.limit{display:inline;}</style>':'');
 	h+='</head>\n<body>\n';
 	h+='<div class="myframe">\n';
 	h+='<p class="title1">'+stitle+'</p>\n';
@@ -764,20 +774,95 @@ function CreateRepHead(stitle, sname) {
 	h+='<p class="normal"><span class="title3">更新时间：</span>';
 	h+=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
 	h+='<br>\n<span class="title3">更新人员：</span>'+sname+'<br>\n';
-	h+='<span class="title3">使用说明：</span>表格列出的是排名前五的衣服。<font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配，<font color=#8E4890>紫色</font>表示可能有<font color=#8E4890>连衣裙</font>>上下装或者<font color=#8E4890>上下装</font>>连衣裙的情况。</p>\n';
 	return h;
+}
+
+function calctopJJC(nCount, nMin){
+	storeTopByCate(category, 2, nCount);
+	var out = '';
+	
+	var ii = 0;
+	for (var b in competitionsRaw){
+		ii++;
+		out+='<a href="#'+ii+'">' + b + '</a>&emsp;';
+	}
+	
+	ii = 0;
+	for (var b in competitionsRaw){
+		theme_name='竞技场: '+b;
+		ii++;
+		out+='<a id="'+ii+'"></a><p class="title2">'+ theme_name +'</p>\n';
+		out+='<table border="1"  width="100%">\n';
+		out+=tr(td('部位', 'width="15%"')+td('顶配', 'width="25%"')+td('次配'));
+	
+		if (allThemes[theme_name]) {
+			inTop=[]; 
+			for (var c in category) addTxtDoubByThemeCate(theme_name, category[c], nMin);
+			if (inTop.length > 0){
+				var cell='';
+				for (var r in inTop) {
+					cell+=td(inTop[r][2]);
+					cell+=td(inTop[r][0]);
+					cell+=td(inTop[r][1]);
+					out+=tr(cell);
+					cell='';	
+				}
+			}
+		}
+		out+='</table>\n</span>\n';
+	}
+	return out;
+}
+
+function addTxtDoubByThemeCate(them, ctype, min){
+	var cloList = [];
+	for (var l in impCart) cloList.push(clothes[impCart[l]]);
+	var resultList = get_storeTop_Cate(them, ctype);
+	var txtSec='';
+	var txtTop='';
+	var isJin = 0;
+	for (var r in resultList){
+		if (resultList[r]) {
+			var inList = $.inArray(resultList[r][0], cloList)>=0 ? 1 : 0;
+			var srcs = '['+resultList[r][0].srcShort+']';
+			var src = resultList[r][0].source;
+			
+			if (r>0 && resultList[r][1]<resultList[0][1]) {
+				if (resultList[r][1] == resultList[r-1][1]) txtSec += ' = ';
+				else txtSec += ' > ';
+				if (inList == 1) txtSec += '<font color="blue">'+resultList[r][0].name + resultList[r][1] + srcs + '</font>';
+				else txtSec += resultList[r][0].name + resultList[r][1] + srcs;			
+			}else{
+				var moveTopToSec = checkRealTop(them, r, resultList, min)[0];
+				var prefix = r>0 ? ' = ' : '';
+				if (inList == 1){
+					if (!moveTopToSec) txtTop += prefix + '<font color="red">' +resultList[r][0].name + resultList[r][1] + srcs + '</font>';
+					else txtSec += prefix + '<font color="blue">' +resultList[r][0].name + resultList[r][1] + srcs + '</font>';
+				}else{
+					if (!moveTopToSec) txtTop += prefix + resultList[r][0].name + resultList[r][1] + srcs;
+					else txtSec += prefix + resultList[r][0].name + resultList[r][1] + srcs;
+				}
+			}
+			var j = r*1+1;
+			if (!resultList[j]) break;
+			if (('/'+src).match(/\/[0-9]\-[0-9]+少/) || ('/'+src).match(/\/[0-9]\-[0-9]+公/) || src.indexOf('店·金') > -1 || src.indexOf('赠送') > -1)
+				isJin = 1;
+			if (isJin && j>=min && resultList[r][1]>resultList[j][1]) break;
+		}
+	}
+	inTop.push([txtTop, txtSec, ctype]);
 }
 
 function calctopRep(nCount){
 	var cartCates=[];
-	for (var i in cartList1) cartCates = addCates(cartCates, cartList1[i]);
+	for (var i in impCart) cartCates = addCates(cartCates, impCart[i]);
 	cartCates = $.unique(cartCates);
 	limitMode=1;
 	storeTopByCate(cartCates, 10, nCount);
 	
 	var out='<a id="1"></a><p class="title2">竞技场</p>\n';
 	out+='<table border="1"  width="100%">\n';
-	out+=tr(td('关卡')+td('部位')+td('名称', 'width="70%"'));
+	out+=tr(td('关卡', 'width="15%"')+td('部位', 'width="15%"')+td('名称'));
 	for (var b in competitionsRaw){
 		theme_name='竞技场: '+b;
 		out += outputRep(theme_name, nCount);
@@ -789,7 +874,7 @@ function calctopRep(nCount){
 	out+=tr(td('关卡')+td('部位')+td('名称', 'width="70%"'));
 	for (var c in tasksRaw){
 		theme_name=c;
-		if (allThemes[theme_name]) out+=outputRep(theme_name);
+		if (allThemes[theme_name]) out+=outputRep(theme_name, nCount);
 	}	
 	out+='</table>\n</span>\n';
 	
@@ -801,7 +886,7 @@ function calctopRep(nCount){
 	out+=tr(td('关卡')+td('部位')+td('名称', 'width="70%"'));
 	for (var c in tasksRaw){
 		theme_name=c;
-		if (allThemes[theme_name]) out+=outputRep(theme_name);
+		if (allThemes[theme_name]) out+=outputRep(theme_name, nCount);
 	}
 	out+='</table>\n</span>\n';
 	
@@ -814,9 +899,8 @@ function outputRep(them, nCount){
 	var rowspan=0;
 	
 	inTop=[]; inSec=[];	
-	for (var c in category) listInTheme(cartList1, them, category[c], nCount);
-	for (var r in inTop) rowspan++;
-	for (var r in inSec) rowspan++;
+	for (var c in category) addTxtPlainByThemeCate(them, category[c], nCount);
+	rowspan += inTop.length + inSec.length;
 	
 	if (rowspan > 0){
 		var cell=td(them.replace(/竞技场: /,''), 'rowspan="'+rowspan+'"');
@@ -838,72 +922,44 @@ function outputRep(them, nCount){
 	return out;
 }
 
-function listInTheme(list, them, ctype, nCount){
+function addTxtPlainByThemeCate(them, ctype, nCount){
+	var cloList = [];
+	for (var l in impCart) cloList.push(clothes[impCart[l]]);
 	var resultList = get_storeTop_Cate(them, ctype);
 	//resultList[r][0]=clothes, resultList[r][1]=clothes.sumScore
-	var conc='';
+	var txt='';
 	var isInTop = 0;
 	var isInSec = 0;
-	var inList = 0;
-	
-	//sort resultList
-	for (var r in resultList){
-		if (resultList[r][1]<resultList[0][1]) break; //only sort 1st tied
-		for (var l in list){
-			if (clothes[list[l]]==resultList[r][0]){
-				inList = 1;
-				for (r2=0;r2<r;r2++){
-					if(resultList[r][1]==resultList[r2][1]){
-						var tmp_res=resultList[r];
-						for (k=r;k>r2;k--){//lower others ranking
-							resultList[k] = resultList[k-1];					
-						}
-						resultList[r2]=tmp_res;
-						break;
-					}
-				}
-				break;
-			}
-		}
-		if (inList == 1) break;
-	}
 	
 	for (var r in resultList){
 		if (resultList[r]) {
-			inList = 0;
-			for (var l in list){
-				if (clothes[list[l]] == resultList[r][0]){
-					inList = 1;
-					break;
-				}
-			}
-			
+			var inList = $.inArray(resultList[r][0], cloList)>=0 ? 1 : 0;
 			var srcs = '['+resultList[r][0].srcShort+']';
 			
-			if (r>0) {
-				if (resultList[r][1] == resultList[r-1][1]) conc+=' = ';
-				else conc+=' > ';
+			if (r>0 && resultList[r][1]<resultList[0][1]) {
+				if (resultList[r][1] == resultList[r-1][1]) txt += ' = ';
+				else txt += ' > ';
 				if (inList == 1){
-					conc+='<font color="blue">'+resultList[r][0].name + resultList[r][1] + srcs + '</font>';
+					txt += '<font color="blue">'+resultList[r][0].name + resultList[r][1] + srcs + '</font>';
 					if (!checkRealTop(them, r, resultList, nCount)[1]) isInSec = 1;
-				}else conc+=resultList[r][0].name+resultList[r][1] + srcs;
-			}else {
+				}else txt += resultList[r][0].name + resultList[r][1] + srcs;
+			}else if (r == 0 || inList == 1){
+				var realTop = checkRealTop(them, r, resultList, nCount);
+				if (r>0) txt += ' = ';
+				else if (realTop[0]) txt += '<font color=#8E4890>' + realTop[2].replace(/[\[\]\\n\n0-9]+/g,'') + realTop[2].replace(/[^0-9]+/g,'') + '</font> > ';
 				if (inList == 1){
-					var realTop = checkRealTop(them, r, resultList, nCount);
 					if (!realTop[0]) {
-						conc+='<font color="red">' +resultList[r][0].name+resultList[r][1] + srcs + '</font>';
+						txt += '<font color="red">' +resultList[r][0].name + resultList[r][1] + srcs + '</font>';
 						isInTop = 1;
 					}else if (!realTop[1]) {
-						var prefix = realTop[2].replace(/[\[\]\\n\n0-9]+/g,'') + realTop[2].replace(/[^0-9]+/g,'');
-						conc+='<font color=#8E4890>' + prefix + '</font> > ';
-						conc+='<font color="blue">' +resultList[r][0].name+resultList[r][1] + srcs + '</font>';
+						txt += '<font color="blue">' +resultList[r][0].name + resultList[r][1] + srcs + '</font>';
 						isInSec = 1;
 					}
-				}else conc+=resultList[r][0].name+resultList[r][1] + srcs;
-			}
+				}else txt += resultList[r][0].name + resultList[r][1] + srcs;
+			}else txt += ' = ' + resultList[r][0].name + resultList[r][1] + srcs;
 		}
 	}
 	
-	if (isInTop) inTop.push([conc, ctype]);
-	else if (isInSec) inSec.push([conc, ctype]);
+	if (isInTop) inTop.push([txt, ctype]);
+	else if (isInSec) inSec.push([txt, ctype]);
 }
