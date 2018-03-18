@@ -1,13 +1,16 @@
 function init_top(){
 	enterKey();
 	gen_setList();
-	$("#showCnt").val(5);
-	$("#maxHide").val(5);
+	sortTags();
 	addCartNum();
-	init_passcode();
 	searchMode();
 	init_searchModule();
 	init_placeholder();
+	init_passcode();
+	$("#showCnt").val(5);
+	$("#maxHide").val(5);
+	$('#showCnt2').val(3);
+	$('#showScore').val(1000);
 }
 
 function init_passcode(){
@@ -203,10 +206,10 @@ function calcall(){ // calc all categories
 	
 	manfresult = {};
 	
-	storeTopByCate(category, caltype, showCnt);
+	storeTop = storeTopByCate(category, caltype, showCnt, []);
 	storeTop_Normal = cloneKey(storeTop);
 	limitMode=1;
-	storeTopByCate(category, caltype, showCnt);
+	storeTop = storeTopByCate(category, caltype, showCnt, []);
 	storeTop_Limit = cloneKey(storeTop);
 	var date2=new Date();
 	$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;');
@@ -472,7 +475,7 @@ function storeTopByCartCates(caltype, nCount){
 		for (var i in cartList[l]) cartCates = addCates(cartCates, cartList[l][i]);
 	}
 	cartCates = $.unique(cartCates);
-	storeTopByCate(cartCates, caltype, nCount);
+	storeTop = storeTopByCate(cartCates, caltype, nCount, []);
 }
 
 function clearCart(n){
@@ -526,34 +529,31 @@ function previewHtml(){
 
 function header(){
 	var appurl = $('#rmguildhs').is(":checked");
-	var h='<!DOCTYPE html>';
-	h+='<head>';
-	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
-	//h+='<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
-	h+='<meta charset="UTF-8" />';
-	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/':'../../')+'css/style.css" />';
-	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp-style.css" />';
-	h+='<script type="text/javascript" src="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp.js"></script>';
-	h+=(appurl?'<style>label:first-child,#limitn,.norm{display:none;}.limit{display:inline;}</style>':'');
-	h+='</head>';
-	h+='<body>';
-	h+='<div class="myframe">';
-	h+='<p class="title1">';
-	h+='顶配分析-';
-	h+=valOrPh('ajglz_title');
-	h+='</p>';
-	h+='<hr class="mhr"/>';
-	h+='<p class="normal"><span class="title3">更新时间：</span>';
-	var d=new Date();
-	h+=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
-	h+='<br>';
-	h+='<span class="title3">更新人员：</span>';
-	h+=valOrPh('ajglz_staff');
+	var h=headerFrame('顶配分析-'+valOrPh('ajglz_title'), valOrPh('ajglz_staff'), 1, appurl);
 	if($('#ajglz_title').val().indexOf('最新活动')>=0) 
 		h+='<br><span class="title3">说明：</span>新品通常未排F，仅供参考；如果看到内容是上一个活动的，说明最新的顶配分析还没更新，请耐心等待。<br>';
 	h+='</p>';
 	h+='<hr class="mhr"/>';
 	h+='<p class="normal">';
+	return h;
+}
+
+function headerFrame(stitle, sname, dp, appurl){
+	var h='<!DOCTYPE html><head>';
+	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
+	h+='<meta charset="UTF-8" />';
+	//h+='<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
+	h+='<link rel="stylesheet" type="text/css" href="../../css/style.css" />';
+	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/':'../../')+'css/style.css" />';
+	if (dp) h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp-style.css" />';
+	if (dp) h+='<script type="text/javascript" src="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp.js"></script>';
+	if (dp&&appurl) h+='<style>label:first-child,#limitn,.norm{display:none;}.limit{display:inline;}</style>';
+	h+='</head>\n<body><div class="myframe">\n';
+	h+='<p class="title1">'+stitle+'</p><hr class="mhr"/>\n';
+	var d=new Date();
+	h+='<p class="normal"><span class="title3">更新时间：</span>';
+	h+=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+	h+='<br>\n<span class="title3">更新人员：</span>'+sname+'<br>\n';
 	return h;
 }
 
@@ -571,6 +571,10 @@ function addTooltip(text,tooltip){
 
 function nobr(text){
 	return '<em>'+text+'</em>';
+}
+
+function subtitle(text){
+	 return '<p class="title2">' + text + '</p>';
 }
 
 function valOrPh(id){
@@ -712,73 +716,35 @@ function genall_1click(){
 	});
 }
 
-//***************************************integrate with ruoly****************************************//
-
-function chgDpMode(num){
-	for (var i=1;i<=3;i++){
-		if (i==num) $('#DpMode'+i).show();
-		else $('#DpMode'+i).hide();
-	}
-}
+//*******************************integrate with ruoly and top_update********************************//
 
 function init_placeholder(){
 	$('#newVer').attr('placeholder',lastVersion);
 }
 
 function CreateReplace() {
-	var out=CreateRepHead('竞技场联盟新衣服替换('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'));
+	var out=headerFrame('竞技场联盟新衣服替换('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),0,0);
 	out+='<span class="title3">使用说明：</span>表格列出的是排名前五的衣服。<font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配，<font color=#8E4890>紫色</font>表示可能有<font color=#8E4890>连衣裙</font>>上下装或者<font color=#8E4890>上下装</font>>连衣裙的情况。</p>\n';
 	out+='<p class="normal">本页内容：<a href="#1">竞技场</a>&emsp;<a href="#2">联盟六(极限权重)</a>&emsp;<a href="#3">联盟六(标准权重)</a></p>\n';
 	impCart = searchVersion(valOrPh('newVer'));
 	out+=calctopRep(5);
 	out+=footer();
+	$('#ajglz_filename').val('LR_lasted.html');
 	$('#ajglz_out').val(out);
 }
 
 function CreateJJC() {
-	var strName;
-	var out=CreateRepHead('竞技场简表(新衣服标注'+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'));	
+	var out=headerFrame('竞技场简表(新衣服标注'+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),0,0);	
 	out+='<span class="title3">使用说明：</span><font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配。</p>\n';
 	impCart = searchVersion(valOrPh('newVer'));
 	out+=calctopJJC(15, 5);
 	out+=footer();
+	$('#ajglz_filename').val('LR_lasted_JJC.html');
 	$('#ajglz_out').val(out);
 }
 
-function searchVersion(ver){
-	ret=[];
-	var largest = ver.replace(/V/g,'').split('.');
-	for (var i in clothes){
-		if (clothes[i].version == ver)
-			ret.push(i);
-		else if (ver != lastVersion) {
-			var tmpArr = clothes[i].version.replace(/V/g,'').split('.');
-			if (greaterVer(tmpArr,largest)) {
-				ret.push(i);
-			}
-		}
-	}
-	return ret;
-}
-
-function CreateRepHead(stitle, sname) {
-	var h='<!DOCTYPE html><head>';
-	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
-	h+='<meta charset="UTF-8" />';
-	h+='<link rel="stylesheet" type="text/css" href="../../css/style.css" />';
-	h+='</head>\n<body>\n';
-	h+='<div class="myframe">\n';
-	h+='<p class="title1">'+stitle+'</p>\n';
-	h+='<hr class="mhr"/>\n';
-	var d=new Date();
-	h+='<p class="normal"><span class="title3">更新时间：</span>';
-	h+=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
-	h+='<br>\n<span class="title3">更新人员：</span>'+sname+'<br>\n';
-	return h;
-}
-
 function calctopJJC(nCount, nMin){
-	storeTopByCate(category, 2, nCount);
+	storeTop = storeTopByCate(category, 2, nCount, []);
 	var out = '';
 	
 	var ii = 0;
@@ -858,7 +824,8 @@ function calctopRep(nCount){
 	for (var i in impCart) cartCates = addCates(cartCates, impCart[i]);
 	cartCates = $.unique(cartCates);
 	limitMode=1;
-	storeTopByCate(cartCates, 10, nCount);
+	storeTop = storeTopByCate(cartCates, 10, nCount, []);
+	console.log(storeTop);
 	
 	var out='<a id="1"></a><p class="title2">竞技场</p>\n';
 	out+='<table border="1"  width="100%">\n';
@@ -879,7 +846,7 @@ function calctopRep(nCount){
 	out+='</table>\n</span>\n';
 	
 	limitMode=0;
-	storeTopByCate(cartCates, 5, nCount);
+	storeTop = storeTopByCate(cartCates, 5, nCount, []);
 	
 	out+='<a id="3"></a><p class="title2">联盟第六章(标准权重)</p>\n';
 	out+='<table border="1"  width="100%">\n';
@@ -962,4 +929,30 @@ function addTxtPlainByThemeCate(them, ctype, nCount){
 	
 	if (isInTop) inTop.push([txt, ctype]);
 	else if (isInSec) inSec.push([txt, ctype]);
+}
+
+function calctopupd(){
+	var date1=new Date();
+	verifyNum('showCnt2');
+	verifyNum('showScore');
+	var caltype = ($('#showJJC2').is(":checked")?2:1) * ($('#showAlly2').is(":checked")?3:1) * ($('#showAlly62').is(":checked")?5:1) * ($('#showNormal2').is(":checked")?7:1);
+	if (caltype == 1){
+		$('#alert_msg_update').html('至少选一种关卡_(:з」∠)_');
+	}else{
+		clearOutput();
+		check_tasksAdd_old();
+		limitMode = 1;
+		storeTop = storeTopByCate(category, caltype, $("#showCnt2").val(), []);
+		limitMode = 3;
+		storeTop_old = storeTopByCate(category, caltype, 1, searchVersion(valOrPh('newVer')));
+		$('#ajglz_filename').val('LR_GQ.html');
+		var out = headerFrame('关卡极限分数更新('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),1,0);
+		out+='<span class="title3">使用说明：</span>表格列出的是排名前五的衣服。<font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配，<font color=#8E4890>紫色</font>表示可能有<font color=#8E4890>连衣裙</font>>上下装或者<font color=#8E4890>上下装</font>>连衣裙的情况。</p>\n';
+		out+='</p>';
+		out+=compByTheme(caltype).replace(/\n/g,'\\n').replace(/<table/g,'<table style="width:100%;table-layout:fixed;"');
+		out+=footer();
+		$('#ajglz_out').val(out);
+		var date2=new Date();
+		$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
+	}
 }

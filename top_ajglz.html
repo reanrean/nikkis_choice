@@ -43,9 +43,10 @@
 		<b>奇迹暖暖顶配页面生成器</b> for 傲娇攻略组(≥ω≤)<br/>
 		→<a href="top.html">非攻略组成员请左转原版</a>←<br/>
 	</p>
-	<p id="ajglz_radio"><label><input type="radio" name="ar" checked onclick="chgDpMode(1)">顶配分析</label><label><input type="radio" name="ar" onclick="chgDpMode(2)">懒人替换</label><label><input type="radio" name="ar" onclick="chgDpMode(3)">刷分更新</label></p>
+	<p id="top_radio"><label><input type="radio" name="ar" checked onclick="chgDpMode(1)">顶配分析</label><label><input type="radio" name="ar" onclick="chgDpMode(2)">懒人替换</label><label><input type="radio" name="ar" onclick="chgDpMode(3)">刷分更新</label></p>
 	<hr>
-	<span id="DpMode1">
+	
+	<span class="DpMode1">
 	<p>
 		<button id="searchMode" class="btn btn-sm btn-info btn-cust" onclick="searchMode()"></button>
 		<input type="text" id="textBox">
@@ -73,19 +74,29 @@
 	<p>标题：<input type="text" id="ajglz_title" placeholder="XXXX"/>&emsp;更新人员：<input type="text" id="ajglz_staff" placeholder="Rean翎"/></p>
 	<p>分类数量：<span id="cartNum"></span>&ensp;<button class="btn btn-xs btn-default" onclick="addCartNum()">＋</button><button class="btn btn-xs btn-default" onclick="delCartNum()">－</button>&emsp;点击单品添加到：<span id="currentCart"></span></p>
 	<span id="cartContent"></span>
-	<hr>
-	<p id='topsearch_note'></p>
-	<p id='topsearch_info'></p>
 	</span>
 	
-	<span id="DpMode2" style="display:none">
+	<span class="DpMode2 DpMode3" style="display:none">
 	<p>版本追溯至：<input type="text" id="newVer" placeholder="V?.?.?"/>&emsp;更新人员：<input type="text" id="ajglz_staff2" placeholder="Rean翎"/></p>
-	<button onclick="CreateReplace()">竞技场联盟新衣服替换 </button> 
+	</span>
+	<span class="DpMode2" style="display:none"><button onclick="CreateReplace()">竞技场联盟新衣服替换 </button> 
 	<button onclick="CreateJJC()">竞技场简表 </button>
 	</span>
 	
-	<span id="DpMode3" style="display:none">
+	<span class="DpMode3" style="display:none">
+	<p><button id="calc" onclick="calctopupd()">关卡顶配分数更新</button>
+	<span id='alert_msg_update' class="unwrap"></span></p>
+	<fieldset>
+		<legend>选项（重新计算生效）</legend>
+		显示<input type="text" id="showCnt2" size="2" style="line-height:100%;"/>件高配信息<br>
+		分差超过<input type="text" id="showScore" size="5" style="line-height:100%;"/>的关卡<br>
+		<label><input type="checkbox" id="showNormal2" checked />主线</label> <label><input type="checkbox" id="showAlly2" checked />联盟</label> <label><input type="checkbox" id="showAlly62" />联盟六</label> <label><input type="checkbox" id="showJJC2" />竞技场</label><br>
+	</fieldset>
 	</span>
+	
+	<hr>
+	<p id='topsearch_note'></p>
+	<p id='topsearch_info'></p>
 	<hr>
 	<p id="p_passcode" style="display:none"><input type="password" id="passcode" placeholder="神秘代码"/><a href="" onclick="verify();return false;" class="monkey">&#x1f648;</a></p>
 	<p class="p_content">
