@@ -9,6 +9,7 @@
 	<title>Miracle Nikki - 奇迹暖暖顶配页面生成器 for 傲娇攻略组(≥ω≤)</title>
 	<link rel="stylesheet" href="bootstrap/bootstrap.min.css">
 	<style>
+		.unwrap {word-break:keep-all; color:#ff7890;}
 		a.monkey {color:inherit;text-decoration:none;}
 		body {margin:1em; font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;}
 		fieldset {width:100%; max-width:270px; padding:.35em .625em .75em; border:1px solid silver;}
@@ -84,7 +85,8 @@
 	</span>
 	
 	<span class="DpMode3" style="display:none">
-	<p><button id="calc" onclick="calctopupd()">关卡顶配分数更新</button>
+	<p><button id="calcold" onclick="calcTaskAddOld()">先: 计算旧极限</button>
+	<button id="calcupd" onclick="calctopupd()">再: 关卡顶配分数更新</button>
 	<span id='alert_msg_update' class="unwrap"></span></p>
 	<fieldset>
 		<legend>选项（重新计算生效）</legend>

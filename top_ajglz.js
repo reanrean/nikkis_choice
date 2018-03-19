@@ -253,8 +253,7 @@ function calctop(calcopts){
 			var topsearch_info_n=[];
 			for(var l=0;l<cartNum;l++){
 				var listname=(valOrPh('cartName'+(l+1)));
-				var topsearch_info='<a id="'+(l+1)+'"></a>';
-				topsearch_info+=('<p class="title2">'+listname+'</p><span class="norm">'+calctop_byall(l,caltype).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>');
+				var topsearch_info = subtitle(listname, (l+1))+'<span class="norm">'+calctop_byall(l,caltype).replace(/\n/g,'\\n').replace(/href="" /g,'')+'</span>';
 				topsearch_info_n.push(topsearch_info);
 				indexes+=('&emsp;<a href="#'+(l+1)+'">'+listname+'</a>');
 			}
@@ -366,7 +365,7 @@ function propanal_byall(cartList_num){
 		}
 	}
 	if(out_cont) return out+out_cont+'</table>';
-	else return '<p class="normal" align="center">无顶配/高配信息</p>';
+	else return normaltext('无顶配/高配信息');
 }
 
 function calctop_byall(cartList_num, caltype){
@@ -432,7 +431,7 @@ function calctop_byall(cartList_num, caltype){
 		}
 	}
 	if(out_cont) return out+out_cont+'</table>';
-	else return '<p class="normal" align="center">无顶配/高配信息</p>';
+	else return normaltext('无顶配/高配信息');
 }
 
 function isBasicSet(id){
@@ -573,8 +572,12 @@ function nobr(text){
 	return '<em>'+text+'</em>';
 }
 
-function subtitle(text){
-	 return '<p class="title2">' + text + '</p>';
+function subtitle(text, id){
+	 return (id ? '<a id="'+id+'"></a>' : '' ) + '<p class="title2">' + text + '</p>';
+}
+
+function normaltext(text){
+	 return '<p class="normal" align="center">' + text + '</p>';
 }
 
 function valOrPh(id){
@@ -723,6 +726,7 @@ function init_placeholder(){
 }
 
 function CreateReplace() {
+	var date1=new Date();
 	var out=headerFrame('竞技场联盟新衣服替换('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),0,0);
 	out+='<span class="title3">使用说明：</span>表格列出的是排名前五的衣服。<font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配，<font color=#8E4890>紫色</font>表示可能有<font color=#8E4890>连衣裙</font>>上下装或者<font color=#8E4890>上下装</font>>连衣裙的情况。</p>\n';
 	out+='<p class="normal">本页内容：<a href="#1">竞技场</a>&emsp;<a href="#2">联盟六(极限权重)</a>&emsp;<a href="#3">联盟六(标准权重)</a></p>\n';
@@ -731,16 +735,21 @@ function CreateReplace() {
 	out+=footer();
 	$('#ajglz_filename').val('LR_lasted.html');
 	$('#ajglz_out').val(out);
+	var date2=new Date();
+	$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 }
 
 function CreateJJC() {
+	var date1=new Date();
 	var out=headerFrame('竞技场简表(新衣服标注'+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),0,0);	
-	out+='<span class="title3">使用说明：</span><font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配。</p>\n';
+	out+='<span class="title3">使用说明：</span><font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配。如没有部件时请到<a href="../../jingjichang.html">精修版</a>补充。</p>\n';
 	impCart = searchVersion(valOrPh('newVer'));
 	out+=calctopJJC(15, 5);
 	out+=footer();
 	$('#ajglz_filename').val('LR_lasted_JJC.html');
 	$('#ajglz_out').val(out);
+	var date2=new Date();
+	$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 }
 
 function calctopJJC(nCount, nMin){
@@ -757,7 +766,7 @@ function calctopJJC(nCount, nMin){
 	for (var b in competitionsRaw){
 		theme_name='竞技场: '+b;
 		ii++;
-		out+='<a id="'+ii+'"></a><p class="title2">'+ theme_name +'</p>\n';
+		out+=subtitle(theme_name, ii) +'\n';
 		out+='<table border="1"  width="100%">\n';
 		out+=tr(td('部位', 'width="15%"')+td('顶配', 'width="25%"')+td('次配'));
 	
@@ -827,7 +836,7 @@ function calctopRep(nCount){
 	storeTop = storeTopByCate(cartCates, 10, nCount, []);
 	console.log(storeTop);
 	
-	var out='<a id="1"></a><p class="title2">竞技场</p>\n';
+	var out=subtitle('竞技场', 1) + '\n';
 	out+='<table border="1"  width="100%">\n';
 	out+=tr(td('关卡', 'width="15%"')+td('部位', 'width="15%"')+td('名称'));
 	for (var b in competitionsRaw){
@@ -836,7 +845,7 @@ function calctopRep(nCount){
 	}	
 	out+='</table>\n</span>\n';
 	
-	out+='<a id="2"></a><p class="title2">联盟第六章(极限权重, 顶配有效，次配数据仅做参考)</p>\n';
+	out+=subtitle('联盟第六章(极限权重, 顶配有效，次配数据仅做参考', 2) + '\n';
 	out+='<table border="1"  width="100%">\n';
 	out+=tr(td('关卡')+td('部位')+td('名称', 'width="70%"'));
 	for (var c in tasksRaw){
@@ -848,7 +857,7 @@ function calctopRep(nCount){
 	limitMode=0;
 	storeTop = storeTopByCate(cartCates, 5, nCount, []);
 	
-	out+='<a id="3"></a><p class="title2">联盟第六章(标准权重)</p>\n';
+	out+=subtitle('联盟第六章(标准权重)', 3) + '\n';
 	out+='<table border="1"  width="100%">\n';
 	out+=tr(td('关卡')+td('部位')+td('名称', 'width="70%"'));
 	for (var c in tasksRaw){
@@ -947,12 +956,20 @@ function calctopupd(){
 		storeTop_old = storeTopByCate(category, caltype, 1, searchVersion(valOrPh('newVer')));
 		$('#ajglz_filename').val('LR_GQ.html');
 		var out = headerFrame('关卡极限分数更新('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),1,0);
-		out+='<span class="title3">使用说明：</span>表格列出的是排名前五的衣服。<font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配，<font color=#8E4890>紫色</font>表示可能有<font color=#8E4890>连衣裙</font>>上下装或者<font color=#8E4890>上下装</font>>连衣裙的情况。</p>\n';
+		out+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（饰品分数已按带满衰减），'+(showScore>0? '只显示分差'+showScore+'以上的关卡，' : '')+'方便查看哪些关卡的理论分数更新最多，仅作为参考用。<br>\n';
 		out+='</p>';
+		out+='<p class="normal">本页内容：';
+		if($('#showNormal2').is(":checked")) out+='&emsp;<a href="#7">主线关卡</a>';
+		if($('#showAlly2').is(":checked")) out+='&emsp;<a href="#3">联盟委托</a>';
+		else if ($('#showAlly62').is(":checked")) out+='&emsp;<a href="#5">联盟委托</a>';
+		if($('#showJJC2').is(":checked")) out+='&emsp;<a href="#2">竞技场</a>';
 		out+=compByTheme(caltype).replace(/\n/g,'\\n').replace(/<table/g,'<table style="width:100%;table-layout:fixed;"');
 		out+=footer();
 		$('#ajglz_out').val(out);
 		var date2=new Date();
 		$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 	}
+}
+
+function calcTaskAddOld(){
 }

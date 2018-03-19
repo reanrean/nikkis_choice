@@ -1368,8 +1368,12 @@ function addTooltip(text,tooltip){
 	return '<a href="" onclick="return false;" tooltip="'+tooltip+'" class="aTooltip">'+text+'</a>';
 }
 
-function subtitle(text){
+function subtitle(text, id){
 	 return '<p><b>' + text + '</b></p>';
+}
+
+function normaltext(text){
+	 return '<p>' + text + '</p>';
 }
 
 /*function getDistinct(arr){//don't know why the concise method doesn't work...
@@ -1562,7 +1566,7 @@ function compByTheme(caltype){
 			theme_name='关卡: '+d;
 			NM_output.push(compByThemeName(theme_name));
 		}
-		ret += subtitle('主线关卡') + outputByCate(NM_output);
+		ret += subtitle('主线关卡', 2) + outputByCate(NM_output);
 	}
 	if (showAlly){
 		var LM_output=[];
@@ -1570,7 +1574,7 @@ function compByTheme(caltype){
 			theme_name=c;
 			LM_output.push(compByThemeName(theme_name));
 		}
-		ret += subtitle('联盟委托') + outputByCate(LM_output);
+		ret += subtitle('联盟委托', 3) + outputByCate(LM_output);
 	}
 	else if (showAlly6){
 		var LM_output=[];
@@ -1578,7 +1582,7 @@ function compByTheme(caltype){
 			theme_name=c;
 			if (theme_name.indexOf(strAlly6)==0) LM_output.push(compByThemeName(theme_name));
 		}
-		ret += subtitle('联盟委托第六章') + outputByCate(LM_output);
+		ret += subtitle('联盟委托第六章', 5) + outputByCate(LM_output);
 	}
 	if (showJJC){
 		var JJC_output=[];
@@ -1586,7 +1590,7 @@ function compByTheme(caltype){
 			theme_name='竞技场: '+b;
 			JJC_output.push(compByThemeName(theme_name));
 		}
-		ret += subtitle('竞技场') + outputByCate(JJC_output);
+		ret += subtitle('竞技场', 7) + outputByCate(JJC_output);
 	}
 	return ret;
 }
@@ -1698,6 +1702,7 @@ function outputByCate(total){
 	var output='<table border="1">';
 	output+=tr(td('关卡')+td('理论分差/总分')+td('部位')+td('理论分差')+td('顶配'));
 	total.sort(function(a,b){return b[1] - a[1]});
+	var cnt = 0;
 	for(var i in total){
 		var name=total[i][0].replace('竞技场: ','').replace('委托','');
 		var sum_score=total[i][1];
@@ -1705,7 +1710,8 @@ function outputByCate(total){
 		var rest=total[i][3];
 		var sum_wholetheme=total[i][4];
 		if (rest!=0) rowspan++;
-		if(rowspan){
+		if (sum_score>0 && sum_score>=showScore){
+			cnt++;
 			var outLine=td(name+'<br>'+tasksAddFt(name),'rowspan="'+rowspan+'"')+td(sum_score+'<br>/'+sum_wholetheme,'rowspan="'+rowspan+'"');
 			for(var j in total[i][2]){
 				var cate=total[i][2][j][0];
@@ -1734,9 +1740,8 @@ function outputByCate(total){
 		}
 	}
 	output+='</table>';
-	if ((output.match(/<tr>/g)||[]).length > (output.match(/style="display:none;"/g)||[]).length+1)
-		return output;
-	else return '- 无结果';
+	if (cnt>0) return output;
+	else return normaltext('- 无结果');
 }
 
 function tasksAddFt(theme){
