@@ -11,9 +11,6 @@
 	<style>
 		.unwrap {word-break:keep-all; color:#ff7890;}
 		.nobr {white-space:nowrap;}
-		.inTop,.haveTop {color:red;}
-		.inSec {color:black;}
-		.inName {word-break:break-all;}
 		a.aTooltip {color:inherit;}
 		a.aTooltip:hover {text-decoration:none;}
 		body {margin:1em; font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;}
@@ -25,6 +22,7 @@
 		table.calcByAll, table.propByAll {width:100%; table-layout:fixed; min-width:285px;}
 		table.calcByAll tr td:nth-child(-n+3), table.propByAll tr td:nth-child(-n+2), table.propSrc tr td:nth-child(3) {width:10%;}
 		table.calcSrc tr td:nth-child(3),table.calcSrc tr td:nth-child(4) {width:7.5%;}
+		table.calcByAll tr.top td, table.propByAll tr.top td:nth-child(-n+2), td.top{color:red;}
 		@media only screen and (max-width: 360px){
 			table.calcByAll tr td, table.propByAll tr td {padding:1px;}
 			table.calcByAll tr td:nth-child(-n+3), table.propByAll tr td:nth-child(-n+2), table.propSrc tr td:nth-child(3) {width:16px;}
@@ -39,6 +37,7 @@
 			width: 150px; word-break:break-all; white-space:pre-wrap;
 		}
 		table.propByAll tr td:nth-last-child(1) [tooltip]:hover:before {margin-left:-120px;}
+		table.calcByAll tr td:nth-child(1) [tooltip]:hover:before, table.propByAll tr td:nth-child(1) [tooltip]:hover:before {margin-left:0px;}
 		.normTip [tooltip]:hover:before {
 			margin-left:0px; width: 170px; word-break:break-all; white-space:pre-wrap;
 		}

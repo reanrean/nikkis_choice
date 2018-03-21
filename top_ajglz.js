@@ -1,4 +1,5 @@
 function init_top(){
+	init_pagecontent();
 	enterKey();
 	gen_setList();
 	sortTags();
@@ -11,6 +12,85 @@ function init_top(){
 	$("#maxHide").val(5);
 	$('#showCnt2').val(3);
 	$('#showScore').val(1000);
+}
+
+function init_pagecontent(){
+	var style = $("<style>");
+	style.append('.unwrap {word-break:keep-all; color:#ff7890;}');
+	style.append('a.monkey {color:inherit;text-decoration:none;}');
+	style.append('body {margin:1em; font-family: "Helvetica Neue", Helvetica, Microsoft Yahei, Hiragino Sans GB, WenQuanYi Micro Hei, sans-serif;}');
+	style.append('fieldset {width:100%; max-width:270px; padding:.35em .625em .75em; border:1px solid silver;}');
+	style.append('legend {border:0; width:auto; margin-bottom:0; font-size:14px;}');
+	style.append('label {font-weight:normal; line-height:100%;}');
+	style.append('button.btn-cust {border:0px}');
+	style.append('td {padding:5px;}');
+	style.append('tr:first-child {font-weight:bold;}');
+	style.appendTo("head");
+	
+	var page = '<p id="top_radio"><label><input type="radio" name="ar" checked onclick="chgDpMode(1)">顶配分析</label><label><input type="radio" name="ar" onclick="chgDpMode(2)">懒人替换</label><label><input type="radio" name="ar" onclick="chgDpMode(3)">刷分更新</label></p>';
+	page += '<hr>';
+	page += '<span class="DpMode1">';
+	page += '<p>';
+	page += '<button id="searchMode" class="btn btn-sm btn-info btn-cust" onclick="searchMode()"></button>';
+	page += '<input type="text" id="textBox">';
+	page += '<button id="searchById" onclick="searchById()">查找</button>';
+	page += '<button id="calc" onclick="calctop()">计算</button>';
+	page += '<span id="alert_msg" class="unwrap"></span>';
+	page += '</p>';
+	page += '<fieldset>';
+	page += '<legend>选项（重新计算生效）</legend>';
+	page += '模板：<span id="searchModule"></span> <label><input type="checkbox" id="rmguildhs" onclick="toggle_rmguildhs()" />for点点</label><br>';
+	page += '计算 <label><input type="checkbox" id="showJJC" checked />竞技场</label> <label><input type="checkbox" id="showAlly" checked />联盟</label> <label><input type="checkbox" id="showNormal" checked />主线</label><br>';
+	page += '高配数：<input type="text" id="showCnt" size="2" style="line-height:100%;"/> 收起：><input type="text" id="maxHide" size="2" style="line-height:100%;"/><br>';
+	page += '<label><input type="checkbox" id="check_manual_flist" onclick="toggle_manual_flist()" />手动F表</label> ';
+	page += '<span class="modable">';
+	page += '<label><input type="checkbox" id="hideNores" />只显示顶配/高配部件</label><br>';
+	page += '显示 <label><input type="checkbox" id="showSource" />来源</label> <label><input type="checkbox" id="showMerc" />兑换数量</label><br>';
+	page += '</span>';
+	page += '<span style="display:none"><input type="checkbox" id="cartMode" onclick="chgcartMode()" checked />选取多件</span>';
+	page += '<button id="calcall" onclick="calcall()">全部计算</button>';
+	page += '<button id="genall" onclick="calctop('+"'all'"+')">生成</button>';
+	page += '<button id="genall_1click" onclick="genall_1click()">一键生成(试作)</button>';
+	page += '</fieldset>';
+	page += '<hr>';
+	page += '<p>标题：<input type="text" id="ajglz_title" placeholder="XXXX"/>&emsp;更新人员：<input type="text" id="ajglz_staff" placeholder="Rean翎"/></p>';
+	page += '<p>分类数量：<span id="cartNum"></span>&ensp;<button class="btn btn-xs btn-default" onclick="addCartNum()">＋</button><button class="btn btn-xs btn-default" onclick="delCartNum()">－</button>&emsp;点击单品添加到：<span id="currentCart"></span></p>';
+	page += '<span id="cartContent"></span>';
+	page += '</span>';
+	page += '<span class="DpMode2 DpMode3" style="display:none">';
+	page += '<p>版本追溯至：<input type="text" id="newVer" placeholder="V?.?.?"/>&emsp;更新人员：<input type="text" id="ajglz_staff2" placeholder="Rean翎"/></p>';
+	page += '</span>';
+	page += '<span class="DpMode2" style="display:none"><button onclick="CreateReplace()">竞技场联盟新衣服替换 </button> ';
+	page += '<button onclick="CreateJJC()">竞技场简表 </button>';
+	page += '</span>';
+	page += '<span class="DpMode3" style="display:none">';
+	page += '<p><button id="calcold" onclick="calcTaskAddOld()">先: 计算旧极限</button>';
+	page += '<button id="calcupd" onclick="calctopupd()">极限分数更新</button>';
+	page += '<span id="alert_msg_update" class="unwrap"></span></p>';
+	page += '<fieldset>';
+	page += '<legend>选项（重新计算生效）</legend>';
+	page += '显示<input type="text" id="showCnt2" size="2" style="line-height:100%;"/>件高配信息<br>';
+	page += '分差超过<input type="text" id="showScore" size="5" style="line-height:100%;"/>的关卡<br>';
+	page += '<label><input type="checkbox" id="showNormal2" checked />主线</label> <label><input type="checkbox" id="showAlly2" checked />联盟</label> <label><input type="checkbox" id="showAlly62" />联盟六</label> <label><input type="checkbox" id="showJJC2" />竞技场</label><br>';
+	page += '</fieldset>';
+	page += '</span>';
+	page += '<hr>';
+	page += '<p id="topsearch_note"></p>';
+	page += '<p id="topsearch_info"></p>';
+	page += '<hr>';
+	page += '<p id="p_passcode" style="display:none"><input type="password" id="passcode" placeholder="神秘代码"/><a href="" onclick="verify();return false;" class="monkey">&#x1f648;</a></p>';
+	page += '<p class="p_content">';
+	page += '<button onclick="clear_textarea()">清空</button><button onclick="previewHtml()">预览</button><button onclick="download_top()">下载</button><br>';
+	page += '<input type="text" id="ajglz_filename" style="width:100%" placeholder="文件名"/><br>';
+	page += '<textarea id="ajglz_out" rows=15 style="width:100%"></textarea><br>';
+	page += '</p>';
+	page += '<hr>';
+	page += '<p id="p_fcontent" style="display:none">';
+	page += '<textarea id="manual_flist" rows=5 style="width:100%">';
+	page += "F表格式（示例）：\n'关卡: 1-1':[20401,20402,],\n'关卡: 1-2':[20435,],</textarea><br>";
+	page += '<span id="manual_flist_result" class="p_content" style="display:none"></span>';
+	page += '</p>';
+	$("#init").html(page);
 }
 
 function init_passcode(){
@@ -212,7 +292,7 @@ function calcall(){ // calc all categories
 	storeTop = storeTopByCate(category, caltype, showCnt, []);
 	storeTop_Limit = cloneKey(storeTop);
 	var date2=new Date();
-	$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;');
+	$('#topsearch_note').html('计算完成-全部计算，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;');
 }
 
 function calctop(calcopts){
@@ -284,156 +364,6 @@ function calctop(calcopts){
 	}
 }
 
-function propanal_byall(cartList_num){
-	//***modified from top.js, rmb to update if it is changed in top.js***
-	var showSource = $('#showSource').is(":checked");
-	var showMerc = $('#showMerc').is(":checked");
-	
-	var out='<table border="1" class="propByAll'+((showMerc||showSource)?' propSrc':'')+'">';
-	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('同属性排名')+td('同部位同tag数')+td('属性被覆盖'));
-	
-	var out_cont='';
-	for (var c in category){//sort by category
-		for (var i in cartList[cartList_num]){
-			id=cartList[cartList_num][i];
-			if(clothes[id].type.type!=category[c]) continue;
-			var withTag=clothesWithTag(clothes[id]);
-			var result=propanal_byid(id);
-			var out_rank=result[0]; 
-			var out_rankTag=result[1];
-			var out_tagCnt=result[2]; 
-			var out_repl=result[3];
-			var out_replTag=result[4];
-			var isTop=result[5];
-			var isSec=result[6];
-			
-			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)));
-			cell+=td(shortForm(clothes[id].type.type));
-			if(showSource||showMerc){
-				var cell_3rd='';
-				if(showSource) cell_3rd=conv_source(clothes[id].source, clothes[id].type.mainType);
-				if(showMerc){
-					var price=getMerc(id);
-					if(price) {
-						var hasStr=0;
-						for (var r in replaceSrc){
-							if(cell_3rd.indexOf(replaceSrc[r])>-1) {cell_3rd=cell_3rd.replace(replaceSrc[r],price); hasStr=1; break;}
-						}
-						if (!hasStr) cell_3rd=price;
-					}
-				}
-				cell+=td(cell_3rd);
-			}
-			
-			//同属性排名
-			var cellRank='';
-			var rankTxt=(withTag?'不计tag:':'')+out_rank[0];
-			cellRank+=(out_rank[1] ? addTooltip(rankTxt,out_rank[1]) : rankTxt) +'<br>';
-			if (withTag){
-				for (var tagj in out_rankTag){
-					var rankTagTxt=rmtagstr(tagj)+':'+out_rankTag[tagj][0];
-					cellRank+=(out_rankTag[tagj][1] ? addTooltip(rankTagTxt,out_rankTag[tagj][1]) : rankTagTxt) +'<br>';
-				}
-			}
-			cell+=td(cellRank,(cellRank.indexOf('第1<')>-1?'class="top"':''));
-			//tag
-			if (withTag){
-				var cellRank='';
-				for (var tagj in out_tagCnt){
-					var tagTxt=rmtagstr(tagj)+':'+out_tagCnt[tagj][0];
-					cellRank+=(out_tagCnt[tagj][1] ? addTooltip(tagTxt,out_tagCnt[tagj][1]) : tagTxt) +'<br>';
-				}
-				cell+=td(cellRank,(cellRank.indexOf(':0个')>-1?'class="top"':''));
-			}else cell+=td('-');
-			//属性被覆盖
-			var cellRank='';
-			var replTxt=(withTag?'不计tag:':'')+out_repl[0];
-			cellRank+=(out_repl[1] ? addTooltip(replTxt,out_repl[1]) : replTxt) +'<br>';
-			if (withTag){
-				for (var tagj in out_replTag){
-					var replTagTxt=rmtagstr(tagj)+':'+out_replTag[tagj][0];
-					cellRank+=(out_replTag[tagj][1] ? addTooltip(replTagTxt,out_replTag[tagj][1]) : replTagTxt) +'<br>';
-				}
-			}
-			cell+=td(cellRank,(cellRank.indexOf(':0个')>-1||cellRank.indexOf('0个')==0?'class="top"':''));
-			
-			if ($.inArray(clothes[id].type.type, skipCategory)>=0) {cellContent=td('-')+td('-')+td('-'); isTop=0; isSec=0;} //skip
-			
-			if (!$('#hideNores').is(":checked")||isSec||isTop){
-				out_cont+=tr(cell,(isTop?'class="top"':''));
-			}
-		}
-	}
-	if(out_cont) return out+out_cont+'</table>';
-	else return normaltext('无顶配/高配信息');
-}
-
-function calctop_byall(cartList_num, caltype){
-	//***modified from top.js, rmb to update if it is changed in top.js***
-	var showJJC = (caltype%2 == 0 ? true : false);
-	var showAlly = (caltype%3 == 0 ? true : false);
-	var showNormal = (caltype%7 == 0 ? true : false);
-	var showSource = $('#showSource').is(":checked");
-	var showMerc = $('#showMerc').is(":checked");
-	var rmguildhs = $('#rmguildhs').is(":checked");
-	
-	var out='<table class="calcByAll'+((showMerc||showSource)?' calcSrc':'')+'">';
-	out+=tr(td('名称')+td('部位')+((showMerc||showSource)?td(showSource?'来源':(showMerc?'价格':'')):'')+td('顶配')+(showJJC?td('竞技场'):'')+(showAlly?td('联盟'+(limitMode&&!rmguildhs?'(极限)':'')):'')+(showNormal?td('关卡'+(limitMode?'(极限)':'')):''));
-	var out_cont='';
-	for (var c in category){//sort by category
-		for (var i in cartList[cartList_num]){
-			id=cartList[cartList_num][i];
-			if(clothes[id].type.type!=category[c]) continue;
-			calctop_byid(id, caltype);
-			var rowspan=(inTop.length>0&&inSec.length>0)? 2:1;
-			
-			var cell=td(addTooltip(clothes[id].name,cell_tag(id,1)),(rowspan>1?'rowspan="'+rowspan+'"':''));
-			cell+=td(shortForm(clothes[id].type.type),(rowspan>1?'rowspan="'+rowspan+'"':''));
-			if(showSource||showMerc){
-				var cell_3rd='';
-				if(showSource) cell_3rd=conv_source(clothes[id].source, clothes[id].type.mainType);
-				if(showMerc){
-					var price=getMerc(id);
-					if(price) {
-						var hasStr=0;
-						for (var r in replaceSrc){
-							if(cell_3rd.indexOf(replaceSrc[r])>-1) {cell_3rd=cell_3rd.replace(replaceSrc[r],price); hasStr=1; break;}
-						}
-						if (!hasStr) cell_3rd=price;
-					}
-				}
-				cell+=td(cell_3rd,(rowspan>1?'rowspan="'+rowspan+'"':''));
-			}
-			if(inTop.length>0){
-				cell+=td('顶配');
-				cell+=(showJJC?td(retTopTd(inTop,'竞技场',id,cartList_num)):'');
-				cell+=(showAlly?td(retTopTd(inTop,'联盟',id,cartList_num)):'');
-				cell+=(showNormal?td(retTopTd(inTop,'关卡',id,cartList_num)):'');
-				out_cont+=tr(cell,'class="top"');
-			}
-			if(inSec.length>0){
-				if(inTop.length>0) cell='';
-				cell+=td('高配');
-				cell+=(showJJC?td(retTopTd(inSec,'竞技场',id,cartList_num)):'');
-				cell+=(showAlly?td(retTopTd(inSec,'联盟',id,cartList_num)):'');
-				cell+=(showNormal?td(retTopTd(inSec,'关卡',id,cartList_num)):'');
-				out_cont+=tr(cell);
-			}
-			if(inTop.length==0 && inSec.length==0 && !($('#hideNores').is(":checked"))){
-				out_cont+=tr(cell+td('-')+(showJJC?td(''):'')+(showAlly?td(''):'')+(showNormal?td(''):''));
-			}
-			
-			//place manual f result
-			if (!limitMode && manfresult[clothes[id].name]){
-				for (var f in manfresult[clothes[id].name]) 
-					$('#manual_flist_result').append(clothes[id].name + ' ' + f + ' F<br>');
-			}
-		}
-	}
-	if(out_cont) return out+out_cont+'</table>';
-	else return normaltext('无顶配/高配信息');
-}
-
 function isBasicSet(id){
 	var targ=[];
 	targ.push(id);
@@ -491,7 +421,7 @@ function addCart_All(n){
 
 function refreshCart(n){
 	$('#cart'+(n+1)).html('');
-	cartList[n]=$.unique(cartList[n]);
+	cartList[n]=getDistinct(cartList[n]);
 	for (var i in cartList[n]){
 		$('#cart'+(n+1)).append('<button class="btn btn-xs btn-default">'+clothes[cartList[n][i]].name+ahref('[×]','delCart('+cartList[n][i]+','+n+')')+'</button>&ensp;');
 	}
@@ -736,7 +666,7 @@ function CreateReplace() {
 	$('#ajglz_filename').val('LR_lasted.html');
 	$('#ajglz_out').val(out);
 	var date2=new Date();
-	$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
+	$('#topsearch_note').html('计算完成-竞技场联盟新衣服替换，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 }
 
 function CreateJJC() {
@@ -749,7 +679,7 @@ function CreateJJC() {
 	$('#ajglz_filename').val('LR_lasted_JJC.html');
 	$('#ajglz_out').val(out);
 	var date2=new Date();
-	$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
+	$('#topsearch_note').html('计算完成-竞技场简表，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 }
 
 function calctopJJC(nCount, nMin){
@@ -767,7 +697,7 @@ function calctopJJC(nCount, nMin){
 		theme_name='竞技场: '+b;
 		ii++;
 		out+=subtitle(theme_name, ii) +'\n';
-		out+='<table border="1"  width="100%">\n';
+		out+='<table border="1" width="100%">\n';
 		out+=tr(td('部位', 'width="15%"')+td('顶配', 'width="25%"')+td('次配'));
 	
 		if (allThemes[theme_name]) {
@@ -834,10 +764,9 @@ function calctopRep(nCount){
 	cartCates = $.unique(cartCates);
 	limitMode=1;
 	storeTop = storeTopByCate(cartCates, 10, nCount, []);
-	console.log(storeTop);
 	
 	var out=subtitle('竞技场', 1) + '\n';
-	out+='<table border="1"  width="100%">\n';
+	out+='<table border="1" width="100%">\n';
 	out+=tr(td('关卡', 'width="15%"')+td('部位', 'width="15%"')+td('名称'));
 	for (var b in competitionsRaw){
 		theme_name='竞技场: '+b;
@@ -846,7 +775,7 @@ function calctopRep(nCount){
 	out+='</table>\n</span>\n';
 	
 	out+=subtitle('联盟第六章(极限权重, 顶配有效，次配数据仅做参考', 2) + '\n';
-	out+='<table border="1"  width="100%">\n';
+	out+='<table border="1" width="100%">\n';
 	out+=tr(td('关卡')+td('部位')+td('名称', 'width="70%"'));
 	for (var c in tasksRaw){
 		theme_name=c;
@@ -858,7 +787,7 @@ function calctopRep(nCount){
 	storeTop = storeTopByCate(cartCates, 5, nCount, []);
 	
 	out+=subtitle('联盟第六章(标准权重)', 3) + '\n';
-	out+='<table border="1"  width="100%">\n';
+	out+='<table border="1" width="100%">\n';
 	out+=tr(td('关卡')+td('部位')+td('名称', 'width="70%"'));
 	for (var c in tasksRaw){
 		theme_name=c;
@@ -967,9 +896,28 @@ function calctopupd(){
 		out+=footer();
 		$('#ajglz_out').val(out);
 		var date2=new Date();
-		$('#topsearch_note').html('计算完成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
+		$('#topsearch_note').html('计算完成-关卡极限分数更新，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 	}
 }
 
 function calcTaskAddOld(){
+	tasksAdd_old = {};
+	var date1=new Date();
+	var ids = searchVersion(valOrPh('newVer'));
+	for (var c in tasksRaw){
+		theme_name=c;
+		if (allThemes[theme_name]) {
+			setFilters(allThemes[theme_name]);
+			tasksAdd_old[theme_name] = genLimitExc(ids);
+		}
+	}
+	for (var d in levelsRaw){
+		theme_name='关卡: '+d;
+		if (allThemes[theme_name]) {
+			setFilters(allThemes[theme_name]);
+			tasksAdd_old[theme_name] = genLimitExc(ids);
+		}
+	}
+	var date2=new Date();
+	$('#topsearch_note').html('计算完成-旧极限，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;');
 }
