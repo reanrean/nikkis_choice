@@ -476,8 +476,9 @@ function headerFrame(stitle, sname, dp, appurl){
 	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/':'../../')+'css/style.css" />';
 	if (dp) h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp-style.css" />';
 	if (dp) h+='<script type="text/javascript" src="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp.js"></script>';
+	h+='</head>\n<body>';
 	if (dp&&appurl) h+='<style>label:first-child,#limitn,.norm{display:none;}.limit{display:inline;}</style>';
-	h+='</head>\n<body><div class="myframe">\n';
+	h+='<div class="myframe">\n';
 	h+='<p class="title1">'+stitle+'</p><hr class="mhr"/>\n';
 	var d=new Date();
 	h+='<p class="normal"><span class="title3">更新时间：</span>';
