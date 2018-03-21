@@ -13,7 +13,7 @@ function init_top(){
 	$("#maxHide").val(5);
 	$('#showCnt2').val(3);
 	$('#showScore').val(1000);
-	showBuzz();
+	toggleBuzz();
 }
 
 var top_id = '';
@@ -1436,21 +1436,27 @@ function fullScore(obj){
 	return obj.type.mainType=='饰品' ? Math.round(accSumScore(obj,accCateNum)) : obj.sumScore;
 }
 
-function showBuzz(){
+function toggleBuzz(){
 	if (typeof(Storage) !== "undefined"&&localStorage.getItem("rean_buzz")){
 		if(localStorage.getItem("rean_buzz")>0 && $('#buzz')){
-			if ($('#buzz').is(":visible")){
-				$('#buzz').hide();
-				$('#abuzz').html("&lt;碎碎念&gt;");
-				var hideBuzz=1;
-			}else{
-				$('#buzz').show();
-				$('#abuzz').html("&lt;收起&gt;");
-				var hideBuzz=0;
-			}
-			if (typeof(Storage) !== "undefined") {
-				localStorage.setItem("rean_buzz", hideBuzz);
-			}
+			showBuzz();
+		}
+	}
+}
+
+function showBuzz(){
+	if ($('#buzz')){
+		if ($('#buzz').is(":visible")){
+			$('#buzz').hide();
+			$('#abuzz').html("&lt;碎碎念&gt;");
+			var hideBuzz=1;
+		}else{
+			$('#buzz').show();
+			$('#abuzz').html("&lt;收起&gt;");
+			var hideBuzz=0;
+		}
+		if (typeof(Storage) !== "undefined") {
+			localStorage.setItem("rean_buzz", hideBuzz);
 		}
 	}
 }
