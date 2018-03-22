@@ -656,6 +656,12 @@ function init_placeholder(){
 	$('#newVer').attr('placeholder',lastVersion);
 }
 
+function yyyymmdd(datetime){
+	var mm = datetime.getMonth() + 1;
+	var dd = datetime.getDate();
+	return [datetime.getFullYear(),(mm>9 ? '' : '0') + mm,(dd>9 ? '' : '0') + dd].join('');
+}
+
 function CreateReplace() {
 	var date1=new Date();
 	var out=headerFrame('竞技场联盟新衣服替换('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),0,0);
@@ -664,7 +670,7 @@ function CreateReplace() {
 	impCart = searchVersion(valOrPh('newVer'));
 	out+=calctopRep(5);
 	out+=footer();
-	$('#ajglz_filename').val('LR_'+date1.getFullYear()+(date1.getMonth()+1)+date1.getDate()+'.html');
+	$('#ajglz_filename').val('LR_'+yyyymmdd(date1)+'.html');
 	$('#ajglz_out').val(out);
 	var date2=new Date();
 	$('#topsearch_note').html('计算完成-竞技场联盟新衣服替换，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
@@ -677,7 +683,7 @@ function CreateJJC() {
 	impCart = searchVersion(valOrPh('newVer'));
 	out+=calctopJJC(15, 5);
 	out+=footer();
-	$('#ajglz_filename').val('LR_'+date1.getFullYear()+(date1.getMonth()+1)+date1.getDate()+'_JJC.html');
+	$('#ajglz_filename').val('LR_'+yyyymmdd(date1)+'_JJC.html');
 	$('#ajglz_out').val(out);
 	var date2=new Date();
 	$('#topsearch_note').html('计算完成-竞技场简表，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
