@@ -13,7 +13,7 @@ function init_top(){
 	$("#maxHide").val(5);
 	$('#showCnt2').val(3);
 	$('#showScore').val(1000);
-	toggleBuzz();
+	showBuzz();
 }
 
 var top_id = '';
@@ -821,8 +821,8 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 				case strAlly6: var pos=3; break;
 				case '关卡': var pos=4; break;
 			}
-			a='<span id="cell'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
-			a+='<span id="cell'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
+			a='<span id="a'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
+			a+='<span id="a'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
 			return a;
 		}
 		return ret;
@@ -842,8 +842,8 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 				case '关卡': var pos=4; break;
 				default: var pos=0;
 			}
-			a='<span id="cell'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
-			a+='<span id="cell'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
+			a='<span id="a'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref('共'+cnt+'关',"showTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
+			a+='<span id="a'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
 			return a;
 		}
 		return ret;
@@ -851,13 +851,13 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 }
 
 function showTop(id){
-	$('#cell'+id+'f').show();
-	$('#cell'+id).hide();
+	$('#a'+id+'f').show();
+	$('#a'+id).hide();
 }
 
 function hideTop(id){
-	$('#cell'+id+'f').hide();
-	$('#cell'+id).show();
+	$('#a'+id+'f').hide();
+	$('#a'+id).show();
 }
 
 function addCates(list, id){
@@ -1436,27 +1436,21 @@ function fullScore(obj){
 	return obj.type.mainType=='饰品' ? Math.round(accSumScore(obj,accCateNum)) : obj.sumScore;
 }
 
-function toggleBuzz(){
+function showBuzz(){
 	if (typeof(Storage) !== "undefined"&&localStorage.getItem("rean_buzz")){
 		if(localStorage.getItem("rean_buzz")>0 && $('#buzz')){
-			showBuzz();
-		}
-	}
-}
-
-function showBuzz(){
-	if ($('#buzz')){
-		if ($('#buzz').is(":visible")){
-			$('#buzz').hide();
-			$('#abuzz').html("&lt;碎碎念&gt;");
-			var hideBuzz=1;
-		}else{
-			$('#buzz').show();
-			$('#abuzz').html("&lt;收起&gt;");
-			var hideBuzz=0;
-		}
-		if (typeof(Storage) !== "undefined") {
-			localStorage.setItem("rean_buzz", hideBuzz);
+			if ($('#buzz').is(":visible")){
+				$('#buzz').hide();
+				$('#abuzz').html("&lt;碎碎念&gt;");
+				var hideBuzz=1;
+			}else{
+				$('#buzz').show();
+				$('#abuzz').html("&lt;收起&gt;");
+				var hideBuzz=0;
+			}
+			if (typeof(Storage) !== "undefined") {
+				localStorage.setItem("rean_buzz", hideBuzz);
+			}
 		}
 	}
 }

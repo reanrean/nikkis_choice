@@ -664,7 +664,7 @@ function CreateReplace() {
 	impCart = searchVersion(valOrPh('newVer'));
 	out+=calctopRep(5);
 	out+=footer();
-	$('#ajglz_filename').val('LR_lasted.html');
+	$('#ajglz_filename').val('LR_'+date1.getFullYear()+(date1.getMonth()+1)+date1.getDate()+'.html');
 	$('#ajglz_out').val(out);
 	var date2=new Date();
 	$('#topsearch_note').html('计算完成-竞技场联盟新衣服替换，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
@@ -677,7 +677,7 @@ function CreateJJC() {
 	impCart = searchVersion(valOrPh('newVer'));
 	out+=calctopJJC(15, 5);
 	out+=footer();
-	$('#ajglz_filename').val('LR_lasted_JJC.html');
+	$('#ajglz_filename').val('LR_'+date1.getFullYear()+(date1.getMonth()+1)+date1.getDate()+'_JJC.html');
 	$('#ajglz_out').val(out);
 	var date2=new Date();
 	$('#topsearch_note').html('计算完成-竞技场简表，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
@@ -874,6 +874,7 @@ function calctopupd(){
 	var date1=new Date();
 	verifyNum('showCnt2');
 	verifyNum('showScore');
+	var showScore = parseInt($("#showScore").val());
 	var caltype = ($('#showJJC2').is(":checked")?2:1) * ($('#showAlly2').is(":checked")?3:1) * ($('#showAlly62').is(":checked")?5:1) * ($('#showNormal2').is(":checked")?7:1);
 	if (caltype == 1){
 		$('#alert_msg_update').html('至少选一种关卡_(:з」∠)_');
@@ -884,7 +885,7 @@ function calctopupd(){
 		storeTop = storeTopByCate(category, caltype, $("#showCnt2").val(), []);
 		limitMode = 3;
 		storeTop_old = storeTopByCate(category, caltype, 1, searchVersion(valOrPh('newVer')));
-		$('#ajglz_filename').val('LR_GQ.html');
+		$('#ajglz_filename').val('LR_GQ-'+valOrPh('newVer').replace(/\./g,'')+'.html');
 		var out = headerFrame('关卡极限分数更新('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),1,0);
 		out+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（饰品分数已按带满衰减），'+(showScore>0? '只显示分差'+showScore+'以上的关卡，' : '')+'方便查看哪些关卡的理论分数更新最多，仅作为参考用。<br>\n';
 		out+='</p>';
