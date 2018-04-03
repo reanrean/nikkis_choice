@@ -53,12 +53,14 @@ function init_pagecontent(){
 	page += '<button id="genall_1click" onclick="genall_1click()">一键生成(试作)</button>';
 	page += '</fieldset>';
 	page += '<hr>';
-	page += '<p>标题：<input type="text" id="ajglz_title" placeholder="XXXX"/>&emsp;更新人员：<input type="text" id="ajglz_staff" placeholder="Rean翎"/></p>';
+	var d = new Date();
+	var ajglz_date = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+	page += '<p>标题：<input type="text" id="ajglz_title" placeholder="XXXX"/>&emsp;更新人员：<input type="text" id="ajglz_staff" placeholder="Rean翎"/>&emsp;更新时间：<input type="text" id="ajglz_date" placeholder="'+ajglz_date+'"/></p>';
 	page += '<p>分类数量：<span id="cartNum"></span>&ensp;<button class="btn btn-xs btn-default" onclick="addCartNum()">＋</button><button class="btn btn-xs btn-default" onclick="delCartNum()">－</button>&emsp;点击单品添加到：<span id="currentCart"></span></p>';
 	page += '<span id="cartContent"></span>';
 	page += '</span>';
 	page += '<span class="DpMode2 DpMode3" style="display:none">';
-	page += '<p>版本追溯至：<input type="text" id="newVer" placeholder="V?.?.?"/>&emsp;更新人员：<input type="text" id="ajglz_staff2" placeholder="Rean翎"/></p>';
+	page += '<p>版本追溯至：<input type="text" id="newVer" placeholder="V?.?.?"/>&emsp;更新人员：<input type="text" id="ajglz_staff2" placeholder="Rean翎"/>&emsp;更新时间：<input type="text" id="ajglz_date2" placeholder="'+ajglz_date+'"/></p>';
 	page += '</span>';
 	page += '<span class="DpMode2" style="display:none"><button onclick="CreateReplace()">竞技场联盟新衣服替换 </button> ';
 	page += '<button onclick="CreateJJC()">竞技场简表 </button>';
@@ -458,7 +460,7 @@ function previewHtml(){
 
 function header(){
 	var appurl = $('#rmguildhs').is(":checked");
-	var h=headerFrame('顶配分析-'+valOrPh('ajglz_title'), valOrPh('ajglz_staff'), 1, appurl);
+	var h=headerFrame('顶配分析-'+valOrPh('ajglz_title'), valOrPh('ajglz_staff'), valOrPh('ajglz_date'), 1, appurl);
 	if($('#ajglz_title').val().indexOf('最新活动')>=0) 
 		h+='<br><span class="title3">说明：</span>新品通常未排F，仅供参考；如果看到内容是上一个活动的，说明最新的顶配分析还没更新，请耐心等待。<br>';
 	h+='</p>';
@@ -467,7 +469,7 @@ function header(){
 	return h;
 }
 
-function headerFrame(stitle, sname, dp, appurl){
+function headerFrame(stitle, sname, sdate, dp, appurl){
 	var h='<!DOCTYPE html><head>';
 	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
 	h+='<meta charset="UTF-8" />';
@@ -480,9 +482,7 @@ function headerFrame(stitle, sname, dp, appurl){
 	if (dp&&appurl) h+='<style>label:first-child,#limitn,.norm{display:none;}.limit{display:inline;}</style>';
 	h+='<div class="myframe">\n';
 	h+='<p class="title1">'+stitle+'</p><hr class="mhr"/>\n';
-	var d=new Date();
-	h+='<p class="normal"><span class="title3">更新时间：</span>';
-	h+=d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
+	h+='<p class="normal"><span class="title3">更新时间：</span>'+sdate;
 	h+='<br>\n<span class="title3">更新人员：</span>'+sname+'<br>\n';
 	return h;
 }
@@ -664,7 +664,7 @@ function yyyymmdd(datetime){
 
 function CreateReplace() {
 	var date1=new Date();
-	var out=headerFrame('竞技场联盟新衣服替换('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),0,0);
+	var out=headerFrame('竞技场联盟新衣服替换('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'), valOrPh('ajglz_date2'),0,0);
 	out+='<span class="title3">使用说明：</span>表格列出的是排名前五的衣服。<font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配，<font color=#8E4890>紫色</font>表示可能有<font color=#8E4890>连衣裙</font>>上下装或者<font color=#8E4890>上下装</font>>连衣裙的情况。</p>\n';
 	out+='<p class="normal">本页内容：<a href="#1">竞技场</a>&emsp;<a href="#2">联盟六(极限权重)</a>&emsp;<a href="#3">联盟六(标准权重)</a></p>\n';
 	impCart = searchVersion(valOrPh('newVer'));
@@ -678,7 +678,7 @@ function CreateReplace() {
 
 function CreateJJC() {
 	var date1=new Date();
-	var out=headerFrame('竞技场简表(新衣服标注'+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),0,0);	
+	var out=headerFrame('竞技场简表(新衣服标注'+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'), valOrPh('ajglz_date2'),0,0);	
 	out+='<span class="title3">使用说明：</span><font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配。如没有部件时请到<a href="../../jingjichang.html">精修版</a>补充。</p>\n';
 	impCart = searchVersion(valOrPh('newVer'));
 	out+=calctopJJC(15, 5);
@@ -892,7 +892,7 @@ function calctopupd(){
 		limitMode = 3;
 		storeTop_old = storeTopByCate(category, caltype, 1, searchVersion(valOrPh('newVer')));
 		$('#ajglz_filename').val('LR_GQ-'+valOrPh('newVer').replace(/\./g,'')+'.html');
-		var out = headerFrame('关卡极限分数更新('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'),1,0);
+		var out = headerFrame('关卡极限分数更新('+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'), valOrPh('ajglz_date2'),1,0);
 		out+='<span class="title3">使用说明：</span>分差根据上一版本和此版本的极限顶配分数计算（饰品分数已按带满衰减），'+(showScore>0? '只显示分差'+showScore+'以上的关卡，' : '')+'方便查看哪些关卡的理论分数更新最多，仅作为参考用。<br>\n';
 		out+='</p>';
 		out+='<p class="normal">本页内容：';
