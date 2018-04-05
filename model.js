@@ -161,7 +161,17 @@ Clothes = function(csv) {
         }
       }
 
+      var spRange = 0 ;
+      if(Flist && Flist[filters.levelName] && Flist[filters.levelName]["range"]){
+        for (var i in Flist[filters.levelName]["range"])
+          if(this.longid == Flist[filters.levelName]["range"][i]) {
+            spRange = 1;
+            break;
+          }
+      }
+
       this.isF = (isf==1? 0:1);
+      this.spRange = spRange;
       this.tmpScore = Math.round(s);
       this.bonusScore = 0;
 	  this.sumScore = 0;

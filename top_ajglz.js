@@ -474,10 +474,9 @@ function headerFrame(stitle, sname, sdate, dp, appurl){
 	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
 	h+='<meta charset="UTF-8" />';
 	//h+='<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
-	h+='<link rel="stylesheet" type="text/css" href="../../css/style.css" />';
 	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/':'../../')+'css/style.css" />';
-	if (dp) h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp-style.css" />';
-	if (dp) h+='<script type="text/javascript" src="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'')+'dp.js"></script>';
+	if (dp) h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'../3-DingPei/')+'dp-style.css" />';
+	if (dp) h+='<script type="text/javascript" src="'+(appurl?'http://ajglz.coding.me/html/3-DingPei/':'../3-DingPei/')+'dp.js"></script>';
 	h+='</head>\n<body>';
 	if (dp&&appurl) h+='<style>label:first-child,#limitn,.norm{display:none;}.limit{display:inline;}</style>';
 	h+='<div class="myframe">\n';
