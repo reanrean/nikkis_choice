@@ -407,6 +407,7 @@ function static_generate(){
 						case '18': var genreName = '梦恋奇迹'; var seq = 12; break;
 						case '19': var genreName = '故事套装'; var seq = 14; break;
 						case '20': var genreName = '御苑琼芳'; var seq = 13; break;
+						case '21': var genreName = '奇妙博物馆'; var seq = 13; break;
 						default: var genreName = '';
 					}
 					if (genreName && $.inArray(name,setCates)>=0){
