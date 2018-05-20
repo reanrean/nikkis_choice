@@ -62,8 +62,9 @@ function init_pagecontent(){
 	page += '<span class="DpMode2 DpMode3" style="display:none">';
 	page += '<p>版本追溯至：<input type="text" id="newVer" placeholder="V?.?.?"/>&emsp;更新人员：<input type="text" id="ajglz_staff2" placeholder="Rean翎"/>&emsp;更新时间：<input type="text" id="ajglz_date2" placeholder="'+ajglz_date+'"/></p>';
 	page += '</span>';
-	page += '<span class="DpMode2" style="display:none"><button onclick="CreateReplace()">竞技场联盟新衣服替换 </button> ';
-	page += '<button onclick="CreateJJC()">竞技场简表 </button>';
+	page += '<span class="DpMode2" style="display:none"><button onclick="CreateReplace()">竞技场联盟新衣服替换</button> ';
+	page += '<button onclick="CreateJJC()">竞技场简表</button> ';
+	page += '<button onclick="CreateLM6()">联盟六简表</button> ';
 	page += '</span>';
 	page += '<span class="DpMode3" style="display:none">';
 	page += '<p><button id="calcold" onclick="calcTaskAddOld()">先: 计算旧极限</button>';
@@ -683,40 +684,107 @@ function CreateJJC() {
 	$('#topsearch_note').html('计算完成-竞技场简表，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
 }
 
+function CreateLM6() {
+	var date1=new Date();
+	var out=headerFrame('联盟六简表(新衣服标注'+valOrPh('newVer')+'～)', valOrPh('ajglz_staff2'), valOrPh('ajglz_date2'),0,0);	
+	out+='<span class="title3">使用说明：</span><font color="red">红色</font>表示新衣服为顶配，<font color="blue">蓝色</font>表示新衣服为次配。如没有部件时请到<a href="../../lianmeng.html">精修版</a>补充。</p>\n';
+	impCart = searchVersion(valOrPh('newVer'));
+	out+=calctopLM6(15, 5);
+	out+=footer();
+	$('#ajglz_filename').val('LR_'+valOrPh('newVer').replace(/\./g,'')+'_LM6.html');
+	$('#ajglz_out').val(out);
+	var date2=new Date();
+	$('#topsearch_note').html('计算完成-联盟六简表，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;<br>↓↓下方复制代码哦↓↓');
+}
+
 function calctopJJC(nCount, nMin){
 	storeTop = storeTopByCate(category, 2, nCount, []);
-	var out = '';
+	var out = '<p class="normal">本页内容：';
 	
 	var ii = 0;
 	for (var b in competitionsRaw){
 		ii++;
 		out+='<a href="#'+ii+'">' + b + '</a>&emsp;';
 	}
+	out += '</p>\n';
 	
 	ii = 0;
 	for (var b in competitionsRaw){
 		theme_name='竞技场: '+b;
 		ii++;
 		out+=subtitle(theme_name, ii) +'\n';
-		out+='<table border="1" width="100%">\n';
-		out+=tr(td('部位', 'width="15%"')+td('顶配', 'width="25%"')+td('次配'));
+		out+=calctopByTheme(theme_name, nMin);
+	}
+	return out;
+}
+
+function calctopLM6(nCount, nMin){
+	limitMode=1;
+	storeTop = storeTopByCate(category, 5, nCount, []);
+	var out = '<p class="normal">本页内容：<br>\n&emsp;极限权重：';
 	
-		if (allThemes[theme_name]) {
-			inTop=[]; 
-			for (var c in category) addTxtDoubByThemeCate(theme_name, category[c], nMin);
-			if (inTop.length > 0){
-				var cell='';
-				for (var r in inTop) {
-					cell+=td(inTop[r][2]);
-					cell+=td(inTop[r][0]);
-					cell+=td(inTop[r][1]);
-					out+=tr(cell);
-					cell='';	
-				}
+	var ii = 0;
+	for (var b in tasksRaw){
+		if (b.indexOf(strAlly6)==0){
+			ii++;
+			out+='<a href="#J'+ii+'">' + b.replace('联盟委托: ','') + '</a>&emsp;';
+		}
+	}
+	out += '<br>\n&emsp;标准权重：';
+	
+	ii = 0;
+	for (var b in tasksRaw){
+		if (b.indexOf(strAlly6)==0){
+			ii++;
+			out+='<a href="#B'+ii+'">' + b.replace('联盟委托: ','') + '</a>&emsp;';
+		}
+	}
+	out += '</p>\n';
+	
+	ii = 0;
+	for (var b in tasksRaw){
+		if (b.indexOf(strAlly6)==0){
+			theme_name=b;
+			ii++;
+			out+=subtitle('[极限] '+theme_name, 'J'+ii) +'\n';
+			out+=calctopByTheme(theme_name, nMin);
+		}
+	}
+	
+	limitMode=0;
+	storeTop = storeTopByCate(category, 5, nCount, []);
+	
+	ii = 0;
+	for (var b in tasksRaw){
+		if (b.indexOf(strAlly6)==0){
+			theme_name=b;
+			ii++;
+			out+=subtitle('[标准] '+theme_name, 'B'+ii) +'\n';
+			out+=calctopByTheme(theme_name, nMin);
+		}
+	}
+	return out;
+}
+
+function calctopByTheme(them, nMin){
+	var out='<table border="1" width="100%">\n';
+	out+=tr(td('部位', 'width="15%"')+td('顶配', 'width="25%"')+td('次配'));
+	
+	if (allThemes[them]) {
+		inTop=[]; 
+		for (var c in category) addTxtDoubByThemeCate(them, category[c], nMin);
+		if (inTop.length > 0){
+			var cell='';
+			for (var r in inTop) {
+				cell+=td(inTop[r][2]);
+				cell+=td(inTop[r][0]);
+				cell+=td(inTop[r][1]);
+				out+=tr(cell);
+				cell='';	
 			}
 		}
-		out+='</table>\n</span>\n';
 	}
+	out+='\n</table>\n';
 	return out;
 }
 
@@ -773,7 +841,7 @@ function calctopRep(nCount){
 		theme_name='竞技场: '+b;
 		out += outputRep(theme_name, nCount);
 	}	
-	out+='</table>\n</span>\n';
+	out+='\n</table>\n';
 	
 	out+=subtitle('联盟第六章(极限权重, 顶配有效，次配数据仅做参考', 2) + '\n';
 	out+='<table border="1" width="100%">\n';
@@ -782,7 +850,7 @@ function calctopRep(nCount){
 		theme_name=c;
 		if (allThemes[theme_name]) out+=outputRep(theme_name, nCount);
 	}	
-	out+='</table>\n</span>\n';
+	out+='\n</table>\n';
 	
 	limitMode=0;
 	storeTop = storeTopByCate(cartCates, 5, nCount, []);
@@ -794,7 +862,7 @@ function calctopRep(nCount){
 		theme_name=c;
 		if (allThemes[theme_name]) out+=outputRep(theme_name, nCount);
 	}
-	out+='</table>\n</span>\n';
+	out+='\n</table>\n';
 	
 	return out;
 }
