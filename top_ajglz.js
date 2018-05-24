@@ -712,8 +712,10 @@ function calctopJJC(nCount, nMin){
 	for (var b in competitionsRaw){
 		theme_name='竞技场: '+b;
 		ii++;
-		out+=subtitle(theme_name, ii) +'\n';
-		out+=calctopByTheme(theme_name, nMin);
+		out += subtitle(theme_name, ii) +'\n';
+		var out2 = calctopByTheme(theme_name, nMin);
+		out += '<p class="center">顶配分数：'+out2[1]+'</p>';
+		out += out2[0];
 	}
 	return out;
 }
@@ -746,8 +748,10 @@ function calctopLM6(nCount, nMin){
 		if (b.indexOf(strAlly6)==0){
 			theme_name=b;
 			ii++;
-			out+=subtitle('[极限] '+theme_name, 'J'+ii) +'\n';
-			out+=calctopByTheme(theme_name, nMin);
+			out += subtitle('[极限] '+theme_name, 'J'+ii) +'\n';
+			var out2 = calctopByTheme(theme_name, nMin);
+			out += '<p class="center">理论极限分数：'+Math.round(out2[1]*1.2726)+'</p>';
+			out += out2[0];
 		}
 	}
 	
@@ -759,8 +763,9 @@ function calctopLM6(nCount, nMin){
 		if (b.indexOf(strAlly6)==0){
 			theme_name=b;
 			ii++;
-			out+=subtitle('[标准] '+theme_name, 'B'+ii) +'\n';
-			out+=calctopByTheme(theme_name, nMin);
+			out += subtitle('[标准] '+theme_name, 'B'+ii) +'\n';
+			var out2 = calctopByTheme(theme_name, nMin);
+			out += out2[0];
 		}
 	}
 	return out;
@@ -769,6 +774,7 @@ function calctopLM6(nCount, nMin){
 function calctopByTheme(them, nMin){
 	var out='<table border="1" width="100%">\n';
 	out+=tr(td('部位', 'width="15%"')+td('顶配', 'width="25%"')+td('次配'));
+	var scoreTop = 0;
 	
 	if (allThemes[them]) {
 		inTop=[]; 
@@ -780,12 +786,13 @@ function calctopByTheme(them, nMin){
 				cell+=td(inTop[r][0]);
 				cell+=td(inTop[r][1]);
 				out+=tr(cell);
-				cell='';	
+				cell='';
+				scoreTop += inTop[r][3];
 			}
 		}
 	}
 	out+='\n</table>\n';
-	return out;
+	return [out, scoreTop];
 }
 
 function addTxtDoubByThemeCate(them, ctype, min){
@@ -794,6 +801,7 @@ function addTxtDoubByThemeCate(them, ctype, min){
 	var resultList = get_storeTop_Cate(them, ctype);
 	var txtSec='';
 	var txtTop='';
+	var scoreTop = 0;
 	var isJin = 0;
 	for (var r in resultList){
 		if (resultList[r]) {
@@ -810,10 +818,16 @@ function addTxtDoubByThemeCate(them, ctype, min){
 				var moveTopToSec = checkRealTop(them, r, resultList, min)[0];
 				var prefix = r>0 ? ' = ' : '';
 				if (inList == 1){
-					if (!moveTopToSec) txtTop += prefix + '<font color="red">' +resultList[r][0].name + resultList[r][1] + srcs + '</font>';
+					if (!moveTopToSec) {
+						txtTop += prefix + '<font color="red">' +resultList[r][0].name + resultList[r][1] + srcs + '</font>';
+						scoreTop += resultList[r][1];
+					}
 					else txtSec += prefix + '<font color="blue">' +resultList[r][0].name + resultList[r][1] + srcs + '</font>';
 				}else{
-					if (!moveTopToSec) txtTop += prefix + resultList[r][0].name + resultList[r][1] + srcs;
+					if (!moveTopToSec) {
+						txtTop += prefix + resultList[r][0].name + resultList[r][1] + srcs;
+						scoreTop += resultList[r][1];
+					}
 					else txtSec += prefix + resultList[r][0].name + resultList[r][1] + srcs;
 				}
 			}
@@ -824,7 +838,7 @@ function addTxtDoubByThemeCate(them, ctype, min){
 			if (isJin && j>=min && resultList[r][1]>resultList[j][1]) break;
 		}
 	}
-	inTop.push([txtTop, txtSec, ctype]);
+	inTop.push([txtTop, txtSec, ctype, scoreTop]);
 }
 
 function calctopRep(nCount){
