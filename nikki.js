@@ -472,7 +472,7 @@ function decodeShortInventory(txt){
 			if (!isNaN(Number(content[j]))) ret2.push(numberToInventoryId(content[j]));
 			else if (content[j].indexOf('-') > 0){
 				var serials = content[j].split('-');
-				for (var k = serials[0]; k <= serials[1]; k++) ret2.push(numberToInventoryId(k));
+				for (var k = Number(serials[0]); k <= Number(serials[1]); k++) ret2.push(numberToInventoryId(k));
 			}
 		}
 		ret += section[0] + ':' + ret2.join(',') + '|';
