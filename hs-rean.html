@@ -22,9 +22,10 @@
 		var wardrobe = function() {
 			var ret = [];
 			var skip_new = (window.location.href.toUpperCase().indexOf('?OLD')>0) ? 1 : 0 ;
+			var last_ver = wardrobe_orig[wardrobe_orig.length-1][17];
 			for (var i in wardrobe_orig) {
 				var tmp=wardrobe[i];
-				if(skip_new) {if(tmp[17]==lastVersion) continue;}
+				if(skip_new) {if(tmp[17]==last_ver) continue;}
 				ret.push(tmp);
 			}
 			return ret;
