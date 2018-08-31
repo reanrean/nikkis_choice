@@ -307,6 +307,8 @@ function static_generate(){
 			switch(staticMode){
 				case 'merge' :
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
+					var skip = ['11292','21094','60515','71156','82725','82726','82727','82728','82729','11294','21096','30527','60516','71158','82739','82740','82741','82743','21095','71159','82742'];
+					if ($.inArray(tar.uid,skip)>=0) continue;
 					var src_arr = contentBy(contents[i],'cloth');
 					var num_arr = contentBy(contents[i],'num');
 					if (tar.name&&tar.src[15].indexOf('设·图')<0) {
@@ -356,6 +358,8 @@ function static_generate(){
 					break;
 				case 'shop':
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
+					var skip = ['11379','30574','40593','50550','71237','83111','83112','83113','83114'];
+					if ($.inArray(tar.uid,skip)>=0) continue;
 					var price = contentBy(contents[i],'price')[0];
 					var price_type = contentBy(contents[i],'price_type')[0];
 					var currency = convert_priceType(price_type);
