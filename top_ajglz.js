@@ -312,7 +312,10 @@ function calctop(calcopts){
 		for(var l=0;l<cartNum;l++){
 			if(cartList[l].length==0) {err=1; break;}
 		}
-		if (err) $('#alert_msg').html('有选取列表为空_(:з」∠)_');
+		if (err) {
+			$('#alert_msg').html('有选取列表为空_(:з」∠)_');
+			console.log('有选取列表为空: ' + valOrPh('ajglz_title'));
+		}
 		else{
 			$('#alert_msg').html('');
 			$('#topsearch_info').html('');
