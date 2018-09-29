@@ -466,7 +466,7 @@ function header(){
 	var appurl = $('#rmguildhs').is(":checked");
 	var h=headerFrame('顶配分析-'+valOrPh('ajglz_title'), valOrPh('ajglz_staff'), valOrPh('ajglz_date'), 1, appurl);
 	if($('#ajglz_title').val().indexOf('最新活动')>=0) 
-		h+='<br><span class="title3">说明：</span>新品通常未排F，仅供参考；如果看到内容是上一个活动的，说明最新的顶配分析还没更新，请耐心等待。<br>';
+		h+='<span class="title3">说明：</span>新品通常未排F，仅供参考；如果看到内容是上一个活动的，说明最新的顶配分析还没更新，请耐心等待。<br>\n';
 	h+='</p>';
 	h+='<hr class="mhr"/>';
 	h+='<p class="normal">';
@@ -492,11 +492,11 @@ function headerFrame(stitle, sname, sdate, dp, appurl){
 }
 
 function middle(){
-	return '</p><p id="radio"></p>';
+	return '</p>\n<p id="radio"></p>';
 }
 
 function footer(){
-	return '</div></body></html>';
+	return '\n</div></body></html>';
 }
 
 function addTooltip(text,tooltip){
@@ -508,7 +508,7 @@ function nobr(text){
 }
 
 function subtitle(text, id){
-	 return (id ? '<a id="'+id+'"></a>' : '' ) + '<p class="title2">' + text + '</p>';
+	 return '\n' + (id ? '<a id="'+id+'"></a>' : '' ) + '<p class="title2">' + text + '</p>';
 }
 
 function normaltext(text){
