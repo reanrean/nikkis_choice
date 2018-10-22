@@ -5,6 +5,7 @@ function init_top(){
 	sortTags();
 	addCartNum();
 	searchMode();
+	presetModules();
 	init_searchModule();
 	init_placeholder();
 	init_passcode();

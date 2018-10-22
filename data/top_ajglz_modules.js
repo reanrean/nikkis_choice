@@ -3,16 +3,12 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','南瓜夜怪谈',1,'南瓜夜怪谈',''],
 ['最新活动','街头极限',1,'街头极限',''],
 ['最新活动','涂鸦风潮',1,'涂鸦风潮',''],
 ['最新活动','潮流女王',1,'潮流女王',''],
-['最新活动','潮汐永航',1,'潮汐永航',''],
 ['最新活动','黄金秋',0,'黄金秋','名称'],
-['最新活动','朝旅歌吟',1,'朝旅歌吟',''],
-['最新活动','夕醉蝶舞',1,'夕醉蝶舞',''],
-['最新活动','千千枝',0,'千千枝','名称'],
 ['最新活动','月下离别曲',1,'月下离别曲',''],
-['最新活动','蔷薇之誓',1,'蔷薇之誓',''],
 ['萤光之灵','<绫罗> 剑',0,'梦境·绫罗1','来源'],
 ['萤光之灵','古琴',0,'梦境·绫罗2','来源'],
 ['萤光之灵','鸟',0,'梦境·绫罗3','来源'],
@@ -231,6 +227,7 @@ var modules_top = [
 ['往期活动(登录)','纸牌游戏',1,'纸牌游戏',''],
 ['往期活动(登录)','黑皮肤',0,'!热情旋律','名称'],
 ['往期活动(登录)','黑皮肤',0,'!滑板妹','名称'],
+['往期活动(节日)','南瓜夜怪谈',1,'南瓜夜怪谈',''],
 ['往期活动(节日)','夕月潇湘',1,'夕月潇湘',''],
 ['往期活动(节日)','鹊烟岚',1,'鹊烟岚',''],
 ['往期活动(节日)','云中舞',1,'云中舞',''],
@@ -783,19 +780,6 @@ var modules_top = [
 //['签到','1月',0,'签到·1月','来源'],
 ];
 
-$(document).ready(function () {
-	var latest = 1;
-	for (var i = wardrobe.length - 1; i >= 0; i--){
-		if (wardrobe[i][15].indexOf('签到·')==0) {
-			latest = wardrobe[i][15].replace(/[^0-9]*/g,'');
-			break;
-		}
-	}
-	for (var i = 1; i <= latest; i++){
-		modules_top.push(['签到',i+'月',0,'签到·'+i+'月','来源']);
-	}
-});
-
 var modules_top_checkbox = {
 '萤光之灵':['showSource'],
 '往期活动':['hideNores'],
@@ -965,3 +949,22 @@ var modules_top_filename = {
 'V11-V15':'CZ-VIP_2.html',
 '签到':'QD.html',
 };
+
+function presetModules(){
+	//签到
+	var latest = 1;
+	for (var i = wardrobe.length - 1; i >= 0; i--){
+		if (wardrobe[i][15].indexOf('签到·')==0) {
+			latest = wardrobe[i][15].replace(/[^0-9]*/g,'');
+			break;
+		}
+	}
+	for (var i = 1; i <= latest; i++){
+		modules_top.push(['签到',i+'月',0,'签到·'+i+'月','来源']);
+	}
+	//金钻套装
+	for (var i = 0; i < wardrobe.length; i++){
+		if (wardrobe[i][18]=='套·金') modules_top.push(['商店·金币','套装成就',0,'!'+wardrobe[i][0],'名称']);
+		else if (wardrobe[i][18]=='套·钻') modules_top.push(['商店·钻石','套装成就',0,'!'+wardrobe[i][0],'名称']);
+	}
+}
