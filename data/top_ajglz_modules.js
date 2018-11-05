@@ -3,6 +3,8 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','蓝星糖果派',1,'蓝星糖果派',''],
+['最新活动','知识问答',0,'活动·知识问答','来源'],
 ['最新活动','狄安娜之梦',1,'狄安娜之梦',''],
 ['最新活动','万圣连充',0,'万圣小夜曲','名称'],
 ['最新活动','万圣连充',0,'迷糊飘飘','名称'],
