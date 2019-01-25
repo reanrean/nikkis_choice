@@ -51,7 +51,7 @@ function init_pagecontent(){
 	page += '<span style="display:none"><input type="checkbox" id="cartMode" onclick="chgcartMode()" checked />选取多件</span>';
 	page += '<button id="calcall" onclick="calcall()">全部计算</button>';
 	page += '<button id="genall" onclick="calctop('+"'all'"+')">生成</button>';
-	page += '<button id="genall_1click" onclick="genall_1click()">一键生成(试作)</button>';
+	page += '<button id="genall_1click" onclick="genall_1click()">一键生成</button>';
 	page += '</fieldset>';
 	page += '<hr>';
 	var d = new Date();
@@ -61,7 +61,7 @@ function init_pagecontent(){
 	page += '<span id="cartContent"></span>';
 	page += '</span>';
 	page += '<span class="DpMode2 DpMode3" style="display:none">';
-	page += '<p>版本追溯至：<input type="text" id="newVer" placeholder="V?.?.?"/>&emsp;更新人员：<input type="text" id="ajglz_staff2" placeholder="Rean翎"/>&emsp;更新时间：<input type="text" id="ajglz_date2" placeholder="'+ajglz_date+'"/></p>';
+	page += '<p>版本追溯至：<input type="text" id="newVer" placeholder="V?.?.?"/>&emsp;更新人员：<input type="text" id="ajglz_staff2" placeholder="Rean翎"/>&emsp;更新时间：<input type="text" id="ajglz_date2" placeholder="'+ajglz_date+'"/>&emsp;<button onclick="genLanRen()">一键懒人</button></p>';
 	page += '</span>';
 	page += '<span class="DpMode2" style="display:none"><button onclick="CreateReplace()">竞技场联盟新衣服替换</button> ';
 	page += '<button onclick="CreateJJC()">竞技场简表</button> ';
@@ -632,6 +632,7 @@ function restore_guild_hs(){
 }
 
 function genall_1click(){
+	var date1=new Date();
 	if (!getLength(storeTop_Normal)>0) {
 		$('#ajglz_out').val('');
 		$('#topsearch_note').html('请先全部计算_(:з」∠)_');
@@ -649,9 +650,41 @@ function genall_1click(){
 			zip.file(file_name, file_content);
 		}
 	});
+	var date2=new Date();
+	$('#topsearch_note').html('计算完成-一键生成，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;');
 	zip.generateAsync({type:"blob"})
 	.then(function(content) {
 		saveAs(content, "3-DingPei.zip");
+	});
+}
+
+function genLanRen(){
+	var date1=new Date();
+	var zip = new JSZip();
+	chgDpMode(2);
+	CreateReplace();
+		var file_content = $('#ajglz_out').val();
+		zip.file($('#ajglz_filename').val(), file_content);
+		zip.file('LR_lasted.html', file_content);
+	CreateJJC();
+		var file_content = $('#ajglz_out').val();
+		zip.file($('#ajglz_filename').val(), file_content);
+		zip.file('LR_lasted_JJC.html', file_content);
+	CreateLM6();
+		var file_content = $('#ajglz_out').val();
+		zip.file($('#ajglz_filename').val(), file_content);
+		zip.file('LR_lasted_LM6.html', file_content);
+	chgDpMode(3);
+	calcTaskAddOld();
+	calctopupd();	
+		var file_content = $('#ajglz_out').val();
+		zip.file($('#ajglz_filename').val(), file_content);
+		zip.file('LR_GQ.html', file_content);
+	var date2=new Date();
+	$('#topsearch_note').html('计算完成-一键懒人，用时'+((date2-date1)/1000).toFixed(2)+'秒&#x1f64a;');
+	zip.generateAsync({type:"blob"})
+	.then(function(content) {
+		saveAs(content, "11-LanRen.zip");
 	});
 }
 
