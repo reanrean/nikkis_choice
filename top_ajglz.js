@@ -410,7 +410,7 @@ function storeTopByCartCates(caltype, nCount){
 	for (var l in cartList){
 		for (var i in cartList[l]) cartCates = addCates(cartCates, cartList[l][i]);
 	}
-	cartCates = $.unique(cartCates);
+	cartCates = getDistinct(cartCates);
 	storeTop = storeTopByCate(cartCates, caltype, nCount, []);
 }
 
@@ -549,11 +549,11 @@ function getLength(obj){
 //*******************************************search module*******************************************//
 
 function init_searchModule(){
-	var box=['不使用'];
+	var box = ['不使用'];
 	for (var m in modules_top){
 		box.push(modules_top[m][0]);
 	}
-	box=$.unique(box);
+	box = getDistinct(box);
 	$('#searchModule').html(selectBox('modes','genModule()',box));
 }
 
@@ -586,7 +586,7 @@ function genModule(){
 	for (var m in modules_top){
 		if (modules_top[m][0]==modes) title.push(modules_top[m][1]);
 	}
-	title=$.unique(title);
+	title=getDistinct(title);
 	if(title.length>0) $('#ajglz_title').val(modes);
 	for (var t in title){
 		if(t>0) addCartNum();
@@ -881,7 +881,7 @@ function addTxtDoubByThemeCate(them, ctype, min){
 function calctopRep(nCount){
 	var cartCates=[];
 	for (var i in impCart) cartCates = addCates(cartCates, impCart[i]);
-	cartCates = $.unique(cartCates);
+	cartCates = getDistinct(cartCates);
 	limitMode=1;
 	storeTop = storeTopByCate(cartCates, 10, nCount, []);
 	
