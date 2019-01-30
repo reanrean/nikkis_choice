@@ -1,5 +1,3 @@
-Clothes recommendation system for nikki 3.
-
-orig:Ivan’s Workshop, mod:seal100x
-
-Rean's copy & mod from 20160201
+Clothes Recommendation for Love Nikki
+seal100x/ivangift
+copy & mod from 20160201
