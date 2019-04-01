@@ -3,6 +3,8 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','旅人倒计时',1,'旅人倒计时',''],
+['最新活动','雪丽丝的礼物',1,'雪丽丝的礼物',''],
 ['最新活动','萌犬守护',1,'萌犬守护',''],
 ['最新活动','一元购',0,'!夜雀衔羽','名称'],
 ['最新活动','星球妄想',1,'星球妄想',''],
