@@ -62,7 +62,7 @@ function MyClothes() {
       this.size = 0;
       for (var i in clothes) {
         if (clothes[i].own) {
-          var type = clothes[i].type.mainType;
+          var type = clothes[i].mainType;
           if (!this.mine[type]) {
             this.mine[type] = [];
           }
@@ -129,7 +129,7 @@ function MyClothes() {
       }
       for (var i in clothes) {
         clothes[i].own = false;
-        var t = clothes[i].type.mainType;
+        var t = clothes[i].mainType;
         var id = clothes[i].id;
         if (x[t] && x[t][clothes[i].id]) {
           clothes[i].own = true;
