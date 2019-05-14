@@ -270,10 +270,10 @@ function arrowKey() {
 }
 
 function go_static(){
-	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve'];
+	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve','+suit'];
 	var info = '<form id="static" action="">';
 	for (var i in radio){
-		info += '<label><input type="radio" name="radio_static" id="static_'+radio[i]+'" value="'+radio[i]+'" '+(i==0?'checked':'')+'>'+radio[i]+'</label><label>';
+		info += '<label><input type="radio" name="radio_static" id="static_'+radio[i]+'" value="'+radio[i]+'" '+(i==0?'checked':'')+' onclick="clickRadio()">'+radio[i]+'</label><label>';
 	}
 	info += '</form><br>';
 	info += '<textarea id="static_input" rows="10" style="width:100%"></textarea><br>';
@@ -292,6 +292,14 @@ function go_static(){
 		}
 		return ret;
 	}();
+}
+
+function clickRadio(){
+	if ($("#static input[type=radio]:checked").val()=='+suit') 
+		$("#static_input").val( function() {
+			return this.value + '\n*****\n';
+		});
+	return;
 }
 
 function static_generate(){
@@ -428,11 +436,55 @@ function static_generate(){
 						}
 					}
 					break;
+				case '+suit':
+					checkSuitConvert(static_input);
+					return;
+					break;
+				default:
+					break;
 			}
 		}
 		if (errmsg) alert('尚缺:'+errmsg);
 		$("#static_output").val(out);
 	}
+}
+
+function checkSuitConvert(input){
+	var errmsg = '';
+	var inputSplit = input.split('*****');
+	var existSetIds = [];
+	var achieve = inputSplit[0];
+	var convert = inputSplit[1];
+	var achieveContents = contentOf(achieve)[0]; //analyze achieve text
+	var achieveId = contentOf(achieve)[1];
+	var achieveName = [];
+	for (var i=0; i<achieveContents.length; i++){
+		achieveName.push(contentBy(achieveContents[i],'name',1)[0].replace(/[\ \"]/g,''));
+	}
+	for (var i=0; i<setCates.length; i++){ //get id for each setName
+		var idx = $.inArray(setCates[i],achieveName);
+		if (idx>=0){
+			existSetIds.push(achieveId[idx]);
+		}
+	}
+	var convertContents = contentOf(convert)[0]; //analyze convert text
+	var convertId = contentOf(convert)[1];
+	for (var i=0; i<convertContents.length; i++){
+		if ($.inArray(convertId[i],existSetIds)<0) continue;
+		var cvtCnt = contentOf(convertContents[i])[0];
+		for (var j=0; j<cvtCnt.length; j++){
+			var cloListRaw = contentOf(cvtCnt[j])[0][0].split(',');
+			for (var k=0; k<cloListRaw.length; k++){
+				var equalSign = cloListRaw[k].indexOf('=');
+				if (equalSign==-1) continue;
+				var uid = cloListRaw[k].substr(equalSign).replace(/[^0-9]/g,'');
+				var tar = convert_uid(uid);
+				if (!tar.name) errmsg += " " + uid;
+			}
+		}
+	}
+	if (errmsg) alert('尚缺:'+errmsg);
+	else alert('check done.');
 }
 
 function contentOf(txt){
