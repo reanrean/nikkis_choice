@@ -4,6 +4,7 @@ var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
 ['最新活动','素蕊迎春',1,'素蕊迎春',''],
+['最新活动','素蕊迎春',0,'!沾衣花雨','名称'],
 ['最新活动','薄雪三味',1,'薄雪三味',''],
 ['最新活动','金铃红扇',1,'金铃红扇',''],
 ['最新活动','夏日烟火',1,'夏日烟火',''],
