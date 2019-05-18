@@ -3,11 +3,11 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
-['最新活动','花漾乐章',1,'花漾乐章',''],
 ['最新活动','风铃幻想曲',1,'风铃幻想曲',''],
 ['最新活动','济世沉香',1,'济世沉香',''],
 ['最新活动','虚空聆音',1,'虚空聆音',''],
 ['最新活动','邀月蓬莱',1,'邀月蓬莱',''],
+['最新活动','花漾乐章',1,'花漾乐章',''],
 ['最新活动','春日樱花散件',0,'!樱染之恋','名称'],
 ['最新活动','春日樱花散件',0,'!初恋之樱','名称'],
 ['最新活动','春日樱花散件',0,'!独占思绪','名称'],
@@ -1008,6 +1008,7 @@ var modules_top_filename = {
 '活动·山海云荒':'HD-ShanHaiYunHuang.html',
 '活动·云空之境':'HD-YunKongZhiJing.html',
 '活动·初音未来':'HD-Miku.html',
+'活动·万象之汐':'HD-WanXiangZhiXi.html',
 '往期活动':'HD-WangQiHuoDong.html',
 '往期上架':'HD-WangQi_inShop.html',
 '往期活动(节日)':'HD-WangQiHuoDong_JieRi.html',
