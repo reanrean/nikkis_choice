@@ -82,7 +82,7 @@ function searchSet(setName){
 	var out='<table border="1">';
 	out+=tr(td('名称')+td('分类')+td('套装')+td('来源')+td(''));
 	for (var i in clothes){
-		if(clothes[i].set==setName || $.inArray('套装·'+setName, clothes[i].source.split('/'))>=0){
+		if(clothes[i].set==setName || $.inArray('套装·'+setName, clothes[i].source.split('/'))>=0 || clothes[i].setRef.indexOf(setName+'·')==0){
 			currentList.push(i);
 		}
 	}
