@@ -366,7 +366,7 @@ function static_generate(){
 					break;
 				case 'shop':
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
-					var skip = ['11352','30555','40585','50542','71211','82957','82958','82960','90161','11379','30574','40593','50550','71237','83111','83112','83113','83114'];
+					var skip = ['11352','30555','40585','50542','71211','82957','82958','82960','90161'];
 					if ($.inArray(tar.uid,skip)>=0) continue;
 					var price = contentBy(contents[i],'price')[0];
 					var price_type = contentBy(contents[i],'price_type')[0];
