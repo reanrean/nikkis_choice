@@ -366,7 +366,7 @@ function static_generate(){
 					break;
 				case 'shop':
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
-					var skip = ['11352','30555','40585','50542','71211','82957','82958','82960','90161'];
+					var skip = ['11352','30555','40585','50542','71211','82957','82958','82960','90161','11379','30574','40593','50550','71237','83111','83112','83113','83114'];
 					if ($.inArray(tar.uid,skip)>=0) continue;
 					var price = contentBy(contents[i],'price')[0];
 					var price_type = contentBy(contents[i],'price_type')[0];
@@ -517,6 +517,7 @@ function convert_uid(uid){
 	if (uid=='81327') uid='31327';
 	if (uid=='82599') uid='62599';
 	if (uid=='83221') uid='73221';
+	if (uid=='85735') uid='65735';
 	
 	var mainId = uid.substr(0,1);
 	var id = (uid.substr(1,1)==0 ? uid.substr(2,3) : uid.substr(1,4));
