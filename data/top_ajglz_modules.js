@@ -4,6 +4,7 @@ var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
 ['最新活动','深海茶会',1,'深海茶会',''],
+['最新活动','深海茶会',1,'活动·拾光之屿','来源'],
 ['最新活动','纯白奏鸣曲',1,'纯白奏鸣曲',''],
 ['最新活动','盛景红尘',1,'盛景红尘',''],
 ['最新活动','魔法秘钥',1,'魔法秘钥',''],
