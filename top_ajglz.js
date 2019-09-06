@@ -54,7 +54,7 @@ function init_pagecontent(){
 	page += '<button id="genall_1click" onclick="genall_1click()">一键生成</button>';
 	page += '</fieldset>';
 	page += '<hr>';
-	var d = new Date();
+	var d = new Date(new Date().getTime()+24*60*60*1000);
 	var ajglz_date = d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();
 	page += '<p>标题：<input type="text" id="ajglz_title" placeholder="XXXX"/>&emsp;更新人员：<input type="text" id="ajglz_staff" placeholder="Rean翎"/>&emsp;更新时间：<input type="text" id="ajglz_date" placeholder="'+ajglz_date+'"/></p>';
 	page += '<p>分类数量：<span id="cartNum"></span>&ensp;<button class="btn btn-xs btn-default" onclick="addCartNum()">＋</button><button class="btn btn-xs btn-default" onclick="delCartNum()">－</button>&emsp;点击单品添加到：<span id="currentCart"></span></p>';
