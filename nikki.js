@@ -718,7 +718,7 @@ function searchResult(){
 			var outCate=[];
 			for (var i in clothes){
 				if (clothes[i].type.mainType==h && 
-                    (searchInName && clothes[i].name.indexOf(searchTxt)>=0) || (!searchInName && clothes[i].source.indexOf(searchTxt)>=0) ){
+                    ((searchInName && clothes[i].name.indexOf(searchTxt)>=0) || (!searchInName && clothes[i].source.indexOf(searchTxt)>=0)) ){
 					outCate.push(clothesNameTd_search(clothes[i]));
 				}
 			}
