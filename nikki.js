@@ -674,13 +674,31 @@ function toggleSearchResult(){
 	else $('#searchResult').hide();
 }
 
+function searchResultSource(){
+	if($('#searchResultSource').html()=='名称'){
+		$('#searchResultSource').html('来源');
+		$('#searchResultSource').removeClass('btn-success');
+		$('#searchResultSource').addClass('btn-info');
+		$('#searchResultInput').attr('placeholder','输入来源搜索');
+	}else{
+		$('#searchResultSource').html('名称');
+		$('#searchResultSource').removeClass('btn-info');
+		$('#searchResultSource').addClass('btn-success');
+		$('#searchResultInput').attr('placeholder','输入名字搜索');
+	}
+}
+
 function searchResult(){
 	switchCate(0);
 	var searchTxt=$('#searchResultInput').val();
+    var searchInName = true;
+    if ($('#searchResultSource').html()=='来源') searchInName = false;
 	if (searchTxt){
 		var outSet=[];
 		for (var i in clothes){
-			if(clothes[i].set.indexOf(searchTxt)>=0) outSet.push(clothes[i].set);
+			if(searchInName && clothes[i].set.indexOf(searchTxt)>=0) {
+                outSet.push(clothes[i].set);
+            }
 		}
 		if (outSet.length>0) {
 			outSet=getDistinct(outSet);
@@ -699,7 +717,8 @@ function searchResult(){
 		for (var h in CATEGORY_HIERARCHY){
 			var outCate=[];
 			for (var i in clothes){
-				if (clothes[i].type.mainType==h&&clothes[i].name.indexOf(searchTxt)>=0){
+				if (clothes[i].type.mainType==h && 
+                    (searchInName && clothes[i].name.indexOf(searchTxt)>=0) || (!searchInName && clothes[i].source.indexOf(searchTxt)>=0) ){
 					outCate.push(clothesNameTd_search(clothes[i]));
 				}
 			}
