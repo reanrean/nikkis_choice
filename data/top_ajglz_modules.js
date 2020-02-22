@@ -3,7 +3,7 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
-//['最新活动','海与花之梦',1,'海与花之梦',''],
+['最新活动','海与花之梦',1,'海与花之梦',''],
 ['最新活动','防疫散件',0,'!清洁小能手','名称'],
 ['最新活动','防疫散件',0,'!防护小行家','名称'],
 ['最新活动','防疫散件',0,'!健身大喵','名称'],
