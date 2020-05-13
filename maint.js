@@ -315,8 +315,7 @@ function static_generate(){
 			switch(staticMode){
 				case 'merge' :
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
-					var skip = ['11907','21693','60805','71678','85255','85256','85257','85258','85259','85260','90321','11906','21692','30828','60804','71677','85251','85252','85253','85254','90320'];
-                    //春野仙境, 缤纷赠礼
+					var skip = [];
 					if ($.inArray(tar.uid,skip)>=0) continue;
 					var src_arr = contentBy(contents[i],'cloth');
 					var num_arr = contentBy(contents[i],'num');
