@@ -173,7 +173,7 @@ function clothesNameDeriv_search(setName) {
 	$clothesNameA.click(function () {
 		var setContent = [];
 		for (var i in clothes){
-			if(clothes[i].set == setName || clothes[i].setRef == setName + '·套') {
+			if(clothes[i].set == setName || clothes[i].setRef == setName + '·套' || clothes[i].setRef == setName + '·染' || clothes[i].setRef == setName + '·基') {
                 setContent.push(i);
             }
 			//search setBonus
