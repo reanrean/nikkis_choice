@@ -177,7 +177,10 @@ function chooseAccessories(accfilters) {
 
 function refreshShoppingCart() {
 	shoppingCart.calc(criteria);
-	drawTable(shoppingCart.toList(byCategoryAndScore), "shoppingCart", true);
+    if (uiFilter["byCategoryAndId"])
+		drawTable(shoppingCart.toList(byCategoryAndId), "shoppingCart", true);
+    else
+		drawTable(shoppingCart.toList(byCategoryAndScore), "shoppingCart", true);
 }
 
 function drawLevelInfo() {
@@ -271,6 +274,21 @@ function byCategoryAndScore(a, b) {
 	var catb = category.indexOf(b.type.type);
 	return (cata - catb == 0) ? b.sumScore - a.sumScore : cata - catb;
 }
+
+function byCategoryAndId(a, b) {
+	function mainTypeIndex(a) {
+		for (var i = 0; i < category.length; i++) {
+			if (category[i].indexOf(a.type.mainType) == 0) {
+				return i;
+			}
+		}
+		return category.length;
+	}
+	var cata = mainTypeIndex(a);
+	var catb = mainTypeIndex(b);
+	return (cata - catb == 0) ? a.id - b.id : cata - catb;
+}
+
 function byCategory(a, b) {
 	var cata = category.indexOf(a);
 	var catb = category.indexOf(b);
@@ -691,14 +709,14 @@ function searchResultSource(){
 function searchResult(){
 	switchCate(0);
 	var searchTxt=$('#searchResultInput').val();
-    var searchInName = true;
-    if ($('#searchResultSource').html()=='来源') searchInName = false;
+	var searchInName = true;
+	if ($('#searchResultSource').html()=='来源') searchInName = false;
 	if (searchTxt){
 		var outSet=[];
 		for (var i in clothes){
 			if(searchInName && clothes[i].set.indexOf(searchTxt)>=0) {
-                outSet.push(clothes[i].set);
-            }
+				outSet.push(clothes[i].set);
+			}
 		}
 		if (outSet.length>0) {
 			outSet=getDistinct(outSet);
@@ -718,7 +736,7 @@ function searchResult(){
 			var outCate=[];
 			for (var i in clothes){
 				if (clothes[i].type.mainType==h && 
-                    ((searchInName && clothes[i].name.indexOf(searchTxt)>=0) || (!searchInName && clothes[i].source.indexOf(searchTxt)>=0)) ){
+					((searchInName && clothes[i].name.indexOf(searchTxt)>=0) || (!searchInName && clothes[i].source.indexOf(searchTxt)>=0)) ){
 					outCate.push(clothesNameTd_search(clothes[i]));
 				}
 			}
@@ -838,6 +856,9 @@ function initEvent() {
 		}
 		if (this.value == "acc9") {
 			onChangeCriteria();
+		}
+		if (this.value == "byCategoryAndId") {
+			refreshShoppingCart();
 		}
 	});
 	$(".filter-radio").change(function () {
