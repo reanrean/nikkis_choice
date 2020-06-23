@@ -179,7 +179,7 @@ function go_encw(){
     codes += "        var w = codewardrobe[i].split('|');\n";
     codes += "        item.push(w[0]);\n";
     codes += "        item.push(category[code2num(w[1].charAt(0))]);\n";
-    codes += "        item.push(addzero(code2num(w[1].substr(1))));\n";
+    codes += "        item.push(numberToInventoryId(code2num(w[1].substr(1))));\n";
     codes += "        item = item.concat(code2stat(w[2]));\n";
     codes += "        if (w[3] == '' || w[3].indexOf('+')>0) item.push(w[3]);\n";
     codes += "        else item.push(code2tag[code2num(w[3].charAt(0))] + (w[3].length > 1 ? '/' + code2tag[code2num(w[3].charAt(1))] : '' ));\n";
@@ -187,8 +187,8 @@ function go_encw(){
     codes += "        for (var s in w6s) {\n";
     codes += "            if (!iscode(w6s[s])) srcs.push(w6s[s]);\n";
     codes += "            else if (w6s[s].charAt(0) == '*') srcs.push('套装·' + code2suit[code2num(w6s[s].substr(1))]);\n";
-    codes += "            else if (w6s[s].charAt(0) == '@') srcs.push('设·定' + addzero(code2num(w6s[s].substr(1))));\n";
-    codes += "            else if (w6s[s].charAt(0) == '!') srcs.push('设·进' + addzero(code2num(w6s[s].substr(1))));\n";
+    codes += "            else if (w6s[s].charAt(0) == '@') srcs.push('设·定' + numberToInventoryId(code2num(w6s[s].substr(1))));\n";
+    codes += "            else if (w6s[s].charAt(0) == '!') srcs.push('设·进' + numberToInventoryId(code2num(w6s[s].substr(1))));\n";
     codes += "            else srcs.push(code2src[code2num(w6s[s])]);\n";
     codes += "        }\n";
     codes += "        item.push(srcs.join('/'));\n";
@@ -230,7 +230,7 @@ function go_encw(){
     codes += "    return ret;\n";
     codes += "}\n";
 
-    codes += "function addzero(s) {\n";
+    codes += "function numberToInventoryId(s) {\n";
     codes += "    if (s < 10) return '00' + s;\n";
     codes += "    if (s < 100) return '0' + s;\n";
     codes += "    else return s.toString();\n";
@@ -324,80 +324,7 @@ function go_decw(){
     var file_name = 'wardrobe1.js';
     var blob = new Blob([file_content], {type: "text/plain;charset=utf-8"});
     saveAs(blob, file_name);
-    /*var wardrobe1_out = [];
-    for (var i in codewardrobe) {
-        var item = [];
-        var w = codewardrobe[i].split('|');
-        item.push(w[0]);
-        item.push(category[code2num(w[1].charAt(0))]);
-        item.push(addzero(code2num(w[1].substr(1))));
-        item = item.concat(code2stat(w[2]));
-        
-        if (w[3] == '' || w[3].indexOf('+')>0) item.push(w[3]);
-        else item.push(code2tag[code2num(w[3].charAt(0))] + (w[3].length > 1 ? '/' + code2tag[code2num(w[3].charAt(1))] : '' ));
-        
-        var w6s = w[6].split('/'), srcs = [];
-        for (var s in w6s) {
-            if (!iscode(w6s[s])) srcs.push(w6s[s]);
-            else if (w6s[s].charAt(0) == '*') srcs.push('套装·' + code2suit[code2num(w6s[s].substr(1))]);
-            else if (w6s[s].charAt(0) == '@') srcs.push('设·定' + addzero(code2num(w6s[s].substr(1))));
-            else if (w6s[s].charAt(0) == '!') srcs.push('设·进' + addzero(code2num(w6s[s].substr(1))));
-            else srcs.push(code2src[code2num(w6s[s])]);
-        }
-        item.push(srcs.join('/'));
-        
-        if (w[4] == '') item.push('');
-        else if (w[4].charAt(0) == '*') item.push(code2suit[code2num(w[4].substr(1))] + '·套');
-        else if (w[4].charAt(0) == '@') item.push(code2suit[code2num(w[4].substr(1))] + '·染');
-        else if (w[4].charAt(0) == '!') item.push(code2suit[code2num(w[4].substr(1))] + '·基');
-        else item.push(code2suit[code2num(w[4])]);
-        
-        item.push(code2ver[code2num(w[5])]);
-        item.push(code2ssrc[code2num(w[7])]);
-        
-        wardrobe1_out.push(item);
-    }*/
 }
-
-/*function letter2num(s) {
-    var charcode = s.charCodeAt(0);
-    if (charcode <= 57) return charcode - 48;
-    else if (charcode <= 90) return charcode - 55;
-    else return charcode - 61;
-}
-
-function code2num(s) {
-    var len = s.length;
-    var num = 0;
-    for (var i = 0; i<len; i++) num = 62 * num + letter2num(s.charAt(i));
-    return num;
-}
-
-function code2stat(s) {
-    var num2stat = ['C|', 'B|', 'A|', 'S|', 'SS|', 'SSS|', '|C', '|B', '|A', '|S', '|SS', '|SSS'];
-    var ret = [];
-    var num = code2num(s);
-    for (var i = 0; i < 5; i++) {
-        ret = ret.concat(num2stat[num % 12].split('|'));
-        num = Math.floor(num / 12);
-    }
-    ret.unshift(num);
-    return ret;
-}
-
-function addzero(s) {
-    if (s < 10) return '00' + s;
-    if (s < 100) return '0' + s;
-    else return s;
-}
-
-function iscode(s) {
-    for (var i = 0; i < s.length; i++) {
-        var c = s.charCodeAt(i);
-        if (!(c==33 || c==42 || (c>=48&&c<=57) || (c>=64&&c<=90) || (c>=97&&c<=122))) return false;
-    }
-    return true;
-}*/
 
 /*
 function go_comp(){
