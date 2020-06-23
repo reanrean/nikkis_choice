@@ -1,7 +1,7 @@
 var rows=0;
 var field_desc=['名字','分类','编号','心级',
 	'华丽','简约','优雅','活泼','成熟','可爱','性感','清纯','清凉','保暖',
-	'tag','来源','套装','版本','短来源'];
+	'tag','来源','套装','版本','短来源','动作'];
 //var skip_comp=['来源'];
 var skip_comp=[];
 
@@ -137,6 +137,7 @@ function go_encw(){
         var w = wardrobe1[i];
         var wstr = w[0] + '|';
         wstr += cat2code[w[1]] + num2code(w[2]) + '|';
+        if (w[19]) wstr += '*';
         wstr += stat2code(w[3], stat2num(w[4],w[5]), stat2num(w[6],w[7]), stat2num(w[8],w[9]), stat2num(w[10],w[11]), stat2num(w[12],w[13])) + '|';
         if (w[14]){
             if (w[14].indexOf('+') >= 0) wstr += w[14];
@@ -181,7 +182,7 @@ function go_encw(){
     codes += "        item.push(w[0]);\n";
     codes += "        item.push(category[code2num(w[1].charAt(0))]);\n";
     codes += "        item.push(numberToInventoryId(code2num(w[1].substr(1))));\n";
-    codes += "        item = item.concat(code2stat(w[2]));\n";
+    codes += "        item = item.concat(code2stat(w[2].charAt(0)=='*' ? w[2].substr(1) : w[2]));\n";
     codes += "        if (w[3] == '' || w[3].indexOf('+')>0) item.push(w[3]);\n";
     codes += "        else item.push(code2tag[code2num(w[3].charAt(0))] + (w[3].length > 1 ? '/' + code2tag[code2num(w[3].charAt(1))] : '' ));\n";
     codes += "        var w6s = w[6].split('/'), srcs = [];\n";
@@ -201,6 +202,7 @@ function go_encw(){
     codes += "        else item.push(code2suit[code2num(w[4])]);\n";
     codes += "        item.push(code2ver[code2num(w[5])]);\n";
     codes += "        item.push(code2ssrc[code2num(w[7])]);\n";
+    codes += "        item.push(w[2].charAt(0)=='*' ? '1' : '');\n";
     codes += "        ret.push(item);\n";
     codes += "    }\n";
     codes += "    return ret;\n";
@@ -567,7 +569,7 @@ function arrowKey() {
 }
 
 function go_static(){
-	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve','+suit'];
+	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve','+suit','amputation'];
 	var info = '<form id="static" action="">';
 	for (var i in radio){
 		info += '<label><input type="radio" name="radio_static" id="static_'+radio[i]+'" value="'+radio[i]+'" '+(i==0?'checked':'')+' onclick="clickRadio()">'+radio[i]+'</label><label>';
@@ -744,6 +746,13 @@ function static_generate(){
 					checkSuitConvert(static_input);
 					return;
 					break;
+                case 'amputation':
+					var tar = convert_uid(contentBy(contents[i],'id')[0]);
+					if (tar.name&&!tar.src[19]) {
+						ward = tar.src;
+						out += "  ['"+ward.join("','") + "1'],\n";
+					}
+                    break;
 				default:
 					break;
 			}
@@ -822,6 +831,7 @@ function convert_uid(uid){
 	if (uid=='82599') uid='62599';
 	if (uid=='83221') uid='73221';
 	if (uid=='85735') uid='65735';
+	if (uid=='30961') uid='40961';
 	
 	var mainId = uid.substr(0,1);
 	var id = (uid.substr(1,1)==0 ? uid.substr(2,3) : uid.substr(1,4));

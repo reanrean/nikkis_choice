@@ -19,8 +19,8 @@ var global = {
 };
 
 // parses a csv row into object
-// Clothes: name, type, id, stars, gorgeous, simple, elegant, active, mature, cute, sexy, pure, cool, warm, extra, source, set, srcShort
-//          0     1     2   3      4         5       6        7       8       9     10    11    12    13    14     15      16   17
+// Clothes: name, type, id, stars, gorgeous, simple, elegant, active, mature, cute, sexy, pure, cool, warm, extra, source, set, version, srcShort, pose
+//          0     1     2   3      4         5       6        7       8       9     10    11    12    13    14     15      16   17       18        19
 Clothes = function(csv) {
   var theType = typeInfo[csv[1]];
   if(!theType)
@@ -43,6 +43,7 @@ Clothes = function(csv) {
     setRef: csv[16],
     version: csv[17],
     srcShort: csv[18] ? csv[18] : csv[15],
+    pose: csv[19] ? true : false,
     deps: [],
     exDep: '',
     toCsv: function() {
