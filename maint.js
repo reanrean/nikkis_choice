@@ -1,12 +1,7 @@
-//var wname=[wardrobe,wardrobe_s,wardrobe_i];
-//var wowner=['rean','seal100x','ivangift'];
-var wname=[wardrobe,wardrobe_s];
-var wowner=['rean','seal100x'];
-
 var rows=0;
 var field_desc=['名字','分类','编号','心级',
 	'华丽','简约','优雅','活泼','成熟','可爱','性感','清纯','清凉','保暖',
-	'tag','来源','套装','版本'];
+	'tag','来源','套装','版本','短来源'];
 //var skip_comp=['来源'];
 var skip_comp=[];
 
@@ -25,8 +20,8 @@ function show(){
 
 function go(){
 	var menu='<table width=100% style="table-layout: fixed; font-weight:bold;">';
-	var line=td(ahref('Clothes','go_comp()'));
-		line+=td(ahref('Pattern','go_comp_pattern()'));
+	var line=td(ahref('EncWardrobe','go_encw()'));
+		line+=td(ahref('DecWardrobe','go_decw()'));
 		line+=td(ahref('Add','go_add()'));
 		line+=td(ahref('Data','go_static()'));
 		line+=td(ahref('Source','go_src()'));
@@ -37,6 +32,374 @@ function go(){
 	$("#extra").html('');
 }
 
+function go_encw(){
+    var dlcontent = "var category = ['" + category.join("','") + "'];\n";
+    dlcontent += "var skipCategory = [" + (skipCategory.length>0 ? "'" + skipCategory.join("','") + "'" : '' )+ "];\n";
+    dlcontent += "var repelCates = [";
+    for (var i in repelCates) dlcontent += "['" + repelCates[i].join("','") + "'],";
+    dlcontent += '];\n';
+
+    var cat2code = {}, code2cat = {};
+    for (var i in category) {
+        cat2code[category[i]] = num2code(i);
+        code2cat[num2code(i)] = category[i];
+    }
+    
+    var tagcnt = 0, tag2code = {}, code2tag = [];
+    var suitcnt = 0, suit2code = {}, code2suit = [];
+    var vercnt = 0, ver2code = {}, code2ver = [];
+    var srccnt = 0, src2code = {}, code2src = [];
+    var ssrccnt = 0, ssrc2code = {}, code2ssrc = [];
+    for (var i in wardrobe1) {
+        //tag (exclude'+')
+        var tagstr = wardrobe1[i][jQuery.inArray('tag', field_desc)];
+        if (tagstr != '' && tagstr.indexOf('+') < 0) {
+            var tags = tagstr.split('/');
+            if (tags[0]) {
+                if (!tag2code[tags[0]]) {
+                    tag2code[tags[0]] = num2code(tagcnt);
+                    code2tag.push(tags[0]);
+                    tagcnt++;
+                }
+            }
+            if (tags[1]) {
+                if (!tag2code[tags[1]]) {
+                    tag2code[tags[1]] = num2code(tagcnt);
+                    code2tag.push(tags[1]);
+                    tagcnt++;
+                }
+            }
+        }
+        
+        //suit
+        var suitstr = wardrobe1[i][jQuery.inArray('套装', field_desc)];
+        if (suitstr && suitstr.indexOf('·套')<0 && suitstr.indexOf('·染')<0 && suitstr.indexOf('·基')<0) {
+            if (!suit2code[suitstr]) {
+                suit2code[suitstr] = num2code(suitcnt);
+                code2suit.push(suitstr);
+                suitcnt++;
+            }
+        }
+        
+        //ver
+        var verstr = wardrobe1[i][jQuery.inArray('版本', field_desc)];
+        if (verstr) {
+            if (!ver2code[verstr]) {
+                ver2code[verstr] = num2code(vercnt);
+                code2ver.push(verstr);
+                vercnt++;
+            }
+        }
+        
+        //ssrc
+        var ssrcstr = wardrobe1[i][jQuery.inArray('短来源', field_desc)];
+        if (ssrcstr) {
+            if (!ssrc2code[ssrcstr]) {
+                ssrc2code[ssrcstr] = num2code(ssrccnt);
+                code2ssrc.push(ssrcstr);
+                ssrccnt++;
+            }
+        }
+        
+        //src (exclude list below)
+        var srcstr = wardrobe1[i][jQuery.inArray('来源', field_desc)];
+        if (srcstr) {
+            var srcs = srcstr.split('/');
+            for (var j in srcs) {
+                if (srcs[j].indexOf('公') == srcs[j].length-1) continue;
+                if (srcs[j].indexOf('少') == srcs[j].length-1) continue;
+                if (srcs[j].indexOf('设·定')==0) continue;
+                if (srcs[j].indexOf('设·进')==0) continue;
+                if (srcs[j].indexOf('梦境·')==0 && srcs[j]!='梦境·浮梦岛') continue;
+                if (srcs[j].indexOf('套装·')==0) continue;
+                if (srcs[j].indexOf('剧情')==0) continue;
+                if (srcs[j].indexOf('故宫-')==0) continue;
+                
+                if (!src2code[srcs[j]]) {
+                    src2code[srcs[j]] = num2code(srccnt);
+                    code2src.push(srcs[j]);
+                    srccnt++;
+                }
+            }
+        }
+    }
+    
+    dlcontent += "var code2tag = ['" + code2tag.join("','") + "'];\n";
+    dlcontent += "var code2suit = ['" + code2suit.join("','") + "'];\n";
+    dlcontent += "var code2ver = ['" + code2ver.join("','") + "'];\n";
+    dlcontent += "var code2src = ['" + code2src.join("','") + "'];\n";
+    dlcontent += "var code2ssrc = ['" + code2ssrc.join("','") + "'];\n";
+    
+    codewardrobe = [];
+    dlcontent += "var codewardrobe = [\n";
+    for (var i in wardrobe1) {
+        //套:* 染:@ 基:!
+        var w = wardrobe1[i];
+        var wstr = w[0] + '|';
+        wstr += cat2code[w[1]] + num2code(w[2]) + '|';
+        wstr += stat2code(w[3], stat2num(w[4],w[5]), stat2num(w[6],w[7]), stat2num(w[8],w[9]), stat2num(w[10],w[11]), stat2num(w[12],w[13])) + '|';
+        if (w[14]){
+            if (w[14].indexOf('+') >= 0) wstr += w[14];
+            else {
+                var tags = w[14].split('/');
+                if (tags[0]) wstr += tag2code[tags[0]];
+                if (tags[1]) wstr += tag2code[tags[1]];
+            }
+        }
+        wstr += '|';
+        if (w[16]) {
+            if (suit2code[w[16]]) wstr += suit2code[w[16]];
+            else if (w[16].indexOf('·套')>0) wstr += '*' + suit2code[w[16].replace(/·套/, "")];
+            else if (w[16].indexOf('·染')>0) wstr += '@' + suit2code[w[16].replace(/·染/, "")];
+            else if (w[16].indexOf('·基')>0) wstr += '!' + suit2code[w[16].replace(/·基/, "")];
+            else wstr += w[16];
+        }
+        wstr += '|';
+        wstr += (ver2code[w[17]] ? ver2code[w[17]] : w[17]) + '|';
+        var w15 = w[15].split('/'), w15c = [];
+        for (var j in w15) {
+            if (src2code[w15[j]]) w15c.push(src2code[w15[j]]);
+            else if (w15[j].indexOf('套装·') == 0) w15c.push('*' + suit2code[w15[j].replace(/套装·/, '')]);
+            else if (w15[j].indexOf('设·定') == 0) w15c.push('@' + num2code(w15[j].replace(/设·定/,'')));
+            else if (w15[j].indexOf('设·进') == 0) w15c.push('!' + num2code(w15[j].replace(/设·进/,'')));
+            else w15c.push(w15[j]);
+        }
+        wstr += w15c.join('/') + '|';
+        wstr += (ssrc2code[w[18]] ? ssrc2code[w[18]] : w[18]);
+        codewardrobe.push(wstr);
+        wstr = "'" + wstr + "',\n";
+        dlcontent += wstr;
+    }
+    dlcontent += "];\n\n";
+    
+    var codes = "var wardrobe = function() {\n";
+    codes += "    var ret = [];\n";
+    codes += "    for (var i in codewardrobe) {\n";
+    codes += "        var item = [];\n";
+    codes += "        var w = codewardrobe[i].split('|');\n";
+    codes += "        item.push(w[0]);\n";
+    codes += "        item.push(category[code2num(w[1].charAt(0))]);\n";
+    codes += "        item.push(addzero(code2num(w[1].substr(1))));\n";
+    codes += "        item = item.concat(code2stat(w[2]));\n";
+    codes += "        if (w[3] == '' || w[3].indexOf('+')>0) item.push(w[3]);\n";
+    codes += "        else item.push(code2tag[code2num(w[3].charAt(0))] + (w[3].length > 1 ? '/' + code2tag[code2num(w[3].charAt(1))] : '' ));\n";
+    codes += "        var w6s = w[6].split('/'), srcs = [];\n";
+    codes += "        for (var s in w6s) {\n";
+    codes += "            if (!iscode(w6s[s])) srcs.push(w6s[s]);\n";
+    codes += "            else if (w6s[s].charAt(0) == '*') srcs.push('套装·' + code2suit[code2num(w6s[s].substr(1))]);\n";
+    codes += "            else if (w6s[s].charAt(0) == '@') srcs.push('设·定' + addzero(code2num(w6s[s].substr(1))));\n";
+    codes += "            else if (w6s[s].charAt(0) == '!') srcs.push('设·进' + addzero(code2num(w6s[s].substr(1))));\n";
+    codes += "            else srcs.push(code2src[code2num(w6s[s])]);\n";
+    codes += "        }\n";
+    codes += "        item.push(srcs.join('/'));\n";
+    codes += "        if (w[4] == '') item.push('');\n";
+    codes += "        else if (w[4].charAt(0) == '*') item.push(code2suit[code2num(w[4].substr(1))] + '·套');\n";
+    codes += "        else if (w[4].charAt(0) == '@') item.push(code2suit[code2num(w[4].substr(1))] + '·染');\n";
+    codes += "        else if (w[4].charAt(0) == '!') item.push(code2suit[code2num(w[4].substr(1))] + '·基');\n";
+    codes += "        else item.push(code2suit[code2num(w[4])]);\n";
+    codes += "        item.push(code2ver[code2num(w[5])]);\n";
+    codes += "        item.push(code2ssrc[code2num(w[7])]);\n";
+    codes += "        ret.push(item);\n";
+    codes += "    }\n";
+    codes += "    return ret;\n";
+    codes += "}();\n";
+
+    codes += "function letter2num(s) {\n";
+    codes += "    var charcode = s.charCodeAt(0);\n";
+    codes += "    if (charcode <= 57) return charcode - 48;\n";
+    codes += "    else if (charcode <= 90) return charcode - 55;\n";
+    codes += "    else return charcode - 61;\n";
+    codes += "}\n";
+
+    codes += "function code2num(s) {\n";
+    codes += "    var len = s.length;\n";
+    codes += "    var num = 0;\n";
+    codes += "    for (var i = 0; i<len; i++) num = 62 * num + letter2num(s.charAt(i));\n";
+    codes += "    return num;\n";
+    codes += "}\n";
+
+    codes += "function code2stat(s) {\n";
+    codes += "    var num2stat = ['C|', 'B|', 'A|', 'S|', 'SS|', 'SSS|', '|C', '|B', '|A', '|S', '|SS', '|SSS'];\n";
+    codes += "    var ret = [];\n";
+    codes += "    var num = code2num(s);\n";
+    codes += "    for (var i = 0; i < 5; i++) {\n";
+    codes += "        ret = ret.concat(num2stat[num % 12].split('|'));\n";
+    codes += "        num = Math.floor(num / 12);\n";
+    codes += "    }\n";
+    codes += "    ret.unshift(num.toString());\n";
+    codes += "    return ret;\n";
+    codes += "}\n";
+
+    codes += "function addzero(s) {\n";
+    codes += "    if (s < 10) return '00' + s;\n";
+    codes += "    if (s < 100) return '0' + s;\n";
+    codes += "    else return s.toString();\n";
+    codes += "}\n";
+
+    codes += "function iscode(s) {\n";
+    codes += "    for (var i = 0; i < s.length; i++) {\n";
+    codes += "        var c = s.charCodeAt(i);\n";
+    codes += "        if (!(c==33 || c==42 || (c>=48&&c<=57) || (c>=64&&c<=90) || (c>=97&&c<=122))) return false;\n";
+    codes += "    }\n";
+    codes += "    return true;\n";
+    codes += "}\n";
+    
+    dlcontent += codes;
+    dlcontent += "var wardrobe_lastupd = '" + wardrobe_lastupd + "';";
+    
+    var file_content = dlcontent;
+    var file_name = 'wardrobe.js';
+    var blob = new Blob([file_content], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, file_name);
+}
+
+function num2letter(i) {
+    //0-48, 9-57, A-65(10), Z-90(35), a-97(36), z-122(61); 26+26+10=62
+    if (i >= 62 || i <= 0)  return '0';
+    else if (i < 10) return i;
+    else if (i <= 35) return String.fromCharCode(i + 55);
+    else return String.fromCharCode(i + 61);
+}
+
+function num2code(i) {
+    var ret = '';
+    if (i < 0) return ret;
+    do {
+        ret = num2letter(i % 62) + ret;
+        i = Math.floor(i / 62);
+    } while (i > 0);
+    return ret;
+}
+
+function stat2num(stat1, stat2) {
+    switch(stat1) {
+        case 'C':
+            return 0;
+        case 'B':
+            return 1;
+        case 'A':
+            return 2;
+        case 'S':
+            return 3;
+        case 'SS':
+            return 4;
+        case 'SSS':
+            return 5;
+    }
+    switch(stat2) {
+        case 'C':
+            return 6;
+        case 'B':
+            return 7;
+        case 'A':
+            return 8;
+        case 'S':
+            return 9;
+        case 'SS':
+            return 10;
+        case 'SSS':
+            return 11;
+    }
+    return 0;
+}
+
+//LSB = first stats, MSB = star
+function stat2code(star, num1, num2, num3, num4, num5) {
+    var num = star;
+    num = num * 12 + num5;
+    num = num * 12 + num4;
+    num = num * 12 + num3;
+    num = num * 12 + num2;
+    num = num * 12 + num1;
+    return num2code(num);
+}
+
+function go_decw(){
+    var dlcontent = "var wardrobe1 = [\n";
+    for(var i in wardrobe) {
+        dlcontent += "  ['" + wardrobe[i].join("','") + "'],\n";
+    }
+    dlcontent += '];';
+    var file_content = dlcontent;
+    var file_name = 'wardrobe1.js';
+    var blob = new Blob([file_content], {type: "text/plain;charset=utf-8"});
+    saveAs(blob, file_name);
+    /*var wardrobe1_out = [];
+    for (var i in codewardrobe) {
+        var item = [];
+        var w = codewardrobe[i].split('|');
+        item.push(w[0]);
+        item.push(category[code2num(w[1].charAt(0))]);
+        item.push(addzero(code2num(w[1].substr(1))));
+        item = item.concat(code2stat(w[2]));
+        
+        if (w[3] == '' || w[3].indexOf('+')>0) item.push(w[3]);
+        else item.push(code2tag[code2num(w[3].charAt(0))] + (w[3].length > 1 ? '/' + code2tag[code2num(w[3].charAt(1))] : '' ));
+        
+        var w6s = w[6].split('/'), srcs = [];
+        for (var s in w6s) {
+            if (!iscode(w6s[s])) srcs.push(w6s[s]);
+            else if (w6s[s].charAt(0) == '*') srcs.push('套装·' + code2suit[code2num(w6s[s].substr(1))]);
+            else if (w6s[s].charAt(0) == '@') srcs.push('设·定' + addzero(code2num(w6s[s].substr(1))));
+            else if (w6s[s].charAt(0) == '!') srcs.push('设·进' + addzero(code2num(w6s[s].substr(1))));
+            else srcs.push(code2src[code2num(w6s[s])]);
+        }
+        item.push(srcs.join('/'));
+        
+        if (w[4] == '') item.push('');
+        else if (w[4].charAt(0) == '*') item.push(code2suit[code2num(w[4].substr(1))] + '·套');
+        else if (w[4].charAt(0) == '@') item.push(code2suit[code2num(w[4].substr(1))] + '·染');
+        else if (w[4].charAt(0) == '!') item.push(code2suit[code2num(w[4].substr(1))] + '·基');
+        else item.push(code2suit[code2num(w[4])]);
+        
+        item.push(code2ver[code2num(w[5])]);
+        item.push(code2ssrc[code2num(w[7])]);
+        
+        wardrobe1_out.push(item);
+    }*/
+}
+
+/*function letter2num(s) {
+    var charcode = s.charCodeAt(0);
+    if (charcode <= 57) return charcode - 48;
+    else if (charcode <= 90) return charcode - 55;
+    else return charcode - 61;
+}
+
+function code2num(s) {
+    var len = s.length;
+    var num = 0;
+    for (var i = 0; i<len; i++) num = 62 * num + letter2num(s.charAt(i));
+    return num;
+}
+
+function code2stat(s) {
+    var num2stat = ['C|', 'B|', 'A|', 'S|', 'SS|', 'SSS|', '|C', '|B', '|A', '|S', '|SS', '|SSS'];
+    var ret = [];
+    var num = code2num(s);
+    for (var i = 0; i < 5; i++) {
+        ret = ret.concat(num2stat[num % 12].split('|'));
+        num = Math.floor(num / 12);
+    }
+    ret.unshift(num);
+    return ret;
+}
+
+function addzero(s) {
+    if (s < 10) return '00' + s;
+    if (s < 100) return '0' + s;
+    else return s;
+}
+
+function iscode(s) {
+    for (var i = 0; i < s.length; i++) {
+        var c = s.charCodeAt(i);
+        if (!(c==33 || c==42 || (c>=48&&c<=57) || (c>=64&&c<=90) || (c>=97&&c<=122))) return false;
+    }
+    return true;
+}*/
+
+/*
 function go_comp(){
 	//start - special handling for seal100x wardrobe
 	if(wardrobe_s){
@@ -124,6 +487,7 @@ function go_comp_pattern(){
 	$("#info").html(out);
 	$("#extra").html('');
 }
+*/
 
 function go_add(){
 	rows=0;
@@ -151,8 +515,8 @@ function go_add(){
 function go_src(){
 	var pos=jQuery.inArray('来源', field_desc);
 	var src=[];
-	for (var c in wname[0]){
-		var ss=wname[0][c][pos].split("/");
+	for (var c in wardrobe){
+		var ss=wardrobe[c][pos].split("/");
 		for (var s in ss){
 			if (ss[s].indexOf('公')>-1) {ss[s]='*公';}
 			if (ss[s].indexOf('少')>-1) {ss[s]='*少';}
@@ -161,6 +525,8 @@ function go_src(){
 			if (ss[s].indexOf('梦境·')>-1) {ss[s]='*梦境';}
 			if (ss[s].indexOf('套装·')>-1) {ss[s]='*套装';}
 			if (ss[s].indexOf('签到·')>-1) {ss[s]='*签到';}
+			if (ss[s].indexOf('剧情')>-1) {ss[s]='*剧情';}
+			if (ss[s].indexOf('故宫-')>-1) {ss[s]='*故宫-';}
 			if (jQuery.inArray(ss[s], src)<0) {src.push(ss[s]);}
 		}
 	}
