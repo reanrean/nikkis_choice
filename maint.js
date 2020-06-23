@@ -133,7 +133,7 @@ function go_encw(){
     codewardrobe = [];
     dlcontent += "var codewardrobe = [\n";
     for (var i in wardrobe1) {
-        //套:* 染:@ 基:!
+        //套:* 染:@ 基:! 梦境:~
         var w = wardrobe1[i];
         var wstr = w[0] + '|';
         wstr += cat2code[w[1]] + num2code(w[2]) + '|';
@@ -162,6 +162,7 @@ function go_encw(){
             else if (w15[j].indexOf('套装·') == 0) w15c.push('*' + suit2code[w15[j].replace(/套装·/, '')]);
             else if (w15[j].indexOf('设·定') == 0) w15c.push('@' + num2code(w15[j].replace(/设·定/,'')));
             else if (w15[j].indexOf('设·进') == 0) w15c.push('!' + num2code(w15[j].replace(/设·进/,'')));
+            else if (w15[j].indexOf('梦境·') == 0) w15c.push('~' + w15[j].replace(/梦境·/,''));
             else w15c.push(w15[j]);
         }
         wstr += w15c.join('/') + '|';
@@ -189,6 +190,7 @@ function go_encw(){
     codes += "            else if (w6s[s].charAt(0) == '*') srcs.push('套装·' + code2suit[code2num(w6s[s].substr(1))]);\n";
     codes += "            else if (w6s[s].charAt(0) == '@') srcs.push('设·定' + numberToInventoryId(code2num(w6s[s].substr(1))));\n";
     codes += "            else if (w6s[s].charAt(0) == '!') srcs.push('设·进' + numberToInventoryId(code2num(w6s[s].substr(1))));\n";
+    codes += "            else if (w6s[s].charAt(0) == '~') srcs.push('梦境·' + w6s[s].substr(1));\n";
     codes += "            else srcs.push(code2src[code2num(w6s[s])]);\n";
     codes += "        }\n";
     codes += "        item.push(srcs.join('/'));\n";
@@ -237,9 +239,11 @@ function go_encw(){
     codes += "}\n";
 
     codes += "function iscode(s) {\n";
-    codes += "    for (var i = 0; i < s.length; i++) {\n";
-    codes += "        var c = s.charCodeAt(i);\n";
-    codes += "        if (!(c==33 || c==42 || (c>=48&&c<=57) || (c>=64&&c<=90) || (c>=97&&c<=122))) return false;\n";
+    codes += "    var c = s.charCodeAt(0);\n";
+    codes += "    if (c==33 || c==42 || c==64 || c==126) return true;\n";
+    codes += "    for (var i = 1; i < s.length; i++) {\n";
+    codes += "        c = s.charCodeAt(i);\n";
+    codes += "        if (!((c>=48&&c<=57) || (c>=65&&c<=90) || (c>=97&&c<=122))) return false;\n";
     codes += "    }\n";
     codes += "    return true;\n";
     codes += "}\n";
