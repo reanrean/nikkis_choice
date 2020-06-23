@@ -52,7 +52,7 @@ function go_encw(){
     var ssrccnt = 0, ssrc2code = {}, code2ssrc = [];
     for (var i in wardrobe1) {
         //tag (exclude'+')
-        var tagstr = wardrobe1[i][jQuery.inArray('tag', field_desc)];
+        var tagstr = wardrobe1[i][$.inArray('tag', field_desc)];
         if (tagstr != '' && tagstr.indexOf('+') < 0) {
             var tags = tagstr.split('/');
             if (tags[0]) {
@@ -72,7 +72,7 @@ function go_encw(){
         }
         
         //suit
-        var suitstr = wardrobe1[i][jQuery.inArray('套装', field_desc)];
+        var suitstr = wardrobe1[i][$.inArray('套装', field_desc)];
         if (suitstr && suitstr.indexOf('·套')<0 && suitstr.indexOf('·染')<0 && suitstr.indexOf('·基')<0) {
             if (!suit2code[suitstr]) {
                 suit2code[suitstr] = num2code(suitcnt);
@@ -82,7 +82,7 @@ function go_encw(){
         }
         
         //ver
-        var verstr = wardrobe1[i][jQuery.inArray('版本', field_desc)];
+        var verstr = wardrobe1[i][$.inArray('版本', field_desc)];
         if (verstr) {
             if (!ver2code[verstr]) {
                 ver2code[verstr] = num2code(vercnt);
@@ -92,7 +92,7 @@ function go_encw(){
         }
         
         //ssrc
-        var ssrcstr = wardrobe1[i][jQuery.inArray('短来源', field_desc)];
+        var ssrcstr = wardrobe1[i][$.inArray('短来源', field_desc)];
         if (ssrcstr) {
             if (!ssrc2code[ssrcstr]) {
                 ssrc2code[ssrcstr] = num2code(ssrccnt);
@@ -102,7 +102,7 @@ function go_encw(){
         }
         
         //src (exclude list below)
-        var srcstr = wardrobe1[i][jQuery.inArray('来源', field_desc)];
+        var srcstr = wardrobe1[i][$.inArray('来源', field_desc)];
         if (srcstr) {
             var srcs = srcstr.split('/');
             for (var j in srcs) {
@@ -405,7 +405,7 @@ function go_comp(){
 	if(wardrobe_s){
 		for(var i in wardrobe_s){
 			var setInd = wardrobe_s[i][16];
-			if(jQuery.inArray(setInd.substr(setInd.length-2,setInd.length), ['·套','·基','·染']) >=0) wardrobe_s[i][16]='';
+			if($.inArray(setInd.substr(setInd.length-2,setInd.length), ['·套','·基','·染']) >=0) wardrobe_s[i][16]='';
 		}
 	}
 	//end - special handling for seal100x wardrobe
@@ -430,15 +430,15 @@ function go_comp(){
 	}
 	var skip_pos=[];
 	if(skip_comp){
-		for (var i in skip_comp) skip_pos.push(jQuery.inArray(skip_comp[i], field_desc));
+		for (var i in skip_comp) skip_pos.push($.inArray(skip_comp[i], field_desc));
 	}
-	//var skip_pos=jQuery.inArray('来源', field_desc);
+	//var skip_pos=$.inArray('来源', field_desc);
 	for(var i=0;i<max;i++){//assign values into str[] from wardrobe
 		for (var j in wname){
 			if(wname[j][i]){
 				str[j][i]=wname[j][i][0];
 				for (var p=1;p<field_desc.length;p++){
-					if(jQuery.inArray(p, skip_pos)>=0) continue;
+					if($.inArray(p, skip_pos)>=0) continue;
 					if(p==1&&wname[j][i][p]=='上衣') str[j][i]+='/上装';
 					else str[j][i]+='/'+wname[j][i][p];
 				}
@@ -513,7 +513,7 @@ function go_add(){
 }
 
 function go_src(){
-	var pos=jQuery.inArray('来源', field_desc);
+	var pos=$.inArray('来源', field_desc);
 	var src=[];
 	for (var c in wardrobe){
 		var ss=wardrobe[c][pos].split("/");
@@ -527,7 +527,7 @@ function go_src(){
 			if (ss[s].indexOf('签到·')>-1) {ss[s]='*签到';}
 			if (ss[s].indexOf('剧情')>-1) {ss[s]='*剧情';}
 			if (ss[s].indexOf('故宫-')>-1) {ss[s]='*故宫-';}
-			if (jQuery.inArray(ss[s], src)<0) {src.push(ss[s]);}
+			if ($.inArray(ss[s], src)<0) {src.push(ss[s]);}
 		}
 	}
 	src.sort();
@@ -575,7 +575,7 @@ function validWardrobe(){
 	var prop=['SSS','SS','S','A','B','C',''];
 	var src_list=[];//source list
 	for (var c in wardrobe){
-		if(jQuery.inArray(wardrobe[c][15], src_list)<0) {src_list.push(wardrobe[c][15]);}
+		if($.inArray(wardrobe[c][15], src_list)<0) {src_list.push(wardrobe[c][15]);}
 	}
 	for(var j=1;j<=rows;j++){
 		var head=(j==1? '':'<br/>')+'row'+j+'('+$('#in'+j+'_1').val()+'): '
@@ -583,16 +583,16 @@ function validWardrobe(){
 		var cont='';
 		for (var i=1;i<=field_desc.length;i++){
 			check[i]=$('#in'+j+'_'+i).val();
-			if((jQuery.inArray(i, chk1)>-1)&&(!check[i])) {cont+=field_desc[i-1]+'null, ';}
-			if(jQuery.inArray(i, chk2)>-1){
+			if(($.inArray(i, chk1)>-1)&&(!check[i])) {cont+=field_desc[i-1]+'null, ';}
+			if($.inArray(i, chk2)>-1){
 				if(check[i]&&check[i*1-1]){cont+=field_desc[i-2]+field_desc[i-1]+'both, ';}
 				else if(!check[i]&&!check[i*1-1]){cont+=field_desc[i-2]+field_desc[i-1]+'null, ';}
-				else if(jQuery.inArray(check[i], prop)<0){cont+=field_desc[i-1]+'inv, ';}
-				else if(jQuery.inArray(check[i-1], prop)<0){cont+=field_desc[i-2]+'inv, ';}
+				else if($.inArray(check[i], prop)<0){cont+=field_desc[i-1]+'inv, ';}
+				else if($.inArray(check[i-1], prop)<0){cont+=field_desc[i-2]+'inv, ';}
 			}
-			if(i==2&&check[i]&&jQuery.inArray(check[i], category)<0) {cont+=field_desc[i-1]+'inv, ';}
+			if(i==2&&check[i]&&$.inArray(check[i], category)<0) {cont+=field_desc[i-1]+'inv, ';}
 			if(i==3&&check[i]&&isNaN(parseInt(check[i]))) {cont+=field_desc[i-1]+'inv, ';}
-			if(i==16&&check[i]&&jQuery.inArray(check[i], src_list)<0) {cont+=field_desc[i-1]+'inv, ';}
+			if(i==16&&check[i]&&$.inArray(check[i], src_list)<0) {cont+=field_desc[i-1]+'inv, ';}
 		}
 		if(cont){out+=head+cont;}
 	}
@@ -602,7 +602,7 @@ function validWardrobe(){
 function compare(a,b,split){//a contains but b not
 	var out='';
 	for(var i=0;a[i];i++){
-		if (jQuery.inArray(a[i], b)<0) {out+=a[i]+split;}
+		if ($.inArray(a[i], b)<0) {out+=a[i]+split;}
 	}
 	return out;
 }
@@ -669,6 +669,7 @@ function clickRadio(){
 }
 
 function static_generate(){
+    var mainType = ['发型','连衣裙','外套','上装','下装','袜子','鞋子','饰品','妆容','萤光之灵'];
 	var staticMode = $("#static input[type=radio]:checked").val();
 	var static_input = $("#static_input").val();
 	if(static_input) {
@@ -692,7 +693,8 @@ function static_generate(){
 					}
 					for (var j in src_arr){
 						var src = convert_uid(src_arr[j]);
-						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num_arr[j]+"','设'],\n";
+						//if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num_arr[j]+"','设'],\n";
+                        if (tar.name&&src.name) out += "["+$.inArray(tar.mainType,mainType)+","+parseInt(tar.id)+","+$.inArray(src.mainType,mainType)+","+parseInt(src.id)+","+num_arr[j]+"],\n";
 						if (tar.name&&!src.name) errmsg += " " + src_arr[j];
 					}
 					break;
@@ -705,7 +707,8 @@ function static_generate(){
 						ward = tar.src;
 						console.log("  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·进"+src.id+"','"+ward[16]+"','"+ward[17]+"','进·'],");
 					}
-					if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num+"','进'],\n";
+					//if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num+"','进'],\n";
+					if (tar.name&&src.name) out += "["+$.inArray(tar.mainType,mainType)+","+parseInt(tar.id)+","+$.inArray(src.mainType,mainType)+","+parseInt(src.id)+","+num+"],\n";
 					if (tar.name&&!src.name) errmsg += " " + contentBy(contents[i],'src')[0];
 					if (src.name&&!tar.name) errmsg += " " + contentBy(contents[i],'id')[0];
 					break;
@@ -720,7 +723,8 @@ function static_generate(){
 							ward = tar.src;
 							console.log("  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·定"+src.id+"','"+ward[16]+"','"+ward[17]+"','定·'],");
 						}
-						if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','1','染'],\n";
+						//if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','1','染'],\n";
+						if (tar.name&&src.name) out += "["+$.inArray(tar.mainType,mainType)+","+parseInt(tar.id)+","+$.inArray(src.mainType,mainType)+","+parseInt(src.id)+",1],\n";
 						if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
 					}
 					break;
