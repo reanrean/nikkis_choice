@@ -187,12 +187,12 @@ function go_encw(){
     codes += "        else item.push(code2tag[code2num(w[3].charAt(0))] + (w[3].length > 1 ? '/' + code2tag[code2num(w[3].charAt(1))] : '' ));\n";
     codes += "        var w6s = w[6].split('/'), srcs = [];\n";
     codes += "        for (var s in w6s) {\n";
-    codes += "            if (!iscode(w6s[s])) srcs.push(w6s[s]);\n";
-    codes += "            else if (w6s[s].charAt(0) == '*') srcs.push('套装·' + code2suit[code2num(w6s[s].substr(1))]);\n";
+    codes += "            if (w6s[s].charAt(0) == '*') srcs.push('套装·' + code2suit[code2num(w6s[s].substr(1))]);\n";
     codes += "            else if (w6s[s].charAt(0) == '@') srcs.push('设·定' + numberToInventoryId(code2num(w6s[s].substr(1))));\n";
     codes += "            else if (w6s[s].charAt(0) == '!') srcs.push('设·进' + numberToInventoryId(code2num(w6s[s].substr(1))));\n";
     codes += "            else if (w6s[s].charAt(0) == '~') srcs.push('梦境·' + w6s[s].substr(1));\n";
-    codes += "            else srcs.push(code2src[code2num(w6s[s])]);\n";
+    codes += "            else if (iscode(w6s[s])) srcs.push(code2src[code2num(w6s[s])]);\n";
+    codes += "            else srcs.push(w6s[s]);\n";
     codes += "        }\n";
     codes += "        item.push(srcs.join('/'));\n";
     codes += "        if (w[4] == '') item.push('');\n";
@@ -241,11 +241,9 @@ function go_encw(){
     codes += "}\n";
 
     codes += "function iscode(s) {\n";
-    codes += "    var c = s.charCodeAt(0);\n";
-    codes += "    if (c==33 || c==42 || c==64 || c==126) return true;\n";
     codes += "    for (var i = 1; i < s.length; i++) {\n";
     codes += "        c = s.charCodeAt(i);\n";
-    codes += "        if (!((c>=48&&c<=57) || (c>=65&&c<=90) || (c>=97&&c<=122))) return false;\n";
+    codes += "        if (!(c==33 || c==42 || (c>=48&&c<=57) || (c>=64&&c<=90) || (c>=97&&c<=122))) return false;\n";
     codes += "    }\n";
     codes += "    return true;\n";
     codes += "}\n";
