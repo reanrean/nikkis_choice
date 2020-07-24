@@ -613,8 +613,9 @@ function static_generate(){
 			switch(staticMode){
 				case 'merge' :
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
-					var skip = [];
-					if ($.inArray(tar.uid,skip)>=0) continue;
+					var skip = [11725,21505,21506,60708,84472,84473,84474,84475,84476,90270,11726,21507,60709,71525,84477,84478,84479,84480,84481,84482,84483,84484,84485,84487,84488,90271,];
+                    //般若一梦, 忘川彼岸花
+					if ($.inArray(parseInt(tar.uid),skip)>=0) continue;
 					var src_arr = contentBy(contents[i],'cloth');
 					var num_arr = contentBy(contents[i],'num');
 					if (tar.name&&tar.src[15].indexOf('设·图')<0) {
@@ -667,9 +668,9 @@ function static_generate(){
 					break;
 				case 'shop':
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
-					var skip = ['11379','30574','40593','50550','71237','83111','83112','83113','83114','10818','30339','40449','50413','60312','70742','81241','81242','81243','90053'];
+					var skip = [11379,30574,40593,50550,71237,83111,83112,83113,83114,10818,30339,40449,50413,60312,70742,81241,81242,81243,90053];
                     //美杜莎, 甜蜜阳光
-					if ($.inArray(tar.uid,skip)>=0) continue;
+					if ($.inArray(parseInt(tar.uid),skip)>=0) continue;
 					var price = contentBy(contents[i],'price')[0];
 					var price_type = contentBy(contents[i],'price_type')[0];
 					var currency = convert_priceType(price_type);
