@@ -1184,6 +1184,7 @@ var modules_top_filename = {
 '活动·旋阶之庭':'HD-XuanJieZhiTing.html',
 '活动·穹苍秘轨':'HD-QiongCangMiGui.html',
 '活动·浮光镜界':'HD-FuGuangJingJie.html',
+'活动·石碑幻境':'HD-ShiBeiHuanJing.html',
 '往期活动':'HD-WangQiHuoDong.html',
 '往期上架':'HD-WangQi_inShop.html',
 '往期活动·扭蛋':'HD-WangQiHuoDong_NiuDan.html',
