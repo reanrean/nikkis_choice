@@ -757,7 +757,10 @@ function static_generate(){
 					break;
 			}
 		}
-		if (errmsg) alert('尚缺:'+errmsg);
+		if (errmsg) {
+			alert('尚缺:'+errmsg);
+			console.log('尚缺:'+errmsg);
+		}
 		$("#static_output").val(out);
 	}
 }
@@ -796,7 +799,10 @@ function checkSuitConvert(input){
 			}
 		}
 	}
-	if (errmsg) alert('尚缺:'+errmsg);
+	if (errmsg) {
+		alert('尚缺:'+errmsg);
+		console.log('尚缺:'+errmsg);
+	}
 	else alert('check done.');
 }
 
