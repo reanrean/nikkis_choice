@@ -25,6 +25,7 @@ function go(){
 		line+=td(ahref('Add','go_add()'));
 		line+=td(ahref('Data','go_static()'));
 		line+=td(ahref('Source','go_src()'));
+		line+=td(ahref('GenId','go_genid()'));
 		line+=td('<a href="hs-rean.html" target="_blank">HSLevel</a>');
 	menu+=tr(line);
 	$("#menu").html(menu);
@@ -564,6 +565,157 @@ function arrowKey() {
 			if($('#'+tar_id).length>0) {$('#'+tar_id).focus();}
 		}
 	});
+}
+
+function go_genid(){
+    var txt = '<table style="width:100%">';
+    txt += '<tr><td>target_suit_id</td></tr>';
+    txt += '<tr><td><textarea id="genid_calc" rows="5" style="width:100%"></textarea><td></tr>';
+    txt += '<tr><td style="width:25%">achievement_detail_data<br>-&gt;gdAchievementDetailData</td><td style="width:25%">clothes_evolution_data<br>-&gt;gdClothesEvolutionData</td><td style="width:25%">clothes_data<br>-&gt;gdClothesCvtSeriesData</td><td style="width:25%">suit_convert_data<br>-&gt;gdSuitConvertData</td></tr>';
+    txt += '<tr><td><textarea id="genid_achieve" rows="10" style="width:100%"></textarea></td><td><textarea id="genid_evo" rows="10" style="width:100%"></textarea></td><td><textarea id="genid_cvt" rows="10" style="width:100%"></textarea></td><td><textarea id="genid_suit" rows="10" style="width:100%"></textarea></td></tr>';
+	txt += '<tr><td>' + button('↓↓↓↓↓','genid_generate()') + '</td></tr>';
+	txt += '<tr><td><textarea id="genid_output" rows="10" style="width:100%"></textarea></td></tr>';
+    txt += '</table>';
+    $("#info").html(txt);
+    $("#extra").html('');
+}
+
+function genid_generate(){
+    var output = '';
+    var targets = $("#genid_calc").val().split(' ');
+    var genid_achieve = $("#genid_achieve").val();
+    var genid_evo = $("#genid_evo").val();
+    var genid_cvt = $("#genid_cvt").val();
+    var genid_suit = $("#genid_suit").val();
+    var contents = contentOf(genid_achieve)[0];
+    var contentsName = contentOf(genid_achieve)[1];
+    var contentsEvo = contentOf(genid_evo)[0];
+    var contentsCvt = contentOf(genid_cvt)[0];
+    var contentsSuit = contentOf(genid_suit)[0];
+    var contentsSuitName = contentOf(genid_suit)[1];
+    for (var t in targets) {
+        target = targets[t];
+        var idx = $.inArray(target, contentsName);
+        if (idx < 0){
+            alert("not found:" + target);
+            continue;
+        }
+        var outputarr = [];
+        
+        var target_content = contents[idx];
+        output += contentBy(target_content, 'name', true)[0].replace(/"/g, '');
+        var target_clothes = contentBrac(target_content, "clothes");
+        var target_rewards = contentBrac(target_content, "rewardcomplex");
+        for (var i in target_clothes){
+            var by = contentBy(target_clothes[i], '');
+            for (var j in by) {
+                if ($.inArray(by[j], outputarr) < 0){
+                    outputarr.push(by[j]);
+                    output += by[j] + ' ';
+                }
+            }
+        }
+        for (var i in target_rewards) {
+            var by_id = contentBy(target_rewards[i], 'id');
+            var by_type = contentBy(target_rewards[i], 'type');
+            for (var j in by_type){
+                if (by_type[j] == '0') {
+                    if (j == 0)
+                        output += '送';
+                    if ($.inArray(by_id[j], outputarr) < 0){
+                        outputarr.push(by_id[j]);
+                        output += by_id[j] + ' ';
+                    }
+                }
+            }
+        }
+        
+        var found = true;
+        var offset = 0;
+        while (found) {
+            found = false;
+            var len = outputarr.length;
+            for (var i = offset; i < len; i++) {
+                for (var j in contentsEvo) {
+                    if (outputarr[i] == contentBy(contentsEvo[j], 'id')[0]) {
+                        var src = contentBy(contentsEvo[j], 'src')[0];
+                        if ($.inArray(src, outputarr) < 0){
+                            if (!found)
+                                output += '进';
+                            outputarr.push(src);
+                            output += src + ' ';
+                            found = true;
+                        }
+                    }
+                }
+            }
+            offset = len;
+        }
+        
+        for (var i in outputarr) {
+            for (var j in contentsCvt) {
+                var cvt = contentBy(contentsCvt[j], '');
+                if (outputarr[i] == cvt[0]) {
+                    for (var k = 1; k < cvt.length; k++) {
+                        if ($.inArray(cvt[k], outputarr) < 0){
+                            if (!found)
+                                output += '定';
+                            outputarr.push(cvt[k]);
+                            output += cvt[k] + ' ';
+                            found = true;
+                        }
+                    }
+                }
+            }
+        }
+        
+        var idx_suit = $.inArray(target, contentsSuitName);
+        if (idx_suit >= 0) {
+            found = false;
+            var suit_convert = contentsSuit[idx_suit];
+            var suit_clothes = contentBrac(suit_convert, "clothes");
+            for (var i in suit_clothes){
+                var by = contentBy(suit_clothes[i], '');
+                for (var j in by) {
+                    if ($.inArray(by[j], outputarr) < 0){
+                        if (!found)
+                            output += '套';
+                        outputarr.push(by[j]);
+                        output += by[j] + ' ';
+                        found = true;
+                    }
+                }
+            }
+        }
+    }
+    $("#genid_output").val(output);
+}
+
+function contentBrac(txt, varname){
+    varname = varname+'=';
+    if (txt.indexOf(varname)<0) return '';
+    var txt_sp = txt.split(varname);
+    var ret = [];
+    
+    for (var j = 1; j < txt_sp.length; j++) {
+        var sub_txt = txt_sp[j];
+        var ind = 0;
+        var ret_cont = '';
+        for (var i = 0; i < sub_txt.length; i++){
+            var c = sub_txt.substr(i,1);
+            if (c=='{') ind++;
+            else if (c=='}') {
+                ind--;
+                if (ind==0) {
+                    ret.push(ret_cont.substr(1));
+                    break;
+                }
+            }
+            if (ind>0) ret_cont += c;
+        }
+    }
+    //for (var i=1; i<txt_sp.length; i++) ret.push(txt_sp[i].split(',')[0]);
+    return ret;
 }
 
 function go_static(){
