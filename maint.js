@@ -22,11 +22,11 @@ function go(){
 	var menu='<table width=100% style="table-layout: fixed; font-weight:bold;">';
 	var line=td(ahref('EncWardrobe','go_encw()'));
 		line+=td(ahref('DecWardrobe','go_decw()'));
-		line+=td(ahref('Add','go_add()'));
 		line+=td(ahref('Data','go_static()'));
-		line+=td(ahref('Source','go_src()'));
 		line+=td(ahref('GenId','go_genid()'));
-		line+=td('<a href="hs-rean.html" target="_blank">HSLevel</a>');
+		line+=td(ahref('Add','go_add()'), 'style="color: lightgrey;"');
+		line+=td(ahref('Source','go_src()'), 'style="color: lightgrey;"');
+		line+=td('<a href="hs-rean.html" target="_blank">HSLevel</a>', 'style="color: lightgrey;"');
 	menu+=tr(line);
 	$("#menu").html(menu);
 	$("#info").html('');
