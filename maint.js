@@ -860,24 +860,25 @@ function static_generate(){
 					var name = contentBy(contents[i],'name',1)[0].replace(/[\ \"]/g,'');
 					var genre = contentBy(contents[i],'genre')[0];
 					switch (genre){
-						case '7': var genreName = '节日盛典'; var seq = 8; break;
-						case '8': var genreName = '十二月剧团'; var seq = 9; break;
-						case '9': var genreName = '一路相随'; var seq = 10; break;
-						case '10': var genreName = '满天繁星'; var seq = 11; break;
-						case '11': var genreName = '苹果联邦'; var seq = 1; break;
-						case '12': var genreName = '莉莉斯王国'; var seq = 2; break;
-						case '13': var genreName = '云端帝国'; var seq = 3; break;
-						case '14': var genreName = '信鸽王国'; var seq = 4; break;
-						case '15': var genreName = '北地王国'; var seq = 5; break;
-						case '16': var genreName = '荒原共和国'; var seq = 6; break;
-						case '17': var genreName = '废墟孤岛'; var seq = 7; break;
-						case '18': var genreName = '梦恋奇迹'; var seq = 12; break;
-						case '19': var genreName = '故事套装'; var seq = 18; break;
-						case '21': var genreName = '奇妙博物馆'; var seq = 15; break;
-						case '22': var genreName = '远古化石展'; var seq = 16; break;
-						case '23': var genreName = '星座展'; var seq = 17; break;
-						case '24': var genreName = '御苑琼芳'; var seq = 13; break;
-						case '25': var genreName = '吴郡风雅'; var seq = 14; break;
+						case '7': var genreName = '节日盛典'; var seq = 10; break;
+						case '8': var genreName = '十二月剧团'; var seq = 11; break;
+						case '9': var genreName = '一路相随'; var seq = 12; break;
+						case '10': var genreName = '满天繁星'; var seq = 13; break;
+						case '11': var genreName = '苹果联邦'; var seq = 3; break;
+						case '12': var genreName = '莉莉斯王国'; var seq = 4; break;
+						case '13': var genreName = '云端帝国'; var seq = 5; break;
+						case '14': var genreName = '信鸽王国'; var seq = 6; break;
+						case '15': var genreName = '北地王国'; var seq = 7; break;
+						case '16': var genreName = '荒原共和国'; var seq = 8; break;
+						case '17': var genreName = '废墟孤岛'; var seq = 9; break;
+						case '18': var genreName = '梦恋奇迹'; var seq = 14; break;
+						case '19': var genreName = '故事套装'; var seq = 19; break;
+						case '22': var genreName = '远古化石展'; var seq = 17; break;
+						case '23': var genreName = '星座展'; var seq = 18; break;
+						case '24': var genreName = '御苑琼芳'; var seq = 15; break;
+						case '25': var genreName = '吴郡风雅'; var seq = 16; break;
+						case '27': var genreName = '至臻典藏'; var seq = 1; break;
+						case '28': var genreName = '璀璨华光'; var seq = 2; break;
 						default: var genreName = '';
 					}
 					if (genreName && $.inArray(name,setCates)>=0){
