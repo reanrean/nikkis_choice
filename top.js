@@ -828,7 +828,7 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 				case strAlly6: var pos=3; break;
 				case '关卡': var pos=4; break;
 			}
-			a='<span id="a'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref(plain+'...共'+cnt+'关',"showTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
+			a='<span id="a'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref(plain+'..共'+cnt+'关',"showTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
 			a+='<span id="a'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
 			return a;
 		}
@@ -855,7 +855,7 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 				case '关卡': var pos=4; break;
 				default: var pos=0;
 			}
-			a='<span id="a'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref(plain+'...共'+cnt+'关',"showTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
+			a='<span id="a'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref(plain+'..共'+cnt+'关',"showTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
 			a+='<span id="a'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
 			return a;
 		}
