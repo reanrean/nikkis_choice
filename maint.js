@@ -881,7 +881,7 @@ function static_generate(){
 						case '28': var genreName = '璀璨华光'; var seq = 2; break;
 						default: var genreName = '';
 					}
-					if (genreName && $.inArray(name,setCates)>=0){
+					if (genreName && name && $.inArray(name,setCates)>=0){
 						if (!outArr[seq]) outArr[seq] = [];
 						outArr[seq].push("  ['" + genreName + "','" + name + "'],\n");
 						if (name=='白骨夫人'||name=='幽冥仙主') outArr[seq].push("  ['" + genreName + "','" + name + "·入夜'],\n");
