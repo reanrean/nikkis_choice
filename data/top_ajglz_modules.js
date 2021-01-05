@@ -1112,7 +1112,7 @@ function presetModules(){
     var tmp_sets = ['黑天鹅', '芒山采雾', '锦绣同心']; //initialized: skip list
     var tmp_append = [];
     
-    if (typeof lastname == "undefined") setcategory = [];
+    if (typeof setcategory == "undefined") setcategory = [];
     
 	for (var i = 0; i < wardrobe.length; i++){
         //金钻套装成就
