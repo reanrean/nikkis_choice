@@ -1112,6 +1112,8 @@ function presetModules(){
     var tmp_sets = ['黑天鹅', '芒山采雾', '锦绣同心']; //initialized: skip list
     var tmp_append = [];
     
+    if (typeof lastname == "undefined") setcategory = [];
+    
 	for (var i = 0; i < wardrobe.length; i++){
         //金钻套装成就
 		if (wardrobe[i][18]=='套·金') tmp_append.push(['商店·金币', wardrobe[i][16].replace(/·套/g,''), 0, '!'+wardrobe[i][0], '名称']);
