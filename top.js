@@ -803,14 +803,21 @@ function calctop_byall(cartListNum, caltype){
 
 function retTopTd(arr,crit,id,cartNumIfMult){
 	var ret='';
+    var plain='';
 	var cnt=0;
 	if (!cartNumIfMult) cartNumIfMult=0;
 	
 	if(arr==inTop){
 		for (var s in inTop){
 			if(inTop[s][0].indexOf(crit)==0) {
-				if (crit=='竞技场') ret+=(cnt>0?', ':'')+addTooltip(nobr(inTop[s][0].substr(inTop[s][0].indexOf(': ')+2,2)+(inTop[s][1]?'':'(并列)')),inTop[s][2]);
-				else ret+=(cnt>0?', ':'')+addTooltip(nobr(inTop[s][0].substr(inTop[s][0].indexOf(': ')+2)+(inTop[s][1]?'':'(并列)')),inTop[s][2]);
+                var pname = '';
+				if (crit=='竞技场') 
+                    pname = inTop[s][0].substr(inTop[s][0].indexOf(': ')+2,2)+(inTop[s][1]?'':'(并列)');
+				else 
+                    pname = inTop[s][0].substr(inTop[s][0].indexOf(': ')+2)+(inTop[s][1]?'':'(并列)');
+                ret+=(cnt>0?', ':'')+addTooltip(nobr(pname),inTop[s][2]);
+                if (cnt == 0)
+                    plain = pname;
 				cnt++;
 			}
 		}
@@ -821,7 +828,7 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 				case strAlly6: var pos=3; break;
 				case '关卡': var pos=4; break;
 			}
-			a='<span id="a'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref(ret.substr(0,6)+'..共'+cnt+'关',"showTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
+			a='<span id="a'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref(plain+'...共'+cnt+'关',"showTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
 			a+='<span id="a'+id+'t'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"t"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
 			return a;
 		}
@@ -829,8 +836,14 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 	}else{
 		for (var s in inSec){
 			if(inSec[s][0].indexOf(crit)==0) {
-				if (crit=='竞技场') ret+=(cnt>0?', ':'')+addTooltip(nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2)+'(第'+inSec[s][1]+')'),inSec[s][2]);
-				else ret+=(cnt>0?', ':'')+addTooltip(nobr(inSec[s][0].substr(inSec[s][0].indexOf(': ')+2)+'(第'+inSec[s][1]+')'),inSec[s][2]);
+                var pname = '';
+				if (crit=='竞技场') 
+                    pname = inSec[s][0].substr(inSec[s][0].indexOf(': ')+2,2)+'(第'+inSec[s][1]+')';
+				else 
+                    pname = inSec[s][0].substr(inSec[s][0].indexOf(': ')+2)+'(第'+inSec[s][1]+')';
+                ret+=(cnt>0?', ':'')+addTooltip(nobr(pname),inSec[s][2]);
+                if (cnt == 0)
+                    plain = pname;
 				cnt++;
 			}
 		}
@@ -842,7 +855,7 @@ function retTopTd(arr,crit,id,cartNumIfMult){
 				case '关卡': var pos=4; break;
 				default: var pos=0;
 			}
-			a='<span id="a'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref(ret.substr(0,8)+'..共'+cnt+'关',"showTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
+			a='<span id="a'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'">'+ahref(plain+'...共'+cnt+'关',"showTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')")+'</span>';
 			a+='<span id="a'+id+'s'+(limitMode?"l":"n")+pos+cartNumIfMult+'f" style="display:none">'+ret+'<br>'+nobr(ahref('收起',"hideTop('"+id+"s"+(limitMode?"l":"n")+pos+cartNumIfMult+"')"))+'</span>';
 			return a;
 		}
