@@ -990,7 +990,7 @@ function convert_uid(uid){
 	if (uid=='82599') uid='62599';
 	if (uid=='83221') uid='73221';
 	if (uid=='85735') uid='65735';
-	if (uid=='30961') uid='40961';
+	if (uid=='30961') uid='49961';
 	
 	var mainId = uid.substr(0,1);
 	var id = (uid.substr(1,1)==0 ? uid.substr(2,3) : uid.substr(1,4));
