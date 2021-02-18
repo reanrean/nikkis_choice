@@ -231,7 +231,7 @@ function getstrClothes_mod(result,rescnt,scoreFunction){
 		if(!stgy_showall){
 			for (j=0;j<rescnt&&result[j];j++){
 				if(j>0) tmp2=(eval(scoreFunction+'(result[j-1])')==eval(scoreFunction+'(result[j])') ? " = " : " > ");
-				tmp2+= result[j].name + "「" + eval(scoreFunction+'(result[j])') + " " + removeNum(result[j].source) + "」";
+				tmp2+= result[j].name + "「" + eval(scoreFunction+'(result[j])') + " " + result[j].srcShort + "」";
 				if(result[j].own){
 					str=pspan(tmp2,"clothes",tmp1,"clothes_notown");
 					return str;
@@ -243,7 +243,7 @@ function getstrClothes_mod(result,rescnt,scoreFunction){
 			//var isown=false;
 			for (j=0;j<rescnt&&result[j];j++){
 				if(j>0) str+=(eval(scoreFunction+'(result[j-1])')==eval(scoreFunction+'(result[j])') ? " = " : " > ");
-				tmp3 = result[j].name + "「" + eval(scoreFunction+'(result[j])') + " " + removeNum(result[j].source) + "」";
+				tmp3 = result[j].name + "「" + eval(scoreFunction+'(result[j])') + " " + result[j].srcShort + "」";
 				if(result[j].own) str+=tmp3;
 				else str+='<span class="stgy_clothes_notown">'+tmp3+'</span>';
 				//if(result[j].own){isown=true;}
