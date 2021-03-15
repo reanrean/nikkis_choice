@@ -902,14 +902,7 @@ var modules_top = [
 ['V11-V15','V15-蒸汽之翼',1,'蒸汽之翼',''],
 ['签到','璀璨星河',1,'璀璨星河',''],
 ['签到','花间序',1,'花间序',''],
-['签到','火炮兰',0,'!黑白马尾','名称'],
-['签到','火炮兰',0,'!火炮兰','名称'],
-['签到','火炮兰',0,'!兰之翼','名称'],
-['签到','火炮兰',0,'!炮火如兰','名称'],
-['签到','火炮兰',0,'!钢铁雄心','名称'],
-['签到','火炮兰',0,'!首领徽记','名称'],
-['签到','火炮兰',0,'!萌熊眼罩','名称'],
-['签到','火炮兰',0,'!钢铁少女','名称'],
+['签到','炮火如兰',1,'炮火如兰',''],
 ['签到','甜蜜阳光',1,'甜蜜阳光',''],
 ['签到','青春风暴',1,'青春风暴',''],
 ['签到','远行冒险家',1,'远行冒险家',''],
@@ -1041,6 +1034,7 @@ var modules_top_filename = {
 '节日盛典图纸':'TZ-JieRiShengDian.html',
 '十二月剧团图纸':'TZ-ShiErYue.html',
 '梦恋奇迹图纸':'TZ-MengLian.html',
+'缤纷画卷图纸':'TZ-MengLian.html',
 '故事套装图纸':'TZ-GuShi.html',
 '非套装部件图纸':'TZ-FeiTaoZhuangBuJian.html',
 '第1章掉落':'DL-1.html',
@@ -1169,7 +1163,7 @@ function presetModules(){
         }
         //金套
         else if (wardrobe[i][15].indexOf('店·金币')>=0 && wardrobe[i][16]) {
-            var setName = wardrobe[i][16];
+            var setName = wardrobe[i][16].replace(/·套/g,'').replace(/·染/g,'').replace(/·基/g,'');
             if ($.inArray(setName, tmp_sets) < 0) {
                 checkPast(setName);
                 tmp_sets.push(setName);
@@ -1178,7 +1172,7 @@ function presetModules(){
         }
         //钻套
         else if (wardrobe[i][15].indexOf('店·钻石')>=0 && wardrobe[i][16]) {
-            var setName = wardrobe[i][16];
+            var setName = wardrobe[i][16].replace(/·套/g,'').replace(/·染/g,'').replace(/·基/g,'');
             if ($.inArray(setName, tmp_sets) < 0) {
                 checkPast(setName);
                 tmp_sets.push(setName);
