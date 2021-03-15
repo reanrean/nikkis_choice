@@ -756,6 +756,7 @@ function static_generate(){
 	var staticMode = $("#static input[type=radio]:checked").val();
 	var static_input = $("#static_input").val();
 	if(static_input) {
+        var consolelog = [];
 		var contents = contentOf(static_input)[0];
 		var contentsName = contentOf(static_input)[1];
 		var out = '';
@@ -771,9 +772,9 @@ function static_generate(){
 					var src_arr = contentBy(contents[i],'cloth');
 					var num_arr = contentBy(contents[i],'num');
 					if (tar.name&&tar.src[15].indexOf('设·图')<0) {
-						//console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·图');
-						ward = tar.src;
-						console.log("  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·图','"+ward[16]+"','"+ward[17]+"','图'],");
+						var ward = tar.src;
+						var log = "  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·图','"+ward[16]+"','"+ward[17]+"','图','"+ward[19]+"'],";
+                        consolelog.push([tar.row, log]);
 					}
 					for (var j in src_arr){
 						var src = convert_uid(src_arr[j]);
@@ -787,9 +788,9 @@ function static_generate(){
 					var src = convert_uid(contentBy(contents[i],'src')[0]);
 					var num = contentBy(contents[i],'num')[0];
 					if (tar.name&&tar.src[15].indexOf('设·进')<0) {
-						//console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·进'+src.id);
-						ward = tar.src;
-						console.log("  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·进"+src.id+"','"+ward[16]+"','"+ward[17]+"','进·'],");
+						var ward = tar.src;
+						var log = "  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·进"+src.id+"','"+ward[16]+"','"+ward[17]+"','进·','"+ward[19]+"'],";
+                        consolelog.push([tar.row, log]);
 					}
 					//if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num+"','进'],\n";
 					if (tar.name&&src.name) out += "["+$.inArray(tar.mainType,mainType)+","+parseInt(tar.id)+","+$.inArray(src.mainType,mainType)+","+parseInt(src.id)+","+num+"],\n";
@@ -803,10 +804,14 @@ function static_generate(){
 					for (var j in tar_arr){
 						var tar = convert_uid(tar_arr[j]);
 						if (tar.name&&tar.src[15].indexOf('设·定')<0) {
-							//console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 设·定'+src.id);
-							ward = tar.src;
-							console.log("  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·定"+src.id+"','"+ward[16]+"','"+ward[17]+"','定·'],");
-						}
+							var ward = tar.src;
+							var log = "  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·定"+src.id+"','"+ward[16]+"','"+ward[17]+"','定·','"+ward[19]+"'],";
+                            consolelog.push([tar.row, log]);
+						} else if (tar.name&&src.src[16]!=''&tar.src[16]=='') {
+							var ward = tar.src;
+							var log = "//  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','"+ward[15]+"','"+src.src[16]+"·染','"+ward[17]+"','"+ward[18]+"','"+ward[19]+"'],";
+                            consolelog.push([tar.row, log]);
+                        }
 						//if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','1','染'],\n";
 						if (tar.name&&src.name) out += "["+$.inArray(tar.mainType,mainType)+","+parseInt(tar.id)+","+$.inArray(src.mainType,mainType)+","+parseInt(src.id)+",1],\n";
 						if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
@@ -829,9 +834,9 @@ function static_generate(){
 					var isOld = contentBy(contents[i],'is_activity_goods')[0]==1 ? '1' : '0';
 					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'"+currency+"',"+isOld+"],\n";
 					if (tar.name&&tar.src[15].indexOf('店·')<0) {
-						//console.log ("'"+tar.name+"','"+tar.mainType+"','"+tar.id+"'"+' 店·'+currency);
-						ward = tar.src;
-						console.log("  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','店·"+currency+"','"+ward[16]+"','"+ward[17]+"','"+currency.charAt(0)+"'],");
+						var ward = tar.src;
+						var log = "  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','店·"+currency+"','"+ward[16]+"','"+ward[17]+"','"+currency.charAt(0)+"','"+ward[19]+"'],";
+                        consolelog.push([tar.row, log]);
 					}
 					break;
 				case 'arena':
@@ -872,13 +877,15 @@ function static_generate(){
 						case '16': var genreName = '荒原共和国'; var seq = 8; break;
 						case '17': var genreName = '废墟孤岛'; var seq = 9; break;
 						case '18': var genreName = '梦恋奇迹'; var seq = 14; break;
-						case '19': var genreName = '故事套装'; var seq = 19; break;
+						case '19': var genreName = '故事套装'; var seq = 30; break;
 						case '22': var genreName = '远古化石展'; var seq = 17; break;
 						case '23': var genreName = '星座展'; var seq = 18; break;
 						case '24': var genreName = '御苑琼芳'; var seq = 15; break;
 						case '25': var genreName = '吴郡风雅'; var seq = 16; break;
 						case '27': var genreName = '至臻典藏'; var seq = 1; break;
 						case '28': var genreName = '璀璨华光'; var seq = 2; break;
+						case '29': var genreName = '童话梦乡'; var seq = 19; break;
+						case '30': var genreName = '缤纷画卷'; var seq = 20; break;
 						default: var genreName = '';
 					}
 					if (genreName && name && $.inArray(name,setCates)>=0){
@@ -886,6 +893,22 @@ function static_generate(){
 						outArr[seq].push("  ['" + genreName + "','" + name + "'],\n");
 						if (name=='白骨夫人'||name=='幽冥仙主') outArr[seq].push("  ['" + genreName + "','" + name + "·入夜'],\n");
 					}
+                    
+                    //check single clothes is in set
+                    var clothesList = contentBrac(contents[i],'clothes')[0];
+                    if (clothesList) {
+                        var by = contentBy(clothesList, '');
+                        for (var j in by) {
+                            var tar = convert_uid(by[j]);
+                            if (tar.name&&tar.src[16] != name) {
+                                var ward = tar.src;
+                                var pref = tar.src[16] == '' ? '' : '//';
+                                var log = pref+"  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','"+ward[15]+"','"+name+"','"+ward[17]+"','"+ward[18]+"','"+ward[19]+"'],";
+                                consolelog.push([tar.row, log]);
+                            }
+                        }
+                    }
+                    
 					if (i==Object.keys(contents).length-1){ //last record
 						for (var seq in outArr){
 							outArr[seq].reverse();
@@ -900,11 +923,14 @@ function static_generate(){
 					return;
 					break;
                 case 'amputation':
-					var tar = convert_uid(contentBy(contents[i],'id')[0]);
+                    alert('under construction!');
+					/*
+                    var tar = convert_uid(contentBy(contents[i],'id')[0]);
 					if (tar.name&&!tar.src[19]) {
-						ward = tar.src;
+						var ward = tar.src;
 						out += "  ['"+ward.join("','") + "1'],\n";
 					}
+                    */
                     break;
 				default:
 					break;
@@ -915,13 +941,18 @@ function static_generate(){
 			console.log('尚缺:'+errmsg);
 		}
 		$("#static_output").val(out);
+        consolelog.sort(function(a, b){return a[0] - b[0];});
+        for (var line in consolelog) {
+            console.log(consolelog[line][1]);
+        }
 	}
 }
 
 function checkSuitConvert(input){
 	var errmsg = '';
+    var consolelog = [];
 	var inputSplit = input.split('*****');
-	var existSetIds = [];
+	var existSetIds = {};
 	var achieve = inputSplit[0];
 	var convert = inputSplit[1];
 	var achieveContents = contentOf(achieve)[0]; //analyze achieve text
@@ -933,13 +964,13 @@ function checkSuitConvert(input){
 	for (var i=0; i<setCates.length; i++){ //get id for each setName
 		var idx = $.inArray(setCates[i],achieveName);
 		if (idx>=0){
-			existSetIds.push(achieveId[idx]);
+			existSetIds[achieveId[idx]] = setCates[i];
 		}
 	}
 	var convertContents = contentOf(convert)[0]; //analyze convert text
 	var convertId = contentOf(convert)[1];
 	for (var i=0; i<convertContents.length; i++){
-		if ($.inArray(convertId[i],existSetIds)<0) continue;
+        if (!existSetIds[convertId[i]]) continue;
 		var cvtCnt = contentOf(convertContents[i])[0];
 		for (var j=0; j<cvtCnt.length; j++){
 			var cloListRaw = contentOf(cvtCnt[j])[0][0].split(',');
@@ -949,6 +980,11 @@ function checkSuitConvert(input){
 				var uid = cloListRaw[k].substr(equalSign).replace(/[^0-9]/g,'');
 				var tar = convert_uid(uid);
 				if (!tar.name) errmsg += " " + uid;
+                else if (tar.src&&tar.src[16]=='') {
+                    var ward = tar.src;
+                    var log = "  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','"+ward[15]+"','"+existSetIds[convertId[i]]+"·染','"+ward[17]+"','"+ward[18]+"','"+ward[19]+"'],";
+                    consolelog.push([tar.row, log]);
+                }
 			}
 		}
 	}
@@ -957,6 +993,11 @@ function checkSuitConvert(input){
 		console.log('尚缺:'+errmsg);
 	}
 	else alert('check done.');
+    
+    consolelog.sort(function(a, b){return a[0] - b[0];});
+    for (var line in consolelog) {
+        console.log(consolelog[line][1]);
+    }
 }
 
 function contentOf(txt){
@@ -1001,6 +1042,7 @@ function convert_uid(uid){
 		id: id,
 		name: clothesSet[mainType][id],
 		src: clothesSrc[mainType][id], //src=clothesSrc[mainType][id][15]
+        row: clothesRow[mainType][id],
 	}
 }
 
@@ -1024,6 +1066,18 @@ var clothesSrc = function() {
       ret[t] = {};
     }
     ret[t][wardrobe[i][2]] = wardrobe[i];
+  }
+  return ret;
+}();
+
+var clothesRow = function() {
+  var ret = {};
+  for (var i in wardrobe) {
+    var t = wardrobe[i][1].split('-')[0];
+    if (!ret[t]) {
+      ret[t] = {};
+    }
+    ret[t][wardrobe[i][2]] = i;
   }
   return ret;
 }();
