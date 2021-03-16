@@ -927,14 +927,13 @@ function static_generate(){
 					return;
 					break;
                 case 'amputation':
-                    alert('under construction!');
-					/*
                     var tar = convert_uid(contentBy(contents[i],'id')[0]);
 					if (tar.name&&!tar.src[19]) {
 						var ward = tar.src;
-						out += "  ['"+ward.join("','") + "1'],\n";
+                        var ln = "  ['"+ward.slice(0,19).join("','") + "','1'],";
+                        out += ln + '\n';
+						consolelog.push([tar.row, ln]);
 					}
-                    */
                     break;
 				default:
 					break;
@@ -946,8 +945,8 @@ function static_generate(){
 		}
 		$("#static_output").val(out);
         consolelog.sort(function(a, b){return a[0] - b[0];});
-        for (var line in consolelog) {
-            console.log(consolelog[line][1]);
+        for (var ln in consolelog) {
+            console.log(consolelog[ln][1]);
         }
 	}
 }
