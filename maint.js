@@ -93,7 +93,7 @@ function go_encw(){
         }
         
         //ssrc
-        var ssrcstr = wardrobe1[i][$.inArray('短来源', field_desc)];
+        var ssrcstr = wardrobe1[i][$.inArray('短来源', field_desc)].replace(/^套·/, '');
         if (ssrcstr) {
             if (!ssrc2code[ssrcstr]) {
                 ssrc2code[ssrcstr] = num2code(ssrccnt);
@@ -168,7 +168,11 @@ function go_encw(){
             else w15c.push(w15[j]);
         }
         wstr += w15c.join('/') + '|';
-        wstr += (ssrc2code[w[18]] ? ssrc2code[w[18]] : w[18]);
+        if(w[18]) {
+            var pref = w[18].indexOf('套·') == 0 ? '*' : '';
+            var suf = w[18].replace(/^套·/, '');
+            wstr += (ssrc2code[suf] ? pref + ssrc2code[suf] : w[18]);
+        }
         codewardrobe.push(wstr);
         wstr = "'" + wstr + "',\n";
         dlcontent += wstr;
@@ -202,7 +206,7 @@ function go_encw(){
     codes += "        else if (w[4].charAt(0) == '!') item.push(code2suit[code2num(w[4].substr(1))] + '·基');\n";
     codes += "        else item.push(code2suit[code2num(w[4])]);\n";
     codes += "        item.push(code2ver[code2num(w[5])]);\n";
-    codes += "        item.push(code2ssrc[code2num(w[7])]);\n";
+    codes += "        item.push(w[7].charAt(0)=='*' ? '套·' + code2ssrc[code2num(w[7].substr(1))] : code2ssrc[code2num(w[7])]);\n";
     codes += "        item.push(w[2].charAt(0)=='*' ? '1' : '');\n";
     codes += "        ret.push(item);\n";
     codes += "    }\n";
