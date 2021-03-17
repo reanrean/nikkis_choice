@@ -477,6 +477,12 @@ var shoppingCart = {
 			}
 		}
 	}
+    for (var c in this.cart) { //remove 皮肤 if there is pose
+        if (this.cart[c].pose) {
+            shoppingCart.remove('饰品-皮肤');
+            break;
+        }
+    }
 	if (accNum) {//keep accessories base on accNum
 		var sortCates=[];
 		for (var i in category){

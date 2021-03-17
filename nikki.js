@@ -168,10 +168,32 @@ function refreshTable() {
 }
 
 function chooseAccessories(accfilters) {
+    var topAccessories = filterTopAccessories(clone(accfilters));
+    var topClothes = filterTopClothes(clone(accfilters));
+    
+    //calc for clothes with pose
 	shoppingCart.clear();
-	shoppingCart.putAll(filterTopAccessories(clone(accfilters)));
-	shoppingCart.putAll(filterTopClothes(clone(accfilters)));
+	shoppingCart.putAll(topAccessories);
+	shoppingCart.putAll(topClothes[1]);
 	shoppingCart.validate(clone(accfilters));
+	shoppingCart.calc(criteria);
+    var score1 = shoppingCart.totalScore.sumScore;
+    
+    //calc for clothes without pose
+	shoppingCart.clear();
+	shoppingCart.putAll(topAccessories);
+	shoppingCart.putAll(topClothes[0]);
+	shoppingCart.validate(clone(accfilters));
+	shoppingCart.calc(criteria);
+    var score2 = shoppingCart.totalScore.sumScore;
+    
+    if (score1 > score2) {
+        shoppingCart.clear();
+        shoppingCart.putAll(topAccessories);
+        shoppingCart.putAll(topClothes[1]);
+        shoppingCart.validate(clone(accfilters));
+    }
+    
 	refreshShoppingCart();
 }
 
@@ -378,19 +400,31 @@ function filterTopClothes(filters) {
 	for (var i in skipCategory) {
 		filters[skipCategory[i]] = false;
 	}
-	var result = {};
+	var result = {}; // all normal pose
+    var result2 = {}; // with special pose
 	for (var i in clothes) {
 		if (matches(clothes[i], {}, filters)) {
 			clothes[i].calc(filters);
 			if (clothes[i].isF || clothes[i].sumScore <= 0) continue;
-			if (!result[clothes[i].type.type]) {
-				result[clothes[i].type.type] = clothes[i];
-			} else if (clothes[i].sumScore > result[clothes[i].type.type].sumScore) {
-				result[clothes[i].type.type] = clothes[i];
-			}
+            if (clothes[i].pose){
+                if (!result2[clothes[i].type.type]) {
+                    result2[clothes[i].type.type] = clothes[i];
+                } else if (clothes[i].sumScore > result2[clothes[i].type.type].sumScore) {
+                    result2[clothes[i].type.type] = clothes[i];
+                }
+            } else {
+                if (!result[clothes[i].type.type]) {
+                    result[clothes[i].type.type] = clothes[i];
+                } else if (clothes[i].sumScore > result[clothes[i].type.type].sumScore) {
+                    result[clothes[i].type.type] = clothes[i];
+                }
+            }
 		}
 	}
-	return result;
+    for (var i in result) {
+        if (!result2[i] || result2[i].sumScore <= result[i].sumScore) result2[i] = result[i];
+    }
+	return [result, result2];
 }
 
 function filtering(criteria, filters) {
@@ -806,25 +840,50 @@ function autogenLimit(){
 			}
 			criteria.levelName = $("#theme").val();
 			//calc sumScores
-			shoppingCart.clear();
-			var currScoreByCate=[];
+			var currScoreByCateNorm = [];
+			var currScoreByCatePose = [];
+            var resultNorm = {};
+            var resultPose = {};
 			var ownCnt=loadFromStorage().size>0 ? 1 : 0;
 			for (var i in clothes){
 				if ((!calcGlobalClothes)&&(!clothes[i].own)&&ownCnt) continue;
 				var c=clothes[i].type.type;
 				if ($.inArray(c, skipCategory)>=0) continue;
-				if (!currScoreByCate[c]) currScoreByCate[c]=0;
-				if (clothesOrigScore[i]*1.778 < currScoreByCate[c]) continue; //short cut, no hope to become the new winner; from ip
-				clothes[i].calc(criteria);
-				var sum_score= (clothes[i].type.mainType=='饰品') ? Math.round(accSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum))) : clothes[i].sumScore;
-				if (sum_score>currScoreByCate[c]) {
-					shoppingCart.put(clothes[i]);
-					currScoreByCate[c]=sum_score;
-				}
+                if (clothes[i].isF) continue;
+				if (!currScoreByCateNorm[c]) currScoreByCateNorm[c]=0;
+				if (!currScoreByCatePose[c]) currScoreByCatePose[c]=0;
+                if (clothes[i].pose) {
+                    if (clothesOrigScore[i]*1.778 < currScoreByCatePose[c]) continue; //short cut, no hope to become the new winner; from ip
+                    clothes[i].calc(criteria);
+                    var sum_score = (clothes[i].type.mainType=='饰品') ? Math.round(accSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum))) : clothes[i].sumScore;
+                    if (sum_score > currScoreByCatePose[c]) {
+                        resultPose[c] = clothes[i];
+                        currScoreByCatePose[c] = sum_score;
+                    }
+                } else {
+                    if (clothesOrigScore[i]*1.778 < currScoreByCateNorm[c]) continue; //short cut, no hope to become the new winner; from ip
+                    clothes[i].calc(criteria);
+                    var sum_score= (clothes[i].type.mainType=='饰品') ? Math.round(accSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum))) : clothes[i].sumScore;
+                    if (sum_score>currScoreByCateNorm[c]) {
+                        resultNorm[c] = clothes[i];
+                        currScoreByCateNorm[c] = sum_score;
+                    }
+                }
 			}
+            for (var i in currScoreByCateNorm) {
+                if (currScoreByCateNorm[i] >= currScoreByCatePose[i]) resultPose[i] = resultNorm[i];
+            }
+			shoppingCart.clear();
+            shoppingCart.putAll(resultPose);
 			shoppingCart.validate(criteria,(uiFilter["acc9"]?9:accCateNum));
 			shoppingCart.calc(criteria);
-			var tmpScore=shoppingCart.totalScore.sumScore;
+			var tmpScore1 = shoppingCart.totalScore.sumScore;
+			shoppingCart.clear();
+            shoppingCart.putAll(resultNorm);
+			shoppingCart.validate(criteria,(uiFilter["acc9"]?9:accCateNum));
+			shoppingCart.calc(criteria);
+			var tmpScore2 = shoppingCart.totalScore.sumScore;
+			var tmpScore = tmpScore1 > tmpScore2 ? tmpScore1 : tmpScore2;
 			if (tmpScore>scoreTotal){
 				scoreTotal=tmpScore;
 				boosts=[FEATURES[b],FEATURES[a]];
