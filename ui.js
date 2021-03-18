@@ -40,10 +40,11 @@ function row(piece, isShoppingCart) {
 	var $lineTop = $row;
 	//var $lineTop = $("<div>").addClass("table-line");
 	if (isShoppingCart) $lineTop.append(td(piece.id?shoppingCart.contains(piece):'', 'cnt'));
-	$lineTop.append(td(piece.sumScore, 'score'));
 	if (isShoppingCart) {
+        $lineTop.append(td(realSumScore(piece, shoppingCart.accNum()), 'score'));
 		$lineTop.append(td(piece.name, (piece.version==lastVersion? 'new' : '' )));
 	} else {
+        $lineTop.append(td(piece.sumScore, 'score'));
 		$lineTop.append(clothesNameTd(piece));
 	}
 	var csv = piece.toCsv();

@@ -310,7 +310,7 @@ function strat_sortlist(filters,rescnt){
 }
 
 function actScore(obj){
-	return (obj.type.mainType=='饰品') ? ( uiFilter["acc9"] ? Math.round(accSumScore(obj,9)) : Math.round(accSumScore(obj,accCateNum))) : obj.sumScore;
+	return uiFilter["acc9"] ? realSumScore(obj,9) : realSumScore(obj,accCateNum);
 }
 
 function diffScore(obj){

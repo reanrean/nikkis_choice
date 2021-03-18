@@ -419,6 +419,13 @@ var clothesSet = function() {
 var shoppingCart = {
   cart: {},
   totalScore: fakeClothes(this.cart),
+  accNum: function() {
+    var cnt=0;
+    for (var i in this.cart) {
+        if (this.cart[i].type.mainType == '饰品') cnt++;
+    }
+    return cnt;
+  },
   clear: function() {
     this.cart = {};
   },
@@ -507,8 +514,12 @@ function accScore(total, items) {
   return total * 0.4;
 }
 
-function accSumScore(a,items){
-	return accScore(a.tmpScore, items)+a.bonusScore;
+function accSumScore(a, items){
+	return Math.round(accScore(a.tmpScore, items) + a.bonusScore);
+}
+
+function realSumScore(c, items){
+	return c.type.mainType=='饰品' ? accSumScore(c, items) : c.sumScore;
 }
 
 var accCateNum = function() {
@@ -560,6 +571,7 @@ function fakeClothes(cart) {
   return {
     name: '总分',
     sumScore: Math.round(totalScore),
+    type: '',
     toCsv: function() {
       return ['', '', '',
           scoreWithBonusTd(scores.simple[0], bonus.simple[0]), 

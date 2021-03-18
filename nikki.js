@@ -393,18 +393,18 @@ function filterTopAccessories(filters) { //rean note: it will use shoppingCart a
 	var toSortAll = clone(shoppingCart.cart);
 	
 	shoppingCart.clear();
-	shoppingCart.putAll(resultAll);
+	shoppingCart.putAll(resultNorm);
 	shoppingCart.validate(filters);
 	shoppingCart.calc(filters);
-	var totalPose = shoppingCart.totalScore.sumScore;
-	var toSortPose = clone(shoppingCart.cart);
+	var totalNorm = shoppingCart.totalScore.sumScore;
+	var toSortNorm = clone(shoppingCart.cart);
 	
 	shoppingCart.clear();
-	var max = Math.max(totalS, totalAll, totalPose);
+	var max = Math.max(totalS, totalAll, totalNorm);
     
 	if (totalS == max) return toSortS;
 	else if (totalAll == max) return toSortAll;
-	else return toSortAll;
+	else return toSortNorm;
 }
 
 function filterTopClothes(filters) {
@@ -831,7 +831,7 @@ function autogenLimit(){
 	var clothesOrigScore=[];
 	for(var i in clothes){
 		clothes[i].calc(criteria);
-		var sum_score=(clothes[i].type.mainType=='饰品') ? Math.round(accSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum))) : clothes[i].sumScore;
+		var sum_score = realSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum));
 		clothesOrigScore[i]=sum_score;
 	}
 	
@@ -878,7 +878,7 @@ function autogenLimit(){
                 if (clothes[i].pose) {
                     if (clothesOrigScore[i]*1.778 < currScoreByCatePose[c]) continue; //short cut, no hope to become the new winner; from ip
                     clothes[i].calc(criteria);
-                    var sum_score = (clothes[i].type.mainType=='饰品') ? Math.round(accSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum))) : clothes[i].sumScore;
+                    var sum_score = realSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum));
                     if (sum_score > currScoreByCatePose[c]) {
                         resultPose[c] = clothes[i];
                         currScoreByCatePose[c] = sum_score;
@@ -886,7 +886,7 @@ function autogenLimit(){
                 } else {
                     if (clothesOrigScore[i]*1.778 < currScoreByCateNorm[c]) continue; //short cut, no hope to become the new winner; from ip
                     clothes[i].calc(criteria);
-                    var sum_score= (clothes[i].type.mainType=='饰品') ? Math.round(accSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum))) : clothes[i].sumScore;
+                    var sum_score = realSumScore(clothes[i],(uiFilter["acc9"]?9:accCateNum));
                     if (sum_score>currScoreByCateNorm[c]) {
                         resultNorm[c] = clothes[i];
                         currScoreByCateNorm[c] = sum_score;

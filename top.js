@@ -1449,7 +1449,7 @@ function verifyNum(id){
 }
 
 function fullScore(obj){
-	return obj.type.mainType=='饰品' ? Math.round(accSumScore(obj,accCateNum)) : obj.sumScore;
+	return realSumScore(obj, accCateNum);
 }
 
 function toggleBuzz(){
