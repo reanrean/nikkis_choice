@@ -346,7 +346,7 @@ function filterTopAccessories(filters) { //rean note: it will use shoppingCart a
 	for (var i in skipCategory) {
 		filters[skipCategory[i]] = false;
 	}
-	var resultS = {}; var resultAll = {};
+	var resultS = {}; var resultAll = {}; var resultNorm = {};
 	for (var i in clothes) {
 		if (matches(clothes[i], {}, filters)) {
 			clothes[i].calc(filters);
@@ -356,13 +356,25 @@ function filterTopAccessories(filters) { //rean note: it will use shoppingCart a
 			} else if (accSumScore(clothes[i],accSNum) > accSumScore(resultS[clothes[i].type.type],accSNum)) {
 				resultS[clothes[i].type.type] = clothes[i];
 			}
-			if (!resultAll[clothes[i].type.type]) {
-				resultAll[clothes[i].type.type] = clothes[i];
-			} else if (accSumScore(clothes[i],accCNum) > accSumScore(resultAll[clothes[i].type.type],accCNum)) {
-				resultAll[clothes[i].type.type] = clothes[i];
-			}
+            if (clothes[i].pose) {
+                if (!resultAll[clothes[i].type.type]) {
+                    resultAll[clothes[i].type.type] = clothes[i];
+                } else if (accSumScore(clothes[i],accCNum) > accSumScore(resultAll[clothes[i].type.type],accCNum)) {
+                    resultAll[clothes[i].type.type] = clothes[i];
+                }
+            } else {
+                if (!resultNorm[clothes[i].type.type]) {
+                    resultNorm[clothes[i].type.type] = clothes[i];
+                } else if (accSumScore(clothes[i],accCNum) > accSumScore(resultNorm[clothes[i].type.type],accCNum)) {
+                    resultNorm[clothes[i].type.type] = clothes[i];
+                }
+            }
 		}
 	}
+    for (var i in resultNorm) {
+        if (!resultAll[i] || accSumScore(resultAll[i],accCNum) <= accSumScore(resultNorm[i],accCNum))
+            resultAll[i] = resultNorm[i];
+    }
 	
 	shoppingCart.clear();
 	shoppingCart.putAll(resultS);
@@ -370,6 +382,8 @@ function filterTopAccessories(filters) { //rean note: it will use shoppingCart a
 	shoppingCart.calc(filters);
 	var totalS = shoppingCart.totalScore.sumScore;
 	var toSortS = clone(shoppingCart.cart);
+    
+    if (uiFilter["acc9"]) return toSortS;
 	
 	shoppingCart.clear();
 	shoppingCart.putAll(resultAll);
@@ -379,8 +393,17 @@ function filterTopAccessories(filters) { //rean note: it will use shoppingCart a
 	var toSortAll = clone(shoppingCart.cart);
 	
 	shoppingCart.clear();
+	shoppingCart.putAll(resultAll);
+	shoppingCart.validate(filters);
+	shoppingCart.calc(filters);
+	var totalPose = shoppingCart.totalScore.sumScore;
+	var toSortPose = clone(shoppingCart.cart);
 	
-	if (totalS > totalAll || uiFilter["acc9"] ) return toSortS;
+	shoppingCart.clear();
+	var max = Math.max(totalS, totalAll, totalPose);
+    
+	if (totalS == max) return toSortS;
+	else if (totalAll == max) return toSortAll;
 	else return toSortAll;
 }
 
@@ -849,7 +872,7 @@ function autogenLimit(){
 				if ((!calcGlobalClothes)&&(!clothes[i].own)&&ownCnt) continue;
 				var c=clothes[i].type.type;
 				if ($.inArray(c, skipCategory)>=0) continue;
-                if (clothes[i].isF) continue;
+                if (clothes[i].isF || clothes[i].sumScore <= 0) continue;
 				if (!currScoreByCateNorm[c]) currScoreByCateNorm[c]=0;
 				if (!currScoreByCatePose[c]) currScoreByCatePose[c]=0;
                 if (clothes[i].pose) {
