@@ -50,6 +50,9 @@
 	vertical-align: middle;
 	transition: color 0.2s;
 }
+.table-td.SSS {
+  color: #A6F;
+}
 .table-td.SS {
   color: #E81;
 }
