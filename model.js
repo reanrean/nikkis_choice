@@ -471,7 +471,7 @@ var shoppingCart = {
 			currCate=repelCates[i][j];
 			if (this.cart[currCate]) {
 				this.cart[currCate].calc(criteria);
-				var currSumScore = currCate.split('-')[0] == '饰品' ? accSumScore(this.cart[currCate], accNum?accNum:accCateNum) : this.cart[currCate].sumScore;
+				var currSumScore = realSumScore(this.cart[currCate], accNum);
 				if (j>0) sumOthers+=currSumScore;
 				else sumFirst+=currSumScore;
 			}
