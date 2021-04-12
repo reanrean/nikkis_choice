@@ -776,8 +776,10 @@ function static_generate(){
 					var src_arr = contentBy(contents[i],'cloth');
 					var num_arr = contentBy(contents[i],'num');
 					if (tar.name&&tar.src[15].indexOf('设·图')<0) {
-						var ward = tar.src;
-						var log = "  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·图','"+ward[16]+"','"+ward[17]+"','图','"+ward[19]+"'],";
+                        var ward = cloneArr(tar.src);
+                        ward[15] = '设·图';
+                        ward[18] = '图';
+                        var log = "  ['" + ward.join("','") + "'],";
                         consolelog.push([tar.row, log]);
 					}
 					for (var j in src_arr){
@@ -792,8 +794,10 @@ function static_generate(){
 					var src = convert_uid(contentBy(contents[i],'src')[0]);
 					var num = contentBy(contents[i],'num')[0];
 					if (tar.name&&tar.src[15].indexOf('设·进')<0) {
-						var ward = tar.src;
-						var log = "  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·进"+src.id+"','"+ward[16]+"','"+ward[17]+"','进·','"+ward[19]+"'],";
+                        var ward = cloneArr(tar.src);
+                        ward[15] = "设·进" + src.id;
+                        ward[18] = '进·';
+                        var log = "  ['" + ward.join("','") + "'],";
                         consolelog.push([tar.row, log]);
 					}
 					//if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num+"','进'],\n";
@@ -808,14 +812,17 @@ function static_generate(){
 					for (var j in tar_arr){
 						var tar = convert_uid(tar_arr[j]);
 						if (tar.name&&tar.src[15].indexOf('设·定')<0) {
-							var ward = tar.src;
-							var log = "  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','设·定"+src.id+"','"+ward[16]+"','"+ward[17]+"','定·','"+ward[19]+"'],";
+                            var ward = cloneArr(tar.src);
+                            ward[15] = "设·定" + src.id;
+                            ward[18] = '定·';
+                            var log = "  ['" + ward.join("','") + "'],";
                             consolelog.push([tar.row, log]);
-						} else if (tar.name&&src.src[16]!=''&tar.src[16]=='') {
-							var ward = tar.src;
-							var log = "//  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','"+ward[15]+"','"+src.src[16]+"·染','"+ward[17]+"','"+ward[18]+"','"+ward[19]+"'],";
+						} /*else if (tar.name&&src.src[16]!=''&tar.src[16]=='') {
+                            var ward = cloneArr(tar.src);
+                            ward[16] = src.src[16] + "·染";
+                            var log = "//  ['" + ward.join("','") + "'],";
                             consolelog.push([tar.row, log]);
-                        }
+                        }*/
 						//if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','1','染'],\n";
 						if (tar.name&&src.name) out += "["+$.inArray(tar.mainType,mainType)+","+parseInt(tar.id)+","+$.inArray(src.mainType,mainType)+","+parseInt(src.id)+",1],\n";
 						if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
@@ -838,8 +845,10 @@ function static_generate(){
 					var isOld = contentBy(contents[i],'is_activity_goods')[0]==1 ? '1' : '0';
 					if (tar.name) out += "['"+tar.mainType+"','"+tar.id+"',"+price+",'"+currency+"',"+isOld+"],\n";
 					if (tar.name&&tar.src[15].indexOf('店·')<0) {
-						var ward = tar.src;
-						var log = "  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','店·"+currency+"','"+ward[16]+"','"+ward[17]+"','"+currency.charAt(0)+"','"+ward[19]+"'],";
+                        var ward = cloneArr(tar.src);
+                        ward[15] = "店·"+currency;
+                        ward[18] = currency.charAt(0);
+                        var log = "  ['" + ward.join("','") + "'],";
                         consolelog.push([tar.row, log]);
 					}
 					break;
@@ -905,9 +914,10 @@ function static_generate(){
                         for (var j in by) {
                             var tar = convert_uid(by[j]);
                             if (tar.name&&tar.src[16] != name) {
-                                var ward = tar.src;
+                                var ward = cloneArr(tar.src);
                                 var pref = tar.src[16] == '' ? '' : '//';
-                                var log = pref+"  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','"+ward[15]+"','"+name+"','"+ward[17]+"','"+ward[18]+"','"+ward[19]+"'],";
+                                ward[16] = name;
+                                var log = pref + "  ['" + ward.join("','") + "'],";
                                 consolelog.push([tar.row, log]);
                             }
                         }
@@ -929,8 +939,9 @@ function static_generate(){
                 case 'amputation':
                     var tar = convert_uid(contentBy(contents[i],'id')[0]);
 					if (tar.name&&!tar.src[19]) {
-						var ward = tar.src;
-                        var ln = "  ['"+ward.slice(0,19).join("','") + "','1'],";
+						var ward = cloneArr(tar.src);
+                        ward[19] = '1';
+                        var ln = "  ['" + ward.join("','") + "'],";
                         out += ln + '\n';
 						consolelog.push([tar.row, ln]);
 					}
@@ -974,8 +985,10 @@ function checkSuitConvert(input){
 	var convertId = contentOf(convert)[1];
 	for (var i=0; i<convertContents.length; i++){
         if (!existSetIds[convertId[i]]) continue;
+        var setName = existSetIds[convertId[i]];
 		var cvtCnt = contentOf(convertContents[i])[0];
 		for (var j=0; j<cvtCnt.length; j++){
+            var convertSuffix = contentBy(cvtCnt[j],'convert',1) ? "·染" : "·套";
 			var cloListRaw = contentOf(cvtCnt[j])[0][0].split(',');
 			for (var k=0; k<cloListRaw.length; k++){
 				var equalSign = cloListRaw[k].indexOf('=');
@@ -983,9 +996,17 @@ function checkSuitConvert(input){
 				var uid = cloListRaw[k].substr(equalSign).replace(/[^0-9]/g,'');
 				var tar = convert_uid(uid);
 				if (!tar.name) errmsg += " " + uid;
-                else if (tar.src&&tar.src[16]=='') {
-                    var ward = tar.src;
-                    var log = "  ['"+ward[0]+"','"+ward[1]+"','"+ward[2]+"','"+ward[3]+"','"+ward[4]+"','"+ward[5]+"','"+ward[6]+"','"+ward[7]+"','"+ward[8]+"','"+ward[9]+"','"+ward[10]+"','"+ward[11]+"','"+ward[12]+"','"+ward[13]+"','"+ward[14]+"','"+ward[15]+"','"+existSetIds[convertId[i]]+"·染','"+ward[17]+"','"+ward[18]+"','"+ward[19]+"'],";
+                else if (tar.src && tar.src[16]=='') {
+                    var ward = cloneArr(tar.src);
+                    ward[16] = setName + convertSuffix;
+                    var log = "  ['" + ward.join("','") + "'],";
+                    consolelog.push([tar.row, log]);
+                }
+                //else if (tar.src && tar.src[16].indexOf(setName)<0) {
+                else if (tar.src && tar.src[16]!=setName && tar.src[16]!=(setName+convertSuffix)) {
+                    var ward = cloneArr(tar.src);
+                    ward[16] = setName + convertSuffix;
+                    var log = "//  ['" + ward.join("','") + "'],";
                     consolelog.push([tar.row, log]);
                 }
 			}
@@ -1017,6 +1038,14 @@ function contentOf(txt){
 		else if (c.match(/^[0-9a-z]$/)) ret_name += c;
 	}
 	return [ret,name];
+}
+
+function cloneArr(arr){
+    var ret = [];
+    for (var i in arr) {
+        ret.push(arr[i]);
+    }
+    return ret;
 }
 
 function contentBy(txt,varname,keepChars){
