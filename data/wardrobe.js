@@ -18164,7 +18164,7 @@ var codewardrobe = [
 '风敲玲珑|N2G1|5T1o|3|Kt|1k|1Q|c',
 '花间清坐|E2G2|5YQc||Kt|1k|1Q|c',
 '香蝶留痕|H2G3|5Y3B||Kt|1k|1Q|c',
-'二十四番风|T2G6|5YQG|7|Kt|1k|1Q|c',
+'二十四番风|T2G6|5YQG|3|Kt|1k|1Q|c',
 '天意怜香|W9Q|5YQc||Kt|1k|1Q|c',
 '浓歌舞岚|0gl|5SD5|3|*Kt|1k|*Kt|*c',
 '占尽春风|1bM|*5T2A|3|*Kt|1k|*Kt|*c',
