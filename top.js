@@ -873,7 +873,7 @@ function hideTop(id){
 	$('#a'+id).show();
 }
 
-function addCates(list, id){ //deprecated
+function addCates(list, id){
 	list.push(clothes[id].type.type);
 	for (var k in repelCates){
 		if($.inArray(clothes[id].type.type, repelCates[k])>-1){
@@ -886,11 +886,17 @@ function addCates(list, id){ //deprecated
 }
 
 function storeTopByCate_single(id, caltype){
-	return storeTopByCate(category, caltype, $("#showCnt").val(), []);
+	var cartCates=[];
+	cartCates = addCates(cartCates, id);
+	cartCates = getDistinct(cartCates);
+	return storeTopByCate(cartCates, caltype, $("#showCnt").val(), []);
 }
 
 function storeTopByCartCates(caltype, nCount){
-	return storeTopByCate(category, caltype, nCount, []);
+	var cartCates=[];
+	for (var i in cartList[0]) cartCates = addCates(cartCates, cartList[0][i]);
+	cartCates = getDistinct(cartCates);
+	return storeTopByCate(cartCates, caltype, nCount, []);
 }
 function storeTopByCate(cartCates, caltype, nCount, skipList){
 	var ret = [];
