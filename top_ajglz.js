@@ -406,12 +406,7 @@ function clear_textarea(){
 }
 
 function storeTopByCartCates(caltype, nCount){
-	var cartCates=[];
-	for (var l in cartList){
-		for (var i in cartList[l]) cartCates = addCates(cartCates, cartList[l][i]);
-	}
-	cartCates = getDistinct(cartCates);
-	storeTop = storeTopByCate(cartCates, caltype, nCount, []);
+	storeTop = storeTopByCate(category, caltype, nCount, []);
 }
 
 function clearCart(n){
@@ -879,11 +874,8 @@ function addTxtDoubByThemeCate(them, ctype, min){
 }
 
 function calctopRep(nCount){
-	var cartCates=[];
-	for (var i in impCart) cartCates = addCates(cartCates, impCart[i]);
-	cartCates = getDistinct(cartCates);
 	limitMode=1;
-	storeTop = storeTopByCate(cartCates, 10, nCount, []);
+	storeTop = storeTopByCate(category, 10, nCount, []);
 	
 	var out=subtitle('竞技场', 1) + '\n';
 	out+='<table border="1" width="100%">\n';
@@ -904,7 +896,7 @@ function calctopRep(nCount){
 	out+='\n</table>\n';
 	
 	limitMode=0;
-	storeTop = storeTopByCate(cartCates, 5, nCount, []);
+	storeTop = storeTopByCate(category, 5, nCount, []);
 	
 	out+=subtitle('联盟第六章(标准权重)', 3) + '\n';
 	out+='<table border="1" width="100%">\n';
