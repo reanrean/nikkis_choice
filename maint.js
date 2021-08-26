@@ -770,8 +770,7 @@ function static_generate(){
 			switch(staticMode){
 				case 'merge' :
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
-					var skip = [11725,21505,21506,60708,84472,84473,84474,84475,84476,90270,11726,21507,60709,71525,84477,84478,84479,84480,84481,84482,84483,84484,84485,84487,84488,90271,];
-                    //般若一梦, 忘川彼岸花
+					var skip = [];
 					if ($.inArray(parseInt(tar.uid),skip)>=0) continue;
 					var src_arr = contentBy(contents[i],'cloth');
 					var num_arr = contentBy(contents[i],'num');
