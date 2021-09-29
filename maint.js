@@ -215,7 +215,9 @@ function go_encw(){
 
     codes += "function letter2num(s) {\n";
     codes += "    var charcode = s.charCodeAt(0);\n";
-    codes += "    if (charcode <= 57) return charcode - 48;\n";
+    codes += "    if (charcode == 45) return 62;\n";
+    codes += "    else if (charcode == 95) return 63;\n";
+    codes += "    else if (charcode <= 57) return charcode - 48;\n";
     codes += "    else if (charcode <= 90) return charcode - 55;\n";
     codes += "    else return charcode - 61;\n";
     codes += "}\n";
@@ -223,7 +225,7 @@ function go_encw(){
     codes += "function code2num(s) {\n";
     codes += "    var len = s.length;\n";
     codes += "    var num = 0;\n";
-    codes += "    for (var i = 0; i<len; i++) num = 62 * num + letter2num(s.charAt(i));\n";
+    codes += "    for (var i = 0; i<len; i++) num = 64 * num + letter2num(s.charAt(i));\n";
     codes += "    return num;\n";
     codes += "}\n";
 
@@ -263,8 +265,10 @@ function go_encw(){
 }
 
 function num2letter(i) {
-    //0-48, 9-57, A-65(10), Z-90(35), a-97(36), z-122(61); 26+26+10=62
-    if (i >= 62 || i <= 0)  return '0';
+    //0-48, 9-57, A-65(10), Z-90(35), a-97(36), z-122(61); '-'-62; '_'-63; 26+26+10+2=64
+    if (i >= 64 || i <= 0)  return '0';
+    else if (i == 62) return '-';
+    else if (i == 63) return '_';
     else if (i < 10) return i;
     else if (i <= 35) return String.fromCharCode(i + 55);
     else return String.fromCharCode(i + 61);
@@ -274,8 +278,8 @@ function num2code(i) {
     var ret = '';
     if (i < 0) return ret;
     do {
-        ret = num2letter(i % 62) + ret;
-        i = Math.floor(i / 62);
+        ret = num2letter(i % 64) + ret;
+        i = Math.floor(i / 64);
     } while (i > 0);
     return ret;
 }
