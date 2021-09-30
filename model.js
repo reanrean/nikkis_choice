@@ -343,7 +343,7 @@ function MyClothes() {
 					end = content[j+1];
 			}else {
 				if (end == content[j]) {
-					ret.push(start + '+' + (Number(end) - Number(start)));
+					ret.push(start + '+' + Number(end - start));
 					start = 0;
 					end = 0;
 				}else 
