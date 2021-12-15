@@ -1062,14 +1062,15 @@ function contentBy(txt,varname,keepChars){
 }
 
 function convert_uid(uid){
-	if (uid=='81327') uid='31327';
+	if (uid=='81327') uid='39327';
 	if (uid=='82599') uid='62599';
 	if (uid=='83221') uid='73221';
 	if (uid=='85735') uid='65735';
 	if (uid=='30961') uid='49961';
 	
-	var mainId = uid.substr(0,1);
-	var id = (uid.substr(1,1)==0 ? uid.substr(2,3) : uid.substr(1,4));
+	var mainId = uid.substr(0, uid.length - 4);
+    var subId = uid.substr(uid.length - 4, 4);
+    var id = (mainId == '18' ? '1' + subId : (subId.charAt(0)==0 ? subId.substr(1, 3) : subId));
 	var mainType = convert_type(mainId);
 	return {
 		uid: uid,
@@ -1128,6 +1129,7 @@ function convert_type(tid){
 		case '7' : return '鞋子';
 		case '8' : return '饰品';
 		case '9' : return '妆容';
+		case '18' : return '饰品';
 	}
 }
 
