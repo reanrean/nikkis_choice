@@ -257,11 +257,15 @@ function clotonum(type,id){
 		case '下装': mainType='5'; break;
 		case '袜子': mainType='6'; break;
 		case '鞋子': mainType='7'; break;
-		case '饰品': mainType='8'; break;
+		case '饰品': 
+            if (parseInt(id) >= 10000) mainType = '18';
+            else mainType='8'; 
+            break;
 		case '妆容': mainType='9'; break;
 		case '萤光之灵': mainType='A'; break;
 	}
-	if (parseInt(id) >= 1000) return mainType + id;
+    if (parseInt(id) >= 10000) return mainType + id.substr(id.length-4, 4);
+	else if (parseInt(id) >= 1000) return mainType + id;
 	else return mainType + '0' + id;
 }
 
