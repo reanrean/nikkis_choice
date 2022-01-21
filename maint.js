@@ -774,7 +774,8 @@ function static_generate(){
 			switch(staticMode){
 				case 'merge' :
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
-					var skip = [];
+					var skip = [21270,30632,60605,83514,83515,90205];
+                    //见习巫女
 					if ($.inArray(parseInt(tar.uid),skip)>=0) continue;
 					var src_arr = contentBy(contents[i],'cloth');
 					var num_arr = contentBy(contents[i],'num');
@@ -839,8 +840,8 @@ function static_generate(){
 					break;
 				case 'shop':
 					var tar = convert_uid(contentBy(contents[i],'id')[0]);
-					var skip = [11379,30574,40593,50550,71237,83111,83112,83113,83114,10818,30339,40449,50413,60312,70742,81241,81242,81243,90053];
-                    //美杜莎, 甜蜜阳光
+					var skip = [11379,30574,40593,50550,71237,83111,83112,83113,83114,10818,30339,40449,50413,60312,70742,81241,81242,81243,90053,11477,71318];
+                    //美杜莎, 甜蜜阳光, 见习巫女
 					if ($.inArray(parseInt(tar.uid),skip)>=0) continue;
 					var price = contentBy(contents[i],'price')[0];
 					var price_type = contentBy(contents[i],'price_type')[0];
