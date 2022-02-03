@@ -250,7 +250,7 @@ function go_encw(){
     codes += "function iscode(s) {\n";
     codes += "    for (var i = 1; i < s.length; i++) {\n";
     codes += "        c = s.charCodeAt(i);\n";
-    codes += "        if (!(c==33 || c==42 || (c>=48&&c<=57) || (c>=64&&c<=90) || (c>=97&&c<=122))) return false;\n";
+    codes += "        if (!(c==33 || c==42 || c==45 || c==95 || (c>=48&&c<=57) || (c>=64&&c<=90) || (c>=97&&c<=122))) return false;\n";
     codes += "    }\n";
     codes += "    return true;\n";
     codes += "}\n";
