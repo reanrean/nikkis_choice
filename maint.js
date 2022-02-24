@@ -31,6 +31,22 @@ function go(){
 	$("#menu").html(menu);
 	$("#info").html('');
 	$("#extra").html('');
+    check_dup_ward();
+}
+
+function check_dup_ward(){
+    var allw = [];
+    var errmsgc = '';
+    for (var i in wardrobe) {
+        var cat_id = wardrobe[i][1] + wardrobe[i][2];
+        if ($.inArray(cat_id, allw) >= 0) {
+            console.log('重复：' + cat_id);
+            errmsgc += cat_id + ' ';
+            continue;
+        }
+        allw.push(cat_id);
+    }
+    if (errmsgc) alert('重复：' + errmsgc);
 }
 
 function go_encw(){
