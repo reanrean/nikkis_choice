@@ -806,7 +806,7 @@ function static_generate(){
 						var src = convert_uid(src_arr[j]);
 						//if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num_arr[j]+"','设'],\n";
                         if (tar.name&&src.name) out += "["+$.inArray(tar.mainType,mainType)+","+parseInt(tar.id)+","+$.inArray(src.mainType,mainType)+","+parseInt(src.id)+","+num_arr[j]+"],\n";
-						if (tar.name&&!src.name) errmsg += " " + src_arr[j];
+						if (tar.name&&!src.name) errmsg += "," + src_arr[j];
 					}
 					break;
 				case 'evolve':
@@ -822,8 +822,8 @@ function static_generate(){
 					}
 					//if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','"+num+"','进'],\n";
 					if (tar.name&&src.name) out += "["+$.inArray(tar.mainType,mainType)+","+parseInt(tar.id)+","+$.inArray(src.mainType,mainType)+","+parseInt(src.id)+","+num+"],\n";
-					if (tar.name&&!src.name) errmsg += " " + contentBy(contents[i],'src')[0];
-					if (src.name&&!tar.name) errmsg += " " + contentBy(contents[i],'id')[0];
+					if (tar.name&&!src.name) errmsg += "," + contentBy(contents[i],'src')[0];
+					if (src.name&&!tar.name) errmsg += "," + contentBy(contents[i],'id')[0];
 					break;
 				case 'cvtSeries':
 					var src = convert_uid(contentBy(contents[i],'')[0]);
@@ -845,7 +845,7 @@ function static_generate(){
                         }*/
 						//if (tar.name&&src.name) out += "  ['"+tar.mainType+"','"+tar.id+"','"+src.mainType+"','"+src.id+"','1','染'],\n";
 						if (tar.name&&src.name) out += "["+$.inArray(tar.mainType,mainType)+","+parseInt(tar.id)+","+$.inArray(src.mainType,mainType)+","+parseInt(src.id)+",1],\n";
-						if (src.name&&!tar.name) errmsg += " " + tar_arr[j];
+						if (src.name&&!tar.name) errmsg += "," + tar_arr[j];
 					}
 					break;
 				case 'convert':
@@ -971,8 +971,8 @@ function static_generate(){
 			}
 		}
 		if (errmsg) {
-			alert('尚缺:'+errmsg);
-			console.log('尚缺:'+errmsg);
+			alert('尚缺: '+errmsg);
+			console.log('尚缺: '+errmsg);
 		}
 		$("#static_output").val(out);
         consolelog.sort(function(a, b){return a[0] - b[0];});
