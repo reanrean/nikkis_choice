@@ -474,12 +474,12 @@ function headerFrame(stitle, sname, sdate, dp, appurl){
 	h+='<meta name="viewport" content="width=device-width, initial-scale=1"/>';
 	h+='<meta charset="UTF-8" />';
 	//h+='<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />';
-	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.gitee.io/':'../../')+'css/style.css" />';
-	if (dp) h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://ajglz.gitee.io/html/3-DingPei/':'../3-DingPei/')+'dp-style.css" />';
-	if (dp) h+='<script type="text/javascript" src="'+(appurl?'http://ajglz.gitee.io/html/3-DingPei/':'../3-DingPei/')+'dp.js"></script>';
+	h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://aojiaogongluezu.github.io/nikkiup2u3/':'../../')+'css/style.css" />';
+	if (dp) h+='<link rel="stylesheet" type="text/css" href="'+(appurl?'http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/':'../3-DingPei/')+'dp-style.css" />';
+	if (dp) h+='<script type="text/javascript" src="'+(appurl?'http://aojiaogongluezu.github.io/nikkiup2u3/html/3-DingPei/':'../3-DingPei/')+'dp.js"></script>';
 	h+='</head>\n<body>';
 	if (dp&&appurl) h+='<style>label:first-child,#limitn,.norm{display:none;}.limit{display:inline;}</style>';
-	if (appurl) h+='\n<style>body{background-image:url(http://ajglz.gitee.io/images/bk2.png);background-repeat:repeat-y;background-position:50% 0%;background-size:60%;}</style>';
+	if (appurl) h+='\n<style>body{background-image:url(http://aojiaogongluezu.github.io/nikkiup2u3/images/bk2.png);background-repeat:repeat-y;background-position:50% 0%;background-size:60%;}</style>';
 	h+='<div class="myframe">\n';
 	h+='<p class="title1">'+stitle+'</p><hr class="mhr"/>\n';
 	h+='<p class="normal"><span class="title3">更新时间：</span>'+sdate;
