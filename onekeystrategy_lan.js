@@ -1,4 +1,6 @@
 var limitRet = 15; //maximum return when search by keywords
+var limitTag = 7; //maximum return when search by tag
+var limitTagRet = 5; //maximum return when search by each tag each type
 var lanSteps = 5;
 var lackClothes = []; //array of longid
 var allScores = {};
@@ -132,7 +134,7 @@ function lanStrategy_init(){
 	}
 	for (var i in tagSet){//remove keywords with too many returns
 		for (var j in tagSet[i]['typeCount']){
-			if (tagSet[i]['typeCount'][j] > limitRet){
+			if (tagSet[i]['typeCount'][j] > limitTagRet){
 				tagSet[tagCate]['count'] -= tagSet[i]['typeCount'][j];
 				delete tagSet[i]['clothes'][j];
 				delete tagSet[i]['acc'][j];
@@ -341,10 +343,20 @@ function lanStrategy_print(lazySet){
 	$optionContent1.append('<button class="btn btn-xs btn-default" onclick="min_lanSteps()">－</button>');
 	$strategy.append($optionContent1);
 	var $optionContent2 = $("<p/>");
-	$optionContent2.append("每步≤<span id='limitRet'>"+limitRet+"</span>件衣服");
+	$optionContent2.append("每关键字≤<span id='limitRet'>"+limitRet+"</span>件衣服");
 	$optionContent2.append('<button class="btn btn-xs btn-default" onclick="add_limitRet()">＋</button>');
 	$optionContent2.append('<button class="btn btn-xs btn-default" onclick="min_limitRet()">－</button>');
 	$strategy.append($optionContent2);
+	var $optionContent3 = $("<p/>");
+	$optionContent3.append("每tag≤<span id='limitTag'>"+limitTag+"</span>个部位");
+	$optionContent3.append('<button class="btn btn-xs btn-default" onclick="add_limitTag()">＋</button>');
+	$optionContent3.append('<button class="btn btn-xs btn-default" onclick="min_limitTag()">－</button>');
+	$strategy.append($optionContent3);
+	var $optionContent4 = $("<p/>");
+	$optionContent4.append("每tag每部位≤<span id='limitTagRet'>"+limitTagRet+"</span>件衣服");
+	$optionContent4.append('<button class="btn btn-xs btn-default" onclick="add_limitTagRet()">＋</button>');
+	$optionContent4.append('<button class="btn btn-xs btn-default" onclick="min_limitTagRet()">－</button>');
+	$strategy.append($optionContent4);
 	
 	var clotheslist_title = $("<p/>");
 	clotheslist_title.append(pspan("偷懒步骤: ", "clotheslist_title"));
@@ -423,6 +435,8 @@ function evalSets(resultObj,existObj){
 	}
 	
 	for (var str in resultObj){
+        if ($.inArray(str, Object.keys(lazyKeywords)) > 0) continue;
+        
 		//delete those with low scores
 		if (resultObj[str]['rawSumScore']&&low&&resultObj[str]['rawSumScore']<=low){
 			delete resultObj[str];
@@ -431,7 +445,9 @@ function evalSets(resultObj,existObj){
 		
 		//get accCount
 		var accCount = 0;
+        var newAcc = 0;
 		resultObj[str]['typeScore'] = {}; //init typeScore base on obj types
+		resultObj[str]['typeAddedScore'] = {}; //delete result remain in last run
 		resultObj[str]['result'] = {}; //delete result remain in last run
 		if (existObj) for (var i in existObj) {
 			resultObj[str]['typeScore'][i] = 0;
@@ -440,17 +456,21 @@ function evalSets(resultObj,existObj){
 		for (var i in resultObj[str]['acc']){
 			if (resultObj[str]['typeScore'][i]==null) {
 				resultObj[str]['typeScore'][i] = 0;
-				accCount++;
+				resultObj[str]['typeAddedScore'][i] = 0;
+				if (newAcc < limitTag) {
+                    accCount++;
+                    newAcc++;
+                }
 			}
 		}
-		resultObj[str]['accCount'] = accCount;
 		
+		//put clothes in each type to 'result'
 		for (var i in resultObj[str]['clothes']){
 			if (resultObj[str]['typeScore'][i]==null) resultObj[str]['typeScore'][i] = 0;
 			resultObj[str]['result'][i] = resultObj[str]['clothes'][i]; 
 		}
 		
-		//calc acc scores and put to 'result'
+		//calc highest acc scores in each acc type and put to 'result'
 		if(resultObj[str]['acc']) {
 			for (var type in resultObj[str]['acc']){
 				var maxScore = 0;
@@ -463,14 +483,35 @@ function evalSets(resultObj,existObj){
 			}
 		}
 		
-		//compare with existObj and get typeScore
+		//compare with existObj, get typeScore and typeAddedScore
 		for (var type in resultObj[str]['typeScore']){
 			if (existObj&&existObj[type]) resultObj[str]['typeScore'][type] = isAccSumScore(existObj[type],accCount);
 			if (!resultObj[str]['result'][type]) continue;
 			var score = isAccSumScore(resultObj[str]['result'][type],accCount);
 			if (score<=resultObj[str]['typeScore'][type]) delete resultObj[str]['result'][type];
-			else resultObj[str]['typeScore'][type] = score;
+            else {
+                resultObj[str]['typeAddedScore'][type] = score - resultObj[str]['typeScore'][type];
+                resultObj[str]['typeScore'][type] = score;
+            }
 		}
+        
+        //remove tagCate category more than limitTag
+        if (str.indexOf("tag:")==0 && Object.keys(resultObj[str]['typeAddedScore']).length > limitTag){
+            var entries = Object.entries(resultObj[str]['typeAddedScore']);
+            entries.sort(function(a,b){return b[1] - a[1];});
+            entries = entries.slice(0, limitTag);
+            var keys = [];
+            for (var i in entries) {
+                keys.push(entries[i][0]);
+            }
+            for (var type in resultObj[str]['result']) {
+                if ($.inArray(type, keys)<0) {
+                    delete resultObj[str]['result'][type];
+                    if (existObj&&existObj[type]) resultObj[str]['typeScore'][type] = isAccSumScore(existObj[type],accCount);
+                    else delete resultObj[str]['typeScore'][type];
+                }
+            }
+        }
 		
 		//remove repelCates and calc score
 		resultObj[str]['score'] = 0;
@@ -575,13 +616,39 @@ function add_limitRet(){
 	lanStrategy();
 }
 function min_limitRet(){
-	limitRet=Math.max(1,limitRet-1);
+	limitRet = Math.max(1, limitRet-1);
 	var recalc = false;
 	for (var i in lazyKeywords){
-		if (cntKeywordsReturns(i)>limitRet) recalc = true;
+		if (cntKeywordsReturns(i) > limitRet) recalc = true;
 	}
 	if (recalc) lanStrategy();
 	else $('#limitRet').text(limitRet);
+}
+function add_limitTag(){
+	limitTag++;
+	lanStrategy();
+}
+function min_limitTag(){
+	limitTag = Math.max(0, limitTag-1);
+	var recalc = false;
+	for (var i in lazyKeywords){
+		if (cntKeywordsReturns(i) > limitTag) recalc = true;
+	}
+	if (recalc) lanStrategy();
+	else $('#limitTag').text(limitTag);
+}
+function add_limitTagRet(){
+	limitTagRet++;
+	lanStrategy();
+}
+function min_limitTagRet(){
+	limitTagRet = Math.max(1, limitTagRet-1);
+	var recalc = false;
+	for (var i in lazyKeywords){
+		if (cntKeywordsReturns(i) > limitTagRet) recalc = true;
+	}
+	if (recalc) lanStrategy();
+	else $('#limitTagRet').text(limitTagRet);
 }
 
 function cntKeywordsReturns(kw){
