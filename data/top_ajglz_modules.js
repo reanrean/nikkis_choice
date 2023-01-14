@@ -3,6 +3,8 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','琉璃镜花',1,'琉璃镜花',''],
+['最新活动','电影之夜',1,'电影之夜',''],
 ['最新活动','圣灵恩泽',1,'圣灵恩泽',''],
 ['最新活动','石生花',1,'石生花',''],
 ['最新活动','童心稚愿',1,'童心稚愿',''],
@@ -561,6 +563,11 @@ var modules_top = [
 ['福袋2022','金苹果诗篇',1,'金苹果诗篇',''],
 ['福袋2022','春来寒山',1,'春来寒山',''],
 ['福袋2022','柿柿如意',1,'柿柿如意',''],
+['福袋2023','潜龙临渊',1,'潜龙临渊',''],
+['福袋2023','天香狐言',1,'天香狐言',''],
+['福袋2023','灿羽星湖',1,'灿羽星湖',''],
+['福袋2023','霄音升平',1,'霄音升平',''],
+['福袋2023','岁岁东风',1,'岁岁东风',''],
 ['V1-V10','V1-V4',0,'!猫娘','名称'],
 ['V1-V10','V1-V4',0,'!蓝贞·上衣','名称'],
 ['V1-V10','V1-V4',0,'!晚霞','名称'],
@@ -690,6 +697,7 @@ var modules_top_filename = {
 '活动·光域凝晶':'HD-GuangYuNingJing.html',
 '活动·纪梦铭书':'HD-JiMengMingShu.html',
 '活动·旋沫之境':'HD-XuanMoZhiJing.html',
+'活动·古楼绮宴':'HD-GuLouQiYan.html',
 '往期活动':'HD-WangQiHuoDong.html',
 '往期上架':'HD-WangQi_inShop.html',
 '往期活动·扭蛋':'HD-WangQiHuoDong_NiuDan.html',
@@ -804,6 +812,7 @@ var modules_top_filename = {
 '福袋2020':'CZ-FuDai2020.html',
 '福袋2021':'CZ-FuDai2021.html',
 '福袋2022':'CZ-FuDai2022.html',
+'福袋2023':'CZ-FuDai2023.html',
 'V1-V10':'CZ-VIP_1.html',
 'V11-V15':'CZ-VIP_2.html',
 '签到':'QD.html',
@@ -858,6 +867,7 @@ var map_src_module = {
     '抽·纪梦铭书': '活动·纪梦铭书',
     '活动·旋沫之境': '活动·旋沫之境',
     '抽·旋沫之境': '活动·旋沫之境',
+    '活动·古楼绮宴': '活动·古楼绮宴',
 }
 
 var map_src_module_past = {
@@ -897,12 +907,12 @@ function presetModules(){
 	for (var i = 1; i <= latest; i++){
 		modules_top.push(['签到',i+'月',0,'签到·'+i+'月','来源']);
 	}
-    
+
     var tmp_sets = ['黑天鹅']; //initialized: skip list
     var tmp_append = [];
-    
+
     if (typeof setcategory == "undefined") setcategory = [];
-    
+
 	for (var i = 0; i < wardrobe.length; i++){
         //金钻套装成就
 		if (wardrobe[i][18]=='套·金') tmp_append.push(['商店·金币', wardrobe[i][16].replace(/·套/g,''), 0, '!'+wardrobe[i][0], '名称']);
