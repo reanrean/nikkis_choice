@@ -3,6 +3,11 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','霜骨龙吟',1,'霜骨龙吟',''],
+['最新活动','世纪之夜',1,'世纪之夜',''],
+['最新活动','澄冬雪兔',1,'澄冬雪兔',''],
+['最新活动','芳庭故梦',1,'芳庭故梦',''],
+['最新活动','青柠奏夏',1,'青柠奏夏',''],
 ['最新活动','风旅铃音',1,'风旅铃音',''],
 ['最新活动','盛夏旅刊',1,'盛夏旅刊',''],
 ['最新活动','清韵翩然',1,'清韵翩然',''],
@@ -696,6 +701,7 @@ var modules_top_filename = {
 '活动·旋沫之境':'HD-XuanMoZhiJing.html',
 '活动·古楼绮宴':'HD-GuLouQiYan.html',
 '活动·谜梦解析':'HD-MiMengJieXi.html',
+'活动·神庭幻谕':'HD-ShenTingHuanYu.html',
 '往期活动':'HD-WangQiHuoDong.html',
 '往期上架':'HD-WangQi_inShop.html',
 '往期活动·扭蛋':'HD-WangQiHuoDong_NiuDan.html',
@@ -871,6 +877,8 @@ var map_src_module = {
     '活动·古楼绮宴': '活动·古楼绮宴',
     '活动·谜梦解析': '活动·谜梦解析',
     '抽·谜梦解析': '活动·谜梦解析',
+    '活动·神庭幻谕': '活动·神庭幻谕',
+    '抽·神庭幻谕': '活动·神庭幻谕',
 }
 
 var map_src_module_past = {
