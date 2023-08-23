@@ -743,7 +743,7 @@ function contentBrac(txt, varname){
 }
 
 function go_static(){
-	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve','+suit','amputation'];
+	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve','+suit','amputation','wardrobe'];
 	var info = '<form id="static" action="">';
 	for (var i in radio){
 		info += '<label><input type="radio" name="radio_static" id="static_'+radio[i]+'" value="'+radio[i]+'" '+(i==0?'checked':'')+' onclick="clickRadio()">'+radio[i]+'</label><label>';
@@ -780,6 +780,30 @@ function static_generate(){
 	var staticMode = $("#static input[type=radio]:checked").val();
 	var static_input = $("#static_input").val();
 	if(static_input) {
+        
+        if (staticMode == 'wardrobe') {
+            var static_input_arr = static_input.split('\n');
+            var wardrobe_arr = [];
+            for (var i in wardrobe) {
+                var w = wardrobe[i];
+                var v = w[0] + w[1] + parseInt(w[2]) + w[3];
+                for (var j = 4; j < 14; j++){
+                    v += zeroIfBlank(w[j]);
+                }
+                v += (w[14].indexOf('+')<0 ? w[14] : '');
+                wardrobe_arr.push(v);
+            }
+            var out = '';
+            for (var i in wardrobe_arr) {
+                if ($.inArray(wardrobe_arr[i],static_input_arr) < 0) {
+                    out += wardrobe_arr[i] + '\n';
+                }
+            }
+            $("#static_output").val(out);
+            if (out == '') alert('check done.');
+            return;
+        }
+        
         var consolelog = [];
 		var contents = contentOf(static_input)[0];
 		var contentsName = contentOf(static_input)[1];
@@ -1041,6 +1065,14 @@ function checkSuitConvert(input){
     consolelog.sort(function(a, b){return a[0] - b[0];});
     for (var line in consolelog) {
         console.log(consolelog[line][1]);
+    }
+}
+
+function zeroIfBlank(str) {
+    if (str == '') {
+        return '0';
+    } else {
+        return str;
     }
 }
 
