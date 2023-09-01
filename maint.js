@@ -935,14 +935,15 @@ function static_generate(){
 						case '17': var genreName = '废墟孤岛'; var seq = 9; break;
 						case '18': var genreName = '梦恋奇迹'; var seq = 14; break;
 						case '19': var genreName = '故事套装'; var seq = 30; break;
-						case '22': var genreName = '远古化石展'; var seq = 17; break;
-						case '23': var genreName = '星座展'; var seq = 18; break;
+						case '22': var genreName = '远古化石展'; var seq = 18; break;
+						case '23': var genreName = '星座展'; var seq = 19; break;
 						case '24': var genreName = '御苑琼芳'; var seq = 15; break;
 						case '25': var genreName = '吴郡风雅'; var seq = 16; break;
 						case '27': var genreName = '至臻典藏'; var seq = 1; break;
 						case '28': var genreName = '璀璨华光'; var seq = 2; break;
-						case '29': var genreName = '童话梦乡'; var seq = 19; break;
-						case '30': var genreName = '缤纷画卷'; var seq = 20; break;
+						case '29': var genreName = '童话梦乡'; var seq = 20; break;
+						case '30': var genreName = '缤纷画卷'; var seq = 21; break;
+						case '32': var genreName = '越韵绮缘'; var seq = 17; break;
 						default: var genreName = '';
 					}
 					if (genreName && name && $.inArray(name,setCates)>=0){
