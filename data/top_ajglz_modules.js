@@ -3,6 +3,11 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','海风星夜',1,'海风星夜',''],
+['最新活动','海沫轻歌',1,'海沫轻歌',''],
+['最新活动','虚境莲华',1,'虚境莲华',''],
+['最新活动','魔女的叹息',1,'魔女的叹息',''],
+['最新活动','幽涟濯月',1,'幽涟濯月',''],
 ['最新活动','乐购使者',1,'乐购使者',''],
 ['最新活动','鬼金羊',1,'鬼金羊',''],
 ['最新活动','香叶紫藤',1,'香叶紫藤',''],
@@ -721,6 +726,7 @@ var modules_top_filename = {
 '活动·古楼绮宴':'HD-GuLouQiYan.html',
 '活动·谜梦解析':'HD-MiMengJieXi.html',
 '活动·神庭幻谕':'HD-ShenTingHuanYu.html',
+'活动·沉落之海':'HD-ChenLuoZhiHai.html',
 '往期活动':'HD-WangQiHuoDong.html',
 '往期上架':'HD-WangQi_inShop.html',
 '往期活动·扭蛋':'HD-WangQiHuoDong_NiuDan.html',
@@ -900,6 +906,8 @@ var map_src_module = {
     '抽·谜梦解析': '活动·谜梦解析',
     '活动·神庭幻谕': '活动·神庭幻谕',
     '抽·神庭幻谕': '活动·神庭幻谕',
+    '活动·沉落之海': '活动·沉落之海',
+    '抽·沉落之海': '活动·沉落之海',
 }
 
 var map_src_module_past = {
