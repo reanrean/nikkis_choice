@@ -1005,7 +1005,9 @@ function static_generate(){
                             if (j == 0 && k == 0) {
                                 out += name;
                             }
-                            out += '\t' + outTxt + '\n';
+                            if (outTxt.length > 3) {
+                                out += '\t' + outTxt + '\n';
+                            }
                         }
                     }
                     break;
