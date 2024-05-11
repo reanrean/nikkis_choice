@@ -983,11 +983,11 @@ function static_generate(){
 					break;
                 case 'amputation':
                     var tar = convert_uid(contentBy(contents[i],'id')[0]);
+                    out += tar.uid + '\n';
 					if (tar.name&&!tar.src[19]) {
 						var ward = cloneArr(tar.src);
                         ward[19] = '1';
                         var ln = "  ['" + ward.join("','") + "'],";
-                        out += ln + '\n';
 						consolelog.push([tar.row, ln]);
 					}
                     break;
@@ -1134,7 +1134,7 @@ function contentBy(txt,varname,keepChars){
 function convert_uid(uid){
 	if (uid=='81327') uid='39327';
 	if (uid=='82599') uid='62599';
-	if (uid=='83221') uid='73221';
+	if (uid=='83221') uid='79221';
 	if (uid=='85735') uid='65735';
 	if (uid=='30961') uid='49961';
 	
