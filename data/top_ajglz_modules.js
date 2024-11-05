@@ -3,6 +3,7 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','甜蜜满载',1,'甜蜜满载',''], //体力
 ['最新活动','桃心恶魔',1,'桃心恶魔',''], //登录 可删
 ['最新活动','魔女法则',1,'魔女法则',''], //扭蛋
 ['最新活动','魔女法则',0,'!怪诞甜心','名称'], //扭蛋
