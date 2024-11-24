@@ -3,6 +3,7 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','谜夜寻踪',1,'谜夜寻踪',''], //打包
 ['最新活动','密林趣旅',1,'密林趣旅',''], //体力
 ['最新活动','馥郁童话',1,'馥郁童话',''], //充值 可删
 ['最新活动','梦境边缘',1,'梦境边缘',''], //充值 可删
