@@ -743,7 +743,7 @@ function contentBrac(txt, varname){
 }
 
 function go_static(){
-	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve','+suit','amputation','wardrobe','setToId'];
+	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve','+suit','amputation','wardrobe','setToId','TaskClothesData'];
 	var info = '<form id="static" action="">';
 	for (var i in radio){
 		info += '<label><input type="radio" name="radio_static" id="static_'+radio[i]+'" value="'+radio[i]+'" '+(i==0?'checked':'')+' onclick="clickRadio()">'+radio[i]+'</label><label>';
@@ -1007,6 +1007,26 @@ function static_generate(){
                             }
                             if (outTxt.length > 3) {
                                 out += '\t' + outTxt + '\n';
+                            }
+                        }
+                    }
+                    break;
+                case 'TaskClothesData':
+                    var name = contentsName[i];
+                    var partsList = contentOf(contents[i],'clothes')[0];
+                    for (var j in partsList) {
+                        var newTxt = partsList[j].replace(/[^0-9a-z,=]/gi,'');
+                        var splitTxt = newTxt.split(',');
+                        for (var k in splitTxt) {
+                            var spChar = (j == 0? '=' : 'id=');
+                            var containsChar = splitTxt[k].lastIndexOf(spChar);
+                            if (containsChar < 0) continue;
+                            var outTxt = splitTxt[k].substring(containsChar + spChar.length);
+                            if (j == 0 && k == 0) {
+                                out += '\n' + name + '\t';
+                            }
+                            if (outTxt.length > 3) {
+                                out += outTxt + ',';
                             }
                         }
                     }
