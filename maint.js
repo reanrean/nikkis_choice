@@ -743,7 +743,7 @@ function contentBrac(txt, varname){
 }
 
 function go_static(){
-	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve','+suit','amputation','wardrobe','setToId','TaskClothesData'];
+	var radio=['refactor','convert','cvtSeries','evolve','merge','arena','shop','guild','achieve','+suit','amputation','wardrobe','setToId','TaskClothesData','guild_task_f'];
 	var info = '<form id="static" action="">';
 	for (var i in radio){
 		info += '<label><input type="radio" name="radio_static" id="static_'+radio[i]+'" value="'+radio[i]+'" '+(i==0?'checked':'')+' onclick="clickRadio()">'+radio[i]+'</label><label>';
@@ -1035,6 +1035,31 @@ function static_generate(){
 					break;
 			}
 		}
+        switch(staticMode){
+            case 'guild_task_f':
+                var lines = static_input.trim().split('\n');
+                var outputLines = [];
+                for (var i = 0; i < lines.length; i++) {
+                    var idx = lines[i].indexOf(',');
+                    if (idx === -1) continue;
+                    var idStr = lines[i].substring(0, idx);
+                    var arrStr = lines[i].substring(idx + 1).trim();
+                    var id = parseInt(idStr, 10);
+                    if (id < 1000 || arrStr.indexOf('[') === -1) continue;
+                    // remove ""
+                    if (arrStr.startsWith('"') && arrStr.endsWith('"')) {
+                        arrStr = arrStr.slice(1, -1);
+                    }
+                    var main = Math.floor(id / 1000);
+                    var sub = id % 1000;
+                    var key = "'联盟委托: " + main + "-" + sub + "'";
+                    outputLines.push(key + ":" + arrStr + ",");
+                }
+                out = outputLines.join('\n') + '\n';
+                break;
+            default:
+                break;
+        }
 		if (errmsg) {
 			alert('尚缺: '+errmsg);
 			console.log('尚缺: '+errmsg);
