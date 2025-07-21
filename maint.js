@@ -949,7 +949,7 @@ function static_generate(){
 					if (genreName && name && $.inArray(name,setCates)>=0){
 						if (!outArr[seq]) outArr[seq] = [];
 						outArr[seq].push("  ['" + genreName + "','" + name + "'],\n");
-						if (name=='白骨夫人'||name=='幽冥仙主') outArr[seq].push("  ['" + genreName + "','" + name + "·入夜'],\n");
+						if (['白骨夫人', '幽冥仙主', '恒耀神冕'].includes(name)) outArr[seq].push("  ['" + genreName + "','" + name + "·入夜'],\n");
 					}
                     
                     //check single clothes is in set
@@ -1264,6 +1264,7 @@ function convert_dye(tid){
 		case '3002' : return ['经典网格','20'];
 		case '3003' : return ['清新条纹','20'];
 		case '3004' : return ['高级花纹','20'];
+		case '2011' : return ['回忆星辰','16'];
 	}
 }
 
