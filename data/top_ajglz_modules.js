@@ -3,6 +3,8 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','浮花梦源',1,'浮花梦源',''], //仨币
+['最新活动','星宇梦航',1,'星宇梦航',''], //充值 可删
 ['最新活动','瑰月绮谭',1,'瑰月绮谭',''], //打包
 ['最新活动','曼影风行',1,'曼影风行',''], //体力
 ['最新活动','星海回忆',1,'星海回忆',''], //图 可删
