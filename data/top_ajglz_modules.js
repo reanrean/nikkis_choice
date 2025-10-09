@@ -3,6 +3,7 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','秋夕风月',1,'秋夕风月',''], //中秋体力
 ['最新活动','苍莽回声',1,'苍莽回声',''], //充值 可删
 ['最新活动','甜心汪汪队',1,'甜心汪汪队',''], //充值 可删
 ['最新活动','栖雪之城',1,'栖雪之城',''], //充值 可删
