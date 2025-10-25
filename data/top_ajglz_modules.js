@@ -3,6 +3,7 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','赴梦幽翼',1,'赴梦幽翼',''], //万圣活动图
 ['最新活动','心动定格',1,'心动定格',''], //打包
 ['最新活动','绯焰永誓',1,'绯焰永誓',''], //充值 可删
 ['最新活动','丰时祝颂',1,'丰时祝颂',''], //充值 可删
