@@ -3,6 +3,7 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','贺新禧',1,'贺新禧',''], //登录 可删
 ['最新活动','花鬓灯宵',1,'花鬓灯宵',''], //元宵点灯
 ['最新活动','梅雪照夜',1,'梅雪照夜',''], //登录 可删
 ['最新活动','暖桃叙冬',1,'暖桃叙冬',''], //登录 可删
