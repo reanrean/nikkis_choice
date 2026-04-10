@@ -116,9 +116,10 @@
 		function download_hs(){
 			var lines = output_contents.split('<br>');
 			var dataLines = lines.filter(function(line){ return line.trim().charAt(0) === "'"; });
-			var jsContent = 'var tasksAdd={\n' + dataLines.join('\n') + '\n};';
+			var eol = '\r\n';
+			var jsContent = 'var tasksAdd={' + eol + dataLines.join(eol) + eol + '};' + eol;
 			var blob = new Blob([jsContent], {type: 'text/javascript;charset=utf-8'});
-			saveAs(blob, 'levels-hs.js');
+			saveAs(blob, 'levels-hs.js', true);
 		}
 		function initOnekey(){}
 		function showStrategy(){}
