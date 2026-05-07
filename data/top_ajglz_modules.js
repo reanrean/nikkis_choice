@@ -3,6 +3,7 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','奇喵漫旅',1,'奇喵漫旅',''], //消费
 ['最新活动','天使之愈',1,'天使之愈',''], //充值 可删
 ['最新活动','醇酿盛典',1,'醇酿盛典',''], //充值 可删
 ['最新活动','玉堂春',1,'玉堂春',''], //仨币
