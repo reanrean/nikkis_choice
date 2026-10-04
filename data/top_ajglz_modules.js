@@ -3,6 +3,11 @@ var auto_skip = ['不使用'];
 var modules_top = [
 //modulename, title, searchType, searchString, mode
 //searchType: 0-hardcode_name, 1-set
+['最新活动','月涌星湖',1,'月涌星湖',''], //芳菲秘境 可删
+['最新活动','引春之愿',1,'引春之愿',''], //充值 可删
+['最新活动','莲华妙舞',1,'莲华妙舞',''], //充值 可删
+['最新活动','林风赴梦',1,'林风赴梦',''], //充值 可删
+['最新活动','馨花绽梦',1,'馨花绽梦',''], //充值 可删
 ['最新活动','飨宴之饮',0,'!飨宴之饮','名称'], //织梦人 可删
 ['最新活动','飨宴之饮',0,'!金藤果酒','名称'], //织梦人 可删
 ['最新活动','飨宴之饮',0,'!午后浓荫','名称'], //织梦人 可删
@@ -871,6 +876,7 @@ var modules_top_filename = {
 '活动·圣庭之谒':'HD-ShengTingZhiYe.html',
 '活动·遥夜梦谭':'HD-YaoYeMengTan.html',
 '活动·赫维斯特之遗':'HD-HeWeiSiTeZhiYi.html',
+'活动·绮境漫游':'HD-QiJingManYou.html',
 '往期活动':'HD-WangQiHuoDong.html',
 '往期上架':'HD-WangQi_inShop.html',
 '往期活动·扭蛋':'HD-WangQiHuoDong_NiuDan.html',
@@ -1094,6 +1100,7 @@ var map_src_module = {
     '抽·遥夜梦谭': '活动·遥夜梦谭',
     '活动·赫维斯特之遗': '活动·赫维斯特之遗',
     '抽·赫维斯特之遗': '活动·赫维斯特之遗',
+    '活动·绮境漫游': '活动·绮境漫游',
 }
 
 var map_src_module_past = {
